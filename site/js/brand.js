@@ -25,11 +25,15 @@ export const BRAND = {
     unitShort: 'AI-CoE',
     url: 'https://www.qualizeal.com',
   },
+  // No default client. A hard-coded fallback here is worse than an empty one:
+  // if loadTenant() fails for any reason the page silently brands itself as
+  // whichever client happened to be first, and a prospect sees a competitor's
+  // name on their own demonstration. Empty is visibly wrong; wrong is invisible.
   client: {
-    name: 'Nova Biomedical',
-    url: 'https://www.novabiomedical.com',
+    name: '',
+    url: '#',
     // What the corpus actually is, in the client's language.
-    corpusDescription: 'product documentation, instructions for use, and FDA regulatory records',
+    corpusDescription: 'the documentation in this workspace',
   },
   stage: 'MVP',
 
@@ -45,10 +49,14 @@ export const BRAND = {
   get demoBy()       { return 'Demonstration by ' + this.builder.name; },
   get demoByUnit()   { return this.builder.unit; },
 
+  get clientNameOrFallback() {
+    return this.client.name || 'Demonstration workspace';
+  },
+
   get footerBrand() {
     // "delivered" overclaims at demo stage — this is a demonstration, not a
     // handover, and a director will notice the difference.
-    return this.product + ' — a demonstration prepared for ' + this.client.name +
+    return this.product + ' — a demonstration prepared for ' + this.clientNameOrFallback +
            ' by ' + this.builder.name + ' ' + this.builder.unitShort + '.';
   },
   get footerNote() {
@@ -156,7 +164,7 @@ export function applyBrand(root = document) {
   const map = {
     product: BRAND.product,
     productName: BRAND.productName,
-    clientName: BRAND.clientName,
+    clientName: BRAND.client.name || BRAND.clientNameOrFallback,
     demoBy: BRAND.demoBy,
     demoByUnit: BRAND.demoByUnit,
     footerBrand: BRAND.footerBrand,
