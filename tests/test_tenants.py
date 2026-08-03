@@ -137,3 +137,72 @@ def test_build_is_deterministic():
     a = CorpusEngine(pack, seed, t["name"]).generate(20)
     b = CorpusEngine(pack, seed, t["name"]).generate(20)
     assert [d.body for d in a] == [d.body for d in b], "generation is not deterministic"
+
+
+# =============================================================================
+# Site assembly — the failure that shipped a directory page as every tenant
+# =============================================================================
+
+def test_app_shell_is_separate_from_the_directory_page():
+    """build_site must never read and write the same file.
+
+    The original version read the per-tenant shell from site/index.html and then
+    wrote the tenant directory over that same path. One run destroyed its own
+    input, so every later build copied the DIRECTORY into each tenant folder.
+    Every tenant URL rendered the tenant list, and clicking through produced
+    /t/q-airlines/t/q-retail/ — a 404.
+    """
+    shell = ROOT / "site" / "app.html"
+    assert shell.exists(), "site/app.html missing — no per-tenant shell to copy"
+    src = (ROOT / "pipeline" / "build_site.py").read_text()
+    assert 'ROOT / "site" / "app.html"' in src, "build_site no longer reads app.html"
+    body = src[src.index("def main"):]
+    assert 'shell = ROOT / "site" / "index.html"' not in body, (
+        "build_site reads the shell from its own output path again")
+
+
+def test_app_shell_is_the_application_not_the_directory():
+    shell = (ROOT / "site" / "app.html").read_text()
+    for element in ["composer-input", "answer-stage-text", "galaxy"]:
+        assert element in shell, f"app shell missing '{element}'"
+    assert "Demonstration Tenants" not in shell, "app shell is the directory page"
+
+
+@pytest.mark.parametrize("slug", [t["slug"] for t in yaml.safe_load(
+    (Path(__file__).resolve().parents[1] / "tenants/registry.yml").read_text())["tenants"]])
+def test_each_tenant_page_is_the_application(slug):
+    page = ROOT / f"site/t/{slug}/index.html"
+    if not page.exists():
+        pytest.skip("site not assembled")
+    html = page.read_text()
+    assert "composer-input" in html, f"{slug}: page is not the application"
+    assert "Demonstration Tenants" not in html, f"{slug}: page is the directory"
+    assert (ROOT / f"site/t/{slug}/data/tenant.json").exists(), f"{slug}: no identity file"
+    assert (ROOT / f"site/t/{slug}/js/main.js").exists(), f"{slug}: no application code"
+
+
+def test_module_versions_are_consistent():
+    """Two import specifiers that differ only by query string instantiate the
+    module TWICE. State set on one copy — the tenant focus vocabulary, the
+    trained intent model — is invisible to the other, silently."""
+    import re
+    versions = set()
+    for p in (ROOT / "site/js").glob("*.js"):
+        versions.update(re.findall(r"\.js\?v=(\d+)", p.read_text()))
+    assert len(versions) <= 1, (
+        f"mixed module versions {sorted(versions)} — modules will be "
+        f"instantiated more than once and module-level state will not be shared")
+
+
+def test_build_site_is_idempotent():
+    """Running the build twice must produce the same site, not a broken one."""
+    import subprocess, sys as _s
+    before = (ROOT / "site/t/q-airlines/index.html").read_text() \
+        if (ROOT / "site/t/q-airlines/index.html").exists() else None
+    if before is None:
+        pytest.skip("site not assembled")
+    subprocess.run([_s.executable, "-m", "pipeline.build_site"], cwd=ROOT,
+                   capture_output=True, check=True)
+    after = (ROOT / "site/t/q-airlines/index.html").read_text()
+    assert before == after, "build_site is not idempotent"
+    assert "composer-input" in after, "second run destroyed the tenant page"
