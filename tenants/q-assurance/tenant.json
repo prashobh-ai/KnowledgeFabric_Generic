@@ -1,0 +1,74 @@
+{
+ "slug": "q-assurance",
+ "name": "Q-Assurance",
+ "industry": "Insurance",
+ "subtype": "Carrier / Underwriting & Claims",
+ "tagline": "Wordings, guidelines and claims practice in one answer",
+ "persona": "Chief Underwriting Officer",
+ "accent": "#8E44AD",
+ "accent_2": "#F5B301",
+ "logo": "tenants/q-assurance/brand/logo.svg",
+ "highlights": [
+  "Policy wording clause linked to the claims handling instruction",
+  "Endorsement history reconstructed across versions",
+  "Underwriting appetite reconciled with the filed wording"
+ ],
+ "builder": {
+  "name": "QualiZeal",
+  "unit": "AI Center of Excellence",
+  "unit_short": "AI-CoE"
+ },
+ "stage": "Demonstration",
+ "corpus": {
+  "generator": "insurance",
+  "profile": "carrier",
+  "documents": 55,
+  "document_types": {
+   "Policy Wording": 9,
+   "Endorsement": 7,
+   "Underwriting Guideline": 8,
+   "Claims Handling Instruction": 8,
+   "Coverage Position": 7,
+   "Reinsurance Treaty Summary": 5,
+   "Product Governance Record": 6,
+   "Actuarial Reserving Note": 5
+  },
+  "spine_fields": [
+   "form",
+   "line"
+  ],
+  "spine_values": {
+   "form": 9,
+   "line": 9
+  },
+  "bytes": 71379,
+  "synthetic": true
+ },
+ "domain": {
+  "regulations": [
+   "Solvency II Article 45",
+   "Solvency II Article 41",
+   "IFRS 17",
+   "Insurance Distribution Directive Article 25",
+   "Insurance Distribution Directive Article 20"
+  ],
+  "systems": [
+   "the policy administration system",
+   "the claims management system",
+   "the underwriting workbench",
+   "the rating engine",
+   "the reinsurance administration system",
+   "the document library"
+  ],
+  "roles": [
+   "Chief Underwriting Officer",
+   "Claims Operations Director",
+   "Head of Product Governance",
+   "Chief Actuary",
+   "Reinsurance Manager",
+   "Coverage Counsel",
+   "Portfolio Underwriter",
+   "Claims Technical Lead"
+  ]
+ }
+}
