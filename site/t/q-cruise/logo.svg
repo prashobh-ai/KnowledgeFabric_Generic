@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"
+     width="48" height="48" role="img" aria-label="Q-Cruise">
+  <defs>
+    <linearGradient id="g-q-cruise" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0077B6"/>
+      <stop offset="100%" stop-color="#FFB703"/>
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="11" fill="url(#g-q-cruise)"/>
+  <path d="M24 12 m-3 0 a3 3 0 1 0 6 0 a3 3 0 1 0-6 0 M24 16 v20 M16 24 h16 M12 30 c0 6 6 8 12 8 s12-2 12-8" fill="none" stroke="#fff" stroke-width="2.4"
+        stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>
+</svg>

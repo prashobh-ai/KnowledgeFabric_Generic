@@ -1,0 +1,20 @@
+[
+ "Which airworthiness directives are open against {reg_hint}?",
+ "What is the repetitive inspection interval for the {ata_hint} inspection?",
+ "Can we defer this defect and for how long?",
+ "Which task card closes the AD compliance for the landing gear?",
+ "What repair scheme was approved for the fuselage corrosion finding?",
+ "Who is authorised to release the aircraft to service after this work?",
+ "What records must we retain for this maintenance action?",
+ "Which regulation makes the operator responsible for airworthiness?",
+ "What triggered the repeat defect on the hydraulic system?",
+ "Has the terminating action been embodied on the fleet?",
+ "What is the ATA chapter for the pneumatic system?",
+ "Which service bulletin does this engineering order implement?",
+ "What does the documentation say about QA-320N?",
+ "What does the documentation say about QA-321N?",
+ "What does the documentation say about QA-737M?",
+ "What does the documentation say about QA-738M?",
+ "What does the documentation say about QA-350K?",
+ "What does the documentation say about QA-787J?"
+]
