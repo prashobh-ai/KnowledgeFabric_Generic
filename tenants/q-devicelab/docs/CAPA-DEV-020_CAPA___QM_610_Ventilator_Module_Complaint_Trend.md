@@ -1,0 +1,31 @@
+<!--
+SYNTHETIC DOCUMENT — NOT A REAL RECORD
+
+Generated for product demonstration. Every organisation, identifier, person,
+date and finding in this file is fictional. No customer document, dataset or
+confidential material was used to produce it. Domain structure and terminology
+follow public standards and regulator sources so that the document reads
+correctly to a practitioner; the content itself is invented.
+-->
+
+# CAPA — QM-610 Ventilator Module Complaint Trend
+
+**Document number:** CAPA-DEV-020  
+**Document type:** CAPA Record  
+**Owner:** Neha Nordstrand (Post-Market Surveillance Lead, STF-8084)  
+**Approved by:** Idris Ravensworth (Clinical Affairs Manager, STF-1617)  
+**Revision:** A  
+**Effective:** 2024-01-01  
+
+## Root Cause and Action
+
+CAPA raised on complaint CMP-2024-05024 and a trend of reports of an error code presented
+during start-up for the QM-610 Ventilator Module (cleared under K241685).
+
+Root cause: the instructions for use did not state the limitation concerning sample handling
+outside the stated conditions prominently enough at the point of use.
+
+Corrective action: revise the instructions for use and issue a customer notification.
+Preventive action: add the limitation to the design review checklist.
+
+Effectiveness verified through complaint rate monitoring.
