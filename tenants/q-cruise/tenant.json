@@ -1,0 +1,77 @@
+{
+ "slug": "q-cruise",
+ "name": "Q-Cruise",
+ "industry": "Cruise & Maritime",
+ "subtype": "Cruise Line Operations",
+ "tagline": "Ship, shore and guest operations under one safety system",
+ "persona": "Director of Marine Operations",
+ "accent": "#0077B6",
+ "accent_2": "#FFB703",
+ "logo": "tenants/q-cruise/brand/logo.svg",
+ "highlights": [
+  "Safety management procedure linked to the inspection finding it answers",
+  "Planned maintenance record traced to the equipment and the vessel",
+  "Guest-facing and shipboard operations connected across systems"
+ ],
+ "builder": {
+  "name": "QualiZeal",
+  "unit": "AI Center of Excellence",
+  "unit_short": "AI-CoE"
+ },
+ "stage": "Demonstration",
+ "corpus": {
+  "generator": "maritime",
+  "profile": "cruise",
+  "documents": 57,
+  "document_types": {
+   "Safety Management System Procedure": 10,
+   "Planned Maintenance Record": 9,
+   "Port State Control Finding": 7,
+   "Non-Conformity Report": 7,
+   "Emergency Drill Record": 6,
+   "Technical Manual Extract": 6,
+   "Public Health Inspection Report": 6,
+   "Guest Operations Procedure": 6
+  },
+  "spine_fields": [
+   "vessel",
+   "equipment"
+  ],
+  "spine_values": {
+   "vessel": 10,
+   "equipment": 10
+  },
+  "bytes": 73713,
+  "synthetic": true
+ },
+ "domain": {
+  "regulations": [
+   "ISM Code Section 7",
+   "ISM Code Section 9",
+   "ISM Code Section 10",
+   "SOLAS Chapter III Regulation 19",
+   "SOLAS Chapter II-2",
+   "MARPOL Annex IV",
+   "MLC 2006 Regulation 3.1"
+  ],
+  "systems": [
+   "the planned maintenance system",
+   "the fleet management system",
+   "the electronic logbook",
+   "the safety reporting database",
+   "the crew training record system",
+   "the guest services platform"
+  ],
+  "roles": [
+   "Director of Marine Operations",
+   "Designated Person Ashore",
+   "Master",
+   "Chief Engineer",
+   "Safety Officer",
+   "Fleet Technical Superintendent",
+   "Hotel Operations Manager",
+   "HSQE Manager",
+   "Staff Captain"
+  ]
+ }
+}
