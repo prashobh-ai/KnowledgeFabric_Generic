@@ -25,8 +25,8 @@ jobs:
     outputs:
       tenants: ${{ steps.list.outputs.tenants }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with: { python-version: "3.12", cache: pip }
 
       - run: pip install -r pipeline/requirements.txt && pip install pytest
@@ -68,8 +68,8 @@ jobs:
       matrix:
         tenant: ${{ fromJSON(needs.corpora.outputs.tenants) }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with: { python-version: "3.12", cache: pip }
       - run: pip install -r pipeline/requirements.txt
 
@@ -97,8 +97,8 @@ jobs:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with: { python-version: "3.12", cache: pip }
       - run: pip install -r pipeline/requirements.txt
 
