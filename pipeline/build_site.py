@@ -32,13 +32,34 @@ def main():
             src = ROOT / "site" / sub
             if src.exists():
                 shutil.copytree(src, dest / sub, dirs_exist_ok=True)
-        shell = ROOT / "site" / "index.html"
-        if shell.exists():
-            dest_html = dest / "index.html"
-            dest_html.write_text(shell.read_text(encoding="utf-8"), encoding="utf-8")
+        # The shell is site/app.html, NOT site/index.html.
+        #
+        # This was a genuine bug: the previous version read the shell from
+        # site/index.html and then wrote the directory page over the same file.
+        # One run destroyed its own input, so every subsequent build copied the
+        # DIRECTORY into each tenant folder. Every tenant URL rendered the
+        # tenant list, and clicking through produced /t/q-airlines/t/q-retail/.
+        # Input and output must never be the same path.
+        shell = ROOT / "site" / "app.html"
+        if not shell.exists():
+            raise SystemExit(
+                "site/app.html is missing — that file is the per-tenant "
+                "application shell and the build cannot produce tenant pages "
+                "without it.")
+        (dest / "index.html").write_text(shell.read_text(encoding="utf-8"),
+                                         encoding="utf-8")
         logo = ROOT / "tenants" / t["slug"] / "brand" / "logo.svg"
         if logo.exists():
             (dest / "logo.svg").write_text(logo.read_text(encoding="utf-8"), encoding="utf-8")
+
+        # tenant.json beside the app so the shell can brand itself at runtime
+        # instead of being rebuilt per tenant.
+        (dest / "data").mkdir(parents=True, exist_ok=True)
+        (dest / "data" / "tenant.json").write_text(json.dumps(cfg, indent=1),
+                                                   encoding="utf-8")
+
+    if not tenants:
+        raise SystemExit("no tenants resolved — run build_tenants first")
 
     (ROOT / "site" / "data").mkdir(parents=True, exist_ok=True)
     (ROOT / "site" / "data" / "tenants.json").write_text(
