@@ -23,6 +23,26 @@ def registry():
     return yaml.safe_load((ROOT / "tenants/registry.yml").read_text())
 
 
+@pytest.fixture(scope="session")
+def assembled_site():
+    """Assemble the site once, then assert against THAT.
+
+    These tests previously read whatever happened to be in site/t/ — which in a
+    fresh checkout is stale generated output from an earlier commit, not the
+    result of this build. That made the corpora stage fail on files the publish
+    stage was about to replace, blocking the whole pipeline over a false alarm.
+    Generated output is never a fixture; generate it.
+    """
+    import subprocess, sys as _s
+    if not (ROOT / "tenants" / registry()["tenants"][0]["slug"] / "tenant.json").exists():
+        pytest.skip("tenants not built — run build_tenants first")
+    r = subprocess.run([_s.executable, "-m", "pipeline.build_site"],
+                       cwd=ROOT, capture_output=True, text=True)
+    if r.returncode != 0:
+        pytest.fail(f"build_site failed:\n{r.stdout}\n{r.stderr}")
+    return ROOT / "site"
+
+
 def corpora():
     return sorted(ROOT.glob("tenants/*/docs/*.md"))
 
@@ -170,10 +190,9 @@ def test_app_shell_is_the_application_not_the_directory():
 
 @pytest.mark.parametrize("slug", [t["slug"] for t in yaml.safe_load(
     (Path(__file__).resolve().parents[1] / "tenants/registry.yml").read_text())["tenants"]])
-def test_each_tenant_page_is_the_application(slug):
-    page = ROOT / f"site/t/{slug}/index.html"
-    if not page.exists():
-        pytest.skip("site not assembled")
+def test_each_tenant_page_is_the_application(slug, assembled_site):
+    page = assembled_site / "t" / slug / "index.html"
+    assert page.exists(), f"{slug}: build_site produced no page"
     html = page.read_text()
     assert "composer-input" in html, f"{slug}: page is not the application"
     assert "Demonstration Tenants" not in html, f"{slug}: page is the directory"
@@ -194,15 +213,12 @@ def test_module_versions_are_consistent():
         f"instantiated more than once and module-level state will not be shared")
 
 
-def test_build_site_is_idempotent():
+def test_build_site_is_idempotent(assembled_site):
     """Running the build twice must produce the same site, not a broken one."""
     import subprocess, sys as _s
-    before = (ROOT / "site/t/q-airlines/index.html").read_text() \
-        if (ROOT / "site/t/q-airlines/index.html").exists() else None
-    if before is None:
-        pytest.skip("site not assembled")
+    before = (assembled_site / "t/q-airlines/index.html").read_text()
     subprocess.run([_s.executable, "-m", "pipeline.build_site"], cwd=ROOT,
                    capture_output=True, check=True)
-    after = (ROOT / "site/t/q-airlines/index.html").read_text()
+    after = (assembled_site / "t/q-airlines/index.html").read_text()
     assert before == after, "build_site is not idempotent"
     assert "composer-input" in after, "second run destroyed the tenant page"
