@@ -162,8 +162,38 @@ export const DEFAULT_INTENT = {
   penalise: { udi: 0.4, ifu_catalogue: 0.5 }, wants: 'a direct answer',
 };
 
-// Domain analytes/entities worth recognising as the question's focus.
-const FOCUS_TERMS = [
+// Focus terms are LEARNED from the tenant's own knowledge graph at boot, not
+// hard-coded. The previous list named glucose, lactate and StatStrip — correct
+// for one corpus and meaningless for an airline or an insurer, which meant every
+// question there had no recognised subject and the answer opened with "about
+// this" instead of naming what was asked about.
+let TENANT_FOCUS = [];
+// Matching is case-insensitive, but the DISPLAY form must survive: an aircraft
+// registration is "QA-321N", not "Qa-321n", and a reviewer reading the latter
+// in an answer will assume the system does not understand their data.
+let FOCUS_DISPLAY = new Map();
+
+export function focusDisplay(term) {
+  return FOCUS_DISPLAY.get(String(term).toLowerCase()) || term;
+}
+
+/** Seed focus vocabulary from index.entities. Highest-signal kinds first, so a
+ *  question naming an aircraft or a policy resolves to that entity rather than
+ *  to whichever word happens to match. */
+export function setFocusVocabulary(entities) {
+  const scored = (entities || [])
+    .filter(e => e.name && e.name.length >= 3 && e.name.length <= 46)
+    .map(e => ({ name: e.name.toLowerCase(), weight: (e.mention_count || 1) * (e.name.length > 6 ? 1.2 : 1) }))
+    .sort((a, b) => b.weight - a.weight)
+    .slice(0, 260);
+  FOCUS_DISPLAY = new Map();
+  for (const e of (entities || [])) {
+    if (e.name) FOCUS_DISPLAY.set(e.name.toLowerCase(), e.name);
+  }
+  TENANT_FOCUS = [...new Set(scored.map(e => e.name))];
+}
+
+const FALLBACK_FOCUS = [
   'glucose','lactate','creatinine','hematocrit','haematocrit','ketone','hemoglobin',
   'haemoglobin','sodium','potassium','chloride','calcium','magnesium','bilirubin',
   'urea','bun','ph','pco2','po2','hba1c','albumin','uacr','egfr','osmolality',
@@ -188,6 +218,10 @@ export function familyMembers(text, family) {
 
 export function tokens(text) {
   return (String(text).toLowerCase().match(TOKEN_RE) || []).filter(t => t.length > 1);
+}
+
+function focusVocabulary() {
+  return TENANT_FOCUS.length ? TENANT_FOCUS : FALLBACK_FOCUS;
 }
 
 export function contentTokens(text) {
@@ -266,7 +300,7 @@ export function classifyIntent(question) {
 export function extractFocus(question) {
   const low = String(question || '').toLowerCase();
   const found = [];
-  for (const term of FOCUS_TERMS) {
+  for (const term of focusVocabulary()) {
     if (new RegExp(`\\b${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(low)) {
       found.push(term);
     }
