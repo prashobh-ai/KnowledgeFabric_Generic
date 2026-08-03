@@ -1,0 +1,83 @@
+{
+ "slug": "q-assure-claims",
+ "name": "Q-Assure Claims",
+ "industry": "Healthcare",
+ "subtype": "Payer / Claims & Revenue Cycle",
+ "tagline": "Coverage, coding and denials \u2014 with the policy that decided it",
+ "persona": "VP Claims Operations",
+ "accent": "#7A5AF8",
+ "accent_2": "#F2994A",
+ "logo": "tenants/q-assure-claims/brand/logo.svg",
+ "highlights": [
+  "Denial reason traced to the medical policy clause behind it",
+  "Transaction set companion guides beside the coverage determination",
+  "Deliberately paired with Q-Health to show subtype divergence live"
+ ],
+ "builder": {
+  "name": "QualiZeal",
+  "unit": "AI Center of Excellence",
+  "unit_short": "AI-CoE"
+ },
+ "stage": "Demonstration",
+ "corpus": {
+  "generator": "healthcare_payer",
+  "profile": "payer",
+  "documents": 58,
+  "document_types": {
+   "Medical Policy": 10,
+   "Coverage Determination": 8,
+   "Denial Notice": 8,
+   "Appeal Determination": 7,
+   "EDI Companion Guide Section": 6,
+   "Adjudication Edit Specification": 7,
+   "Utilisation Management Criteria": 7,
+   "Payment Integrity Review": 5
+  },
+  "spine_fields": [
+   "policy",
+   "policy_name",
+   "code"
+  ],
+  "spine_values": {
+   "policy": 12,
+   "policy_name": 12,
+   "code": 12
+  },
+  "bytes": 85112,
+  "synthetic": true
+ },
+ "domain": {
+  "regulations": [
+   "45 CFR 147.136",
+   "45 CFR 164.502",
+   "42 CFR 422.566",
+   "42 CFR 422.568",
+   "42 CFR 405.926",
+   "29 CFR 2560.503-1",
+   "45 CFR 162.1102",
+   "45 CFR 162.1602"
+  ],
+  "systems": [
+   "the claims adjudication platform",
+   "the medical policy library",
+   "the utilisation management workflow",
+   "the provider portal",
+   "the clearinghouse gateway",
+   "the appeals and grievances queue",
+   "the edit and audit rules engine",
+   "the enrolment and eligibility system"
+  ],
+  "roles": [
+   "VP Claims Operations",
+   "Medical Policy Director",
+   "Utilisation Management Lead",
+   "Appeals and Grievances Manager",
+   "Provider Network Director",
+   "Payment Integrity Lead",
+   "Configuration Analyst",
+   "Compliance Officer",
+   "Clinical Reviewer",
+   "Revenue Integrity Manager"
+  ]
+ }
+}
