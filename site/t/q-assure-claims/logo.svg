@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"
+     width="48" height="48" role="img" aria-label="Q-Assure Claims">
+  <defs>
+    <linearGradient id="g-q-assure-claims" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7A5AF8"/>
+      <stop offset="100%" stop-color="#F2994A"/>
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="11" fill="url(#g-q-assure-claims)"/>
+  <path d="M24 10 l12 5 v9c0 7-5 12-12 14c-7-2-12-7-12-14v-9z" fill="none" stroke="#fff" stroke-width="2.4"
+        stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>
+</svg>
