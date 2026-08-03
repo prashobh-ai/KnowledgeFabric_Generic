@@ -1,0 +1,87 @@
+{
+ "slug": "q-airlines",
+ "name": "Q-Airlines",
+ "industry": "Aviation",
+ "subtype": "Airline Operations & Continuing Airworthiness",
+ "tagline": "Fleet documentation, airworthiness and operations in one fabric",
+ "persona": "Director of Continuing Airworthiness",
+ "accent": "#0B6FD4",
+ "accent_2": "#00C2A8",
+ "logo": "tenants/q-airlines/brand/logo.svg",
+ "highlights": [
+  "Airworthiness Directive compliance traced to the task card that closed it",
+  "Minimum Equipment List relief cross-checked against deferred defects",
+  "One tail number threading maintenance, operations and safety records"
+ ],
+ "builder": {
+  "name": "QualiZeal",
+  "unit": "AI Center of Excellence",
+  "unit_short": "AI-CoE"
+ },
+ "stage": "Demonstration",
+ "corpus": {
+  "generator": "aviation",
+  "profile": "operator",
+  "documents": 61,
+  "document_types": {
+   "Airworthiness Directive Compliance Record": 12,
+   "Maintenance Task Card": 5,
+   "Minimum Equipment List Entry": 10,
+   "Technical Log Entry": 12,
+   "Service Bulletin": 3,
+   "Engineering Order": 4,
+   "Maintenance Organisation Exposition Section": 2,
+   "Reliability Report": 8,
+   "Quality Audit Finding": 5
+  },
+  "spine_fields": [
+   "tail",
+   "ata",
+   "ata_name"
+  ],
+  "spine_values": {
+   "tail": 7,
+   "ata": 14,
+   "ata_name": 14
+  },
+  "bytes": 98152,
+  "synthetic": true
+ },
+ "domain": {
+  "regulations": [
+   "14 CFR 39.7",
+   "14 CFR 39.15",
+   "14 CFR 43.9",
+   "14 CFR 91.403",
+   "14 CFR 91.417",
+   "14 CFR 121.367",
+   "14 CFR 145.109",
+   "14 CFR 145.219",
+   "EASA Part-145 145.A.50",
+   "EASA Part-M M.A.301",
+   "EASA Part-CAMO CAMO.A.315"
+  ],
+  "systems": [
+   "the maintenance information system",
+   "the electronic technical log",
+   "the airworthiness compliance register",
+   "the planning and forecasting module",
+   "the parts and inventory system",
+   "the reliability reporting database",
+   "the flight operations documentation portal",
+   "the safety reporting system"
+  ],
+  "roles": [
+   "Continuing Airworthiness Manager",
+   "Quality Manager",
+   "Base Maintenance Planner",
+   "Certifying Staff (B1)",
+   "Certifying Staff (B2)",
+   "Reliability Engineer",
+   "Technical Records Controller",
+   "Head of Airworthiness Review",
+   "Line Maintenance Supervisor",
+   "Design Liaison Engineer"
+  ]
+ }
+}
