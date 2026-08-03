@@ -1,0 +1,241 @@
+# =============================================================================
+# TENANT REGISTRY — pre-built demonstration tenants
+# =============================================================================
+#
+# Every tenant here is FICTIONAL and its corpus is FULLY SYNTHETIC. No client
+# name, document, or dataset appears anywhere in this repository.
+#
+# The domain shapes — which documents exist, what they are called, which
+# identifiers thread through them, which regulations bite — are drawn from
+# public standards and regulator sources. That is what makes these read as real
+# to a practitioner while remaining safe to publish, screenshot, and hand out.
+#
+# Why pre-build them: the demo has to exist before the prospect does. Waiting
+# for a name and a sample dataset costs days that a live pipeline does not have.
+# Each of these can be shown as-is, or cloned and re-badged in minutes once the
+# prospect's real name and data arrive.
+#
+# THE SUBTYPE RULE. Two tenants in the "same industry" are deliberately
+# separate builds — Q-Health (provider/EMR) and Q-Assure Claims (payer) share an
+# industry label and almost nothing else: different documents, different codes,
+# different systems, different regulators, different questions. Reusing one
+# configuration for the other is precisely the failure that made a build for one
+# airline non-transferable to the next. Subtype, not industry, is the unit of
+# reuse.
+
+version: 1
+
+defaults:
+  builder:
+    name: QualiZeal
+    unit: AI Center of Excellence
+    unit_short: AI-CoE
+  stage: Demonstration
+  corpus_target: 60          # documents generated per tenant
+  seed: 20260803             # fixed so every rebuild is byte-identical
+
+tenants:
+
+  # ---------------------------------------------------------------- AVIATION
+  - slug: q-airlines
+    name: Q-Airlines
+    industry: Aviation
+    subtype: Airline Operations & Continuing Airworthiness
+    tagline: Fleet documentation, airworthiness and operations in one fabric
+    accent: "#0B6FD4"
+    accent_2: "#00C2A8"
+    logo: tail
+    persona: Director of Continuing Airworthiness
+    corpus:
+      generator: aviation
+      profile: operator
+      documents: 62
+    highlights:
+      - Airworthiness Directive compliance traced to the task card that closed it
+      - Minimum Equipment List relief cross-checked against deferred defects
+      - One tail number threading maintenance, operations and safety records
+
+  - slug: q-aerotech
+    name: Q-AeroTech
+    industry: Aviation
+    subtype: MRO & Component Overhaul
+    tagline: Maintenance, repair and overhaul knowledge that survives an audit
+    accent: "#1F4E8C"
+    accent_2: "#F4A32B"
+    logo: wrench
+    persona: Quality Manager, Part-145 organisation
+    corpus:
+      generator: aviation
+      profile: mro
+      documents: 58
+    highlights:
+      - Service Bulletin to Engineering Order to release certificate, end to end
+      - Capability list and repair scheme evidence in one retrieval
+      - ATA chapter as the spine linking manuals, task cards and findings
+
+  # -------------------------------------------------------------- HEALTHCARE
+  - slug: q-health
+    name: Q-Health
+    industry: Healthcare
+    subtype: Provider / Clinical (EMR)
+    tagline: Clinical policy, pathways and orders, answerable at the bedside
+    accent: "#0E9F6E"
+    accent_2: "#2F80ED"
+    logo: pulse
+    persona: Chief Medical Information Officer
+    corpus:
+      generator: healthcare_provider
+      profile: hospital
+      documents: 60
+    highlights:
+      - Care pathway linked to the policy and the order set that implement it
+      - Accreditation evidence located by standard reference
+      - Clinical terminology resolved across notes, orders and policy
+
+  - slug: q-assure-claims
+    name: Q-Assure Claims
+    industry: Healthcare
+    subtype: Payer / Claims & Revenue Cycle
+    tagline: Coverage, coding and denials — with the policy that decided it
+    accent: "#7A5AF8"
+    accent_2: "#F2994A"
+    logo: shield
+    persona: VP Claims Operations
+    corpus:
+      generator: healthcare_payer
+      profile: payer
+      documents: 58
+    highlights:
+      - Denial reason traced to the medical policy clause behind it
+      - Transaction set companion guides beside the coverage determination
+      - Deliberately paired with Q-Health to show subtype divergence live
+
+  - slug: q-pharma
+    name: Q-Pharma
+    industry: Life Sciences
+    subtype: Clinical Development & GxP
+    tagline: Protocol to submission, inspection-ready
+    accent: "#D4145A"
+    accent_2: "#6C63FF"
+    logo: flask
+    persona: Head of Clinical Quality Assurance
+    corpus:
+      generator: pharma
+      profile: sponsor
+      documents: 60
+    highlights:
+      - Protocol, brochure and study report linked by study identifier
+      - Deviation to CAPA to SOP revision, in one chain
+      - Validation and Part 11 evidence retrievable by system
+
+  - slug: q-devicelab
+    name: Q-DeviceLab
+    industry: Medical Devices
+    subtype: Device Manufacturer / QMS
+    tagline: Design history, complaints and clearances, connected
+    accent: "#00A3A3"
+    accent_2: "#FF6B6B"
+    logo: device
+    persona: Director of Regulatory Affairs
+    corpus:
+      generator: devices
+      profile: manufacturer
+      documents: 60
+    highlights:
+      - Complaint to investigation to reportability decision
+      - Instructions for use aligned to the clearance that permits them
+      - Risk file traced to the design control that mitigates it
+
+  # ----------------------------------------------------------------- FINANCE
+  - slug: q-bank
+    name: Q-Bank
+    industry: Financial Services
+    subtype: Retail & Commercial Banking
+    tagline: Credit policy, controls and obligations without the hunt
+    accent: "#14487F"
+    accent_2: "#3DDC97"
+    logo: vault
+    persona: Head of Regulatory Compliance
+    corpus:
+      generator: banking
+      profile: bank
+      documents: 58
+    highlights:
+      - Regulatory obligation mapped to the internal control that satisfies it
+      - Credit policy exceptions traced to committee approval
+      - Model documentation linked to its validation evidence
+
+  - slug: q-assurance
+    name: Q-Assurance
+    industry: Insurance
+    subtype: Carrier / Underwriting & Claims
+    tagline: Wordings, guidelines and claims practice in one answer
+    accent: "#8E44AD"
+    accent_2: "#F5B301"
+    logo: umbrella
+    persona: Chief Underwriting Officer
+    corpus:
+      generator: insurance
+      profile: carrier
+      documents: 56
+    highlights:
+      - Policy wording clause linked to the claims handling instruction
+      - Endorsement history reconstructed across versions
+      - Underwriting appetite reconciled with the filed wording
+
+  # ------------------------------------------------------- CRUISE & MARITIME
+  - slug: q-cruise
+    name: Q-Cruise
+    industry: Cruise & Maritime
+    subtype: Cruise Line Operations
+    tagline: Ship, shore and guest operations under one safety system
+    accent: "#0077B6"
+    accent_2: "#FFB703"
+    logo: anchor
+    persona: Director of Marine Operations
+    corpus:
+      generator: maritime
+      profile: cruise
+      documents: 58
+    highlights:
+      - Safety management procedure linked to the inspection finding it answers
+      - Planned maintenance record traced to the equipment and the vessel
+      - Guest-facing and shipboard operations connected across systems
+
+  # ------------------------------------------------------------------ RETAIL
+  - slug: q-retail
+    name: Q-Retail
+    industry: Retail & Consumer
+    subtype: Omnichannel Retail Operations
+    tagline: Vendor compliance, store operations and product data, joined up
+    accent: "#E8590C"
+    accent_2: "#1098AD"
+    logo: basket
+    persona: VP Supply Chain Compliance
+    corpus:
+      generator: retail
+      profile: retailer
+      documents: 54
+    highlights:
+      - Vendor requirement traced to the product specification that fails it
+      - Recall notice linked to affected article and store operating instruction
+      - Traceability identifiers threading supplier, product and location
+
+  # --------------------------------------------------- QUALITY ENGINEERING
+  - slug: q-quality
+    name: Q-Quality
+    industry: Quality Engineering
+    subtype: Testing & QA Services
+    tagline: Strategy, cases and defects — the practice, searchable
+    accent: "#E4002B"
+    accent_2: "#2D3E50"
+    logo: check
+    persona: Head of Quality Engineering
+    corpus:
+      generator: quality
+      profile: services
+      documents: 56
+    highlights:
+      - Requirement traced through test case to defect and back
+      - Test strategy aligned to the standard clause it claims to satisfy
+      - Our own discipline, demonstrated on itself
