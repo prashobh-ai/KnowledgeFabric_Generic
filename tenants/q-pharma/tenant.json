@@ -1,0 +1,79 @@
+{
+ "slug": "q-pharma",
+ "name": "Q-Pharma",
+ "industry": "Life Sciences",
+ "subtype": "Clinical Development & GxP",
+ "tagline": "Protocol to submission, inspection-ready",
+ "persona": "Head of Clinical Quality Assurance",
+ "accent": "#D4145A",
+ "accent_2": "#6C63FF",
+ "logo": "tenants/q-pharma/brand/logo.svg",
+ "highlights": [
+  "Protocol, brochure and study report linked by study identifier",
+  "Deviation to CAPA to SOP revision, in one chain",
+  "Validation and Part 11 evidence retrievable by system"
+ ],
+ "builder": {
+  "name": "QualiZeal",
+  "unit": "AI Center of Excellence",
+  "unit_short": "AI-CoE"
+ },
+ "stage": "Demonstration",
+ "corpus": {
+  "generator": "pharma",
+  "profile": "sponsor",
+  "documents": 60,
+  "document_types": {
+   "Clinical Study Protocol": 10,
+   "Investigator Brochure Section": 7,
+   "Standard Operating Procedure": 10,
+   "Protocol Deviation Record": 9,
+   "CAPA Record": 7,
+   "Clinical Study Report Section": 7,
+   "Computerised System Validation Summary": 6,
+   "Trial Master File Index Entry": 4
+  },
+  "spine_fields": [
+   "study",
+   "study_name",
+   "sop"
+  ],
+  "spine_values": {
+   "study": 10,
+   "study_name": 10,
+   "sop": 10
+  },
+  "bytes": 81743,
+  "synthetic": true
+ },
+ "domain": {
+  "regulations": [
+   "21 CFR Part 11",
+   "21 CFR 312.60",
+   "21 CFR 312.62",
+   "ICH E6(R2) Section 5.0",
+   "ICH E6(R2) Section 4.9",
+   "ICH E3",
+   "EU Annex 11"
+  ],
+  "systems": [
+   "the electronic data capture system",
+   "the clinical trial management system",
+   "the electronic trial master file",
+   "the safety database",
+   "the document management system",
+   "the randomisation and supply system"
+  ],
+  "roles": [
+   "Head of Clinical Quality Assurance",
+   "Clinical Operations Director",
+   "Medical Monitor",
+   "Data Management Lead",
+   "Biostatistics Lead",
+   "Pharmacovigilance Manager",
+   "Regulatory Affairs Director",
+   "Clinical Trial Manager",
+   "Quality Systems Manager"
+  ]
+ }
+}

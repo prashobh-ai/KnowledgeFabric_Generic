@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"
+     width="48" height="48" role="img" aria-label="Q-Pharma">
+  <defs>
+    <linearGradient id="g-q-pharma" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#D4145A"/>
+      <stop offset="100%" stop-color="#6C63FF"/>
+    </linearGradient>
+  </defs>
+  <rect width="48" height="48" rx="11" fill="url(#g-q-pharma)"/>
+  <path d="M20 10 v9 L12 33 a2 2 0 0 0 2 3 h20 a2 2 0 0 0 2-3 L28 19 v-9 z" fill="none" stroke="#fff" stroke-width="2.4"
+        stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>
+</svg>
