@@ -1,0 +1,130 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  # ---------------------------------------------------------------- stage 1
+  # Corpora and safety gates. Runs once. Everything downstream depends on it,
+  # so a real-world name or a PII pattern stops the whole pipeline here rather
+  # than being discovered after publication.
+  corpora:
+    runs-on: ubuntu-latest
+    outputs:
+      tenants: ${{ steps.list.outputs.tenants }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+
+      - run: pip install -r pipeline/requirements.txt && pip install pytest
+
+      - name: Generate all tenant corpora
+        run: python -m pipeline.build_tenants
+
+      - name: Safety gate — no real-world names, no PII
+        run: pytest tests/test_tenants.py -q -k "real_world or pii or synthetic"
+
+      - name: Full tenant factory tests
+        run: pytest tests/ -q
+
+      - id: list
+        name: Enumerate tenants for the build matrix
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, yaml
+          reg = yaml.safe_load(open("tenants/registry.yml"))
+          print("tenants=" + json.dumps([t["slug"] for t in reg["tenants"]]))
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: corpora
+          path: tenants/
+          retention-days: 1
+
+  # ---------------------------------------------------------------- stage 2
+  # One job per tenant, in parallel. Each is a completely independent build —
+  # its own vocabulary, graph specification and intent model — which is the
+  # whole point: q-airlines cannot contaminate q-cruise because they never
+  # share a process.
+  fabric:
+    needs: corpora
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        tenant: ${{ fromJSON(needs.corpora.outputs.tenants) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: pip install -r pipeline/requirements.txt
+
+      - uses: actions/download-artifact@v4
+        with: { name: corpora, path: tenants/ }
+
+      - name: Build fabric — ${{ matrix.tenant }}
+        run: python -m pipeline.build_index --tenant ${{ matrix.tenant }}
+
+      - name: Train intent model — ${{ matrix.tenant }}
+        run: python -m pipeline.train_intent --tenant ${{ matrix.tenant }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fabric-${{ matrix.tenant }}
+          path: site/t/${{ matrix.tenant }}/
+          retention-days: 1
+
+  # ---------------------------------------------------------------- stage 3
+  publish:
+    needs: fabric
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: pip install -r pipeline/requirements.txt
+
+      - uses: actions/download-artifact@v4
+        with: { name: corpora, path: tenants/ }
+
+      - uses: actions/download-artifact@v4
+        with: { pattern: fabric-*, path: site/t/, merge-multiple: false }
+
+      - name: Flatten tenant artifacts into site/t/<slug>/
+        run: |
+          cd site/t
+          for d in fabric-*; do
+            [ -d "$d" ] || continue
+            slug="${d#fabric-}"
+            mkdir -p "$slug"
+            cp -r "$d"/. "$slug"/
+            rm -rf "$d"
+          done
+          ls -la
+
+      - name: Build tenant directory page
+        run: python -m pipeline.build_site
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: site }
+      - id: deploy
+        uses: actions/deploy-pages@v4
