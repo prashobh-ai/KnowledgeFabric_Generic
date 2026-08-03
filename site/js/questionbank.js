@@ -1,4 +1,4 @@
-import { tokenize, synonymTokens } from './search.js?v=5';
+import { tokenize, synonymTokens } from './search.js?v=15';
 // ============================================================================
 // Question bank — the tested set
 // ============================================================================

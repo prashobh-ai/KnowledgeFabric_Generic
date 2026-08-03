@@ -28,6 +28,8 @@
 // The evidence stays verbatim and stays cited. We are choosing the wrapper and
 // the connective tissue, not rewriting the source.
 
+import { focusDisplay } from './nlu.js?v=15';
+
 // ---------------------------------------------------------------------------
 // 1. Cleanup — document furniture
 // ---------------------------------------------------------------------------
@@ -109,6 +111,10 @@ const GENERIC_FOCUS = new Set(['meter', 'analyzer', 'analyser', 'strip', 'cartri
 function pretty(term) {
   const key = String(term).toLowerCase();
   if (CANONICAL[key]) return CANONICAL[key];
+  // Prefer the form the corpus itself uses. Title-casing an identifier such as
+  // "QA-321N" or "MP-0142" mangles it, and a mangled identifier reads as a bug.
+  const display = focusDisplay(term);
+  if (display && display !== key) return display;
   return key.replace(/\b\w/g, c => c.toUpperCase());
 }
 

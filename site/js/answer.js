@@ -20,10 +20,10 @@
 // constant. Each stage is separately inspectable, which is what makes the
 // answer defensible in front of a technical audience.
 
-import { analyseQuestion, rerankByIntent } from './nlu.js?v=7';
-import { summarise } from './summarize.js?v=7';
-import { computeConfidence } from './confidence.js?v=7';
-import { composeResponse, composeNoAnswer } from './compose.js?v=8';
+import { analyseQuestion, rerankByIntent } from './nlu.js?v=15';
+import { summarise } from './summarize.js?v=15';
+import { computeConfidence } from './confidence.js?v=15';
+import { composeResponse, composeNoAnswer } from './compose.js?v=15';
 
 /**
  * @param {string} query

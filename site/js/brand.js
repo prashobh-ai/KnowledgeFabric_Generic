@@ -130,6 +130,28 @@ export const COPY = {
 
 /** Apply brand strings to any element carrying data-brand="key". Keeps the
  *  markup declarative and means re-branding never touches the HTML. */
+/** Load this tenant's identity and fold it into BRAND before applying.
+ *  The shell is identical for every tenant; only this file differs, which is
+ *  why a new tenant needs no new markup. */
+export async function loadTenant(url = 'data/tenant.json') {
+  try {
+    const res = await fetch(url, { cache: 'no-cache' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const t = await res.json();
+    BRAND.client = { name: t.name, url: '#', corpusDescription: t.subtype };
+    BRAND.tenant = t;
+    if (t.accent) {
+      document.documentElement.style.setProperty('--tenant-accent', t.accent);
+      document.documentElement.style.setProperty('--tenant-accent-2',
+        t.accent_2 || t.accent);
+    }
+    return t;
+  } catch (err) {
+    console.warn('[fabric] tenant identity unavailable:', err.message);
+    return null;
+  }
+}
+
 export function applyBrand(root = document) {
   const map = {
     product: BRAND.product,

@@ -23,7 +23,7 @@
 // λ = 0.72 — relevance-leaning, but enough diversity pressure that a paraphrase
 // of an already-selected sentence cannot win.
 
-import { evidencePrior, contentTokens, META_REGULATORY_RE, familyMembers } from './nlu.js?v=7';
+import { evidencePrior, contentTokens, META_REGULATORY_RE, familyMembers } from './nlu.js?v=15';
 
 const MMR_LAMBDA = 0.72;
 const MAX_SENTENCES = 5;
