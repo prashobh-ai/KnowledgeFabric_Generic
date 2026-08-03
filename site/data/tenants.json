@@ -1,0 +1,178 @@
+[
+ {
+  "slug": "q-airlines",
+  "name": "Q-Airlines",
+  "industry": "Aviation",
+  "subtype": "Airline Operations & Continuing Airworthiness",
+  "tagline": "Fleet documentation, airworthiness and operations in one fabric",
+  "accent": "#0B6FD4",
+  "accent_2": "#00C2A8",
+  "logo": "tenants/q-airlines/brand/logo.svg",
+  "persona": "Director of Continuing Airworthiness",
+  "highlights": [
+   "Airworthiness Directive compliance traced to the task card that closed it",
+   "Minimum Equipment List relief cross-checked against deferred defects",
+   "One tail number threading maintenance, operations and safety records"
+  ]
+ },
+ {
+  "slug": "q-aerotech",
+  "name": "Q-AeroTech",
+  "industry": "Aviation",
+  "subtype": "MRO & Component Overhaul",
+  "tagline": "Maintenance, repair and overhaul knowledge that survives an audit",
+  "accent": "#1F4E8C",
+  "accent_2": "#F4A32B",
+  "logo": "tenants/q-aerotech/brand/logo.svg",
+  "persona": "Quality Manager, Part-145 organisation",
+  "highlights": [
+   "Service Bulletin to Engineering Order to release certificate, end to end",
+   "Capability list and repair scheme evidence in one retrieval",
+   "ATA chapter as the spine linking manuals, task cards and findings"
+  ]
+ },
+ {
+  "slug": "q-health",
+  "name": "Q-Health",
+  "industry": "Healthcare",
+  "subtype": "Provider / Clinical (EMR)",
+  "tagline": "Clinical policy, pathways and orders, answerable at the bedside",
+  "accent": "#0E9F6E",
+  "accent_2": "#2F80ED",
+  "logo": "tenants/q-health/brand/logo.svg",
+  "persona": "Chief Medical Information Officer",
+  "highlights": [
+   "Care pathway linked to the policy and the order set that implement it",
+   "Accreditation evidence located by standard reference",
+   "Clinical terminology resolved across notes, orders and policy"
+  ]
+ },
+ {
+  "slug": "q-assure-claims",
+  "name": "Q-Assure Claims",
+  "industry": "Healthcare",
+  "subtype": "Payer / Claims & Revenue Cycle",
+  "tagline": "Coverage, coding and denials \u2014 with the policy that decided it",
+  "accent": "#7A5AF8",
+  "accent_2": "#F2994A",
+  "logo": "tenants/q-assure-claims/brand/logo.svg",
+  "persona": "VP Claims Operations",
+  "highlights": [
+   "Denial reason traced to the medical policy clause behind it",
+   "Transaction set companion guides beside the coverage determination",
+   "Deliberately paired with Q-Health to show subtype divergence live"
+  ]
+ },
+ {
+  "slug": "q-pharma",
+  "name": "Q-Pharma",
+  "industry": "Life Sciences",
+  "subtype": "Clinical Development & GxP",
+  "tagline": "Protocol to submission, inspection-ready",
+  "accent": "#D4145A",
+  "accent_2": "#6C63FF",
+  "logo": "tenants/q-pharma/brand/logo.svg",
+  "persona": "Head of Clinical Quality Assurance",
+  "highlights": [
+   "Protocol, brochure and study report linked by study identifier",
+   "Deviation to CAPA to SOP revision, in one chain",
+   "Validation and Part 11 evidence retrievable by system"
+  ]
+ },
+ {
+  "slug": "q-devicelab",
+  "name": "Q-DeviceLab",
+  "industry": "Medical Devices",
+  "subtype": "Device Manufacturer / QMS",
+  "tagline": "Design history, complaints and clearances, connected",
+  "accent": "#00A3A3",
+  "accent_2": "#FF6B6B",
+  "logo": "tenants/q-devicelab/brand/logo.svg",
+  "persona": "Director of Regulatory Affairs",
+  "highlights": [
+   "Complaint to investigation to reportability decision",
+   "Instructions for use aligned to the clearance that permits them",
+   "Risk file traced to the design control that mitigates it"
+  ]
+ },
+ {
+  "slug": "q-bank",
+  "name": "Q-Bank",
+  "industry": "Financial Services",
+  "subtype": "Retail & Commercial Banking",
+  "tagline": "Credit policy, controls and obligations without the hunt",
+  "accent": "#14487F",
+  "accent_2": "#3DDC97",
+  "logo": "tenants/q-bank/brand/logo.svg",
+  "persona": "Head of Regulatory Compliance",
+  "highlights": [
+   "Regulatory obligation mapped to the internal control that satisfies it",
+   "Credit policy exceptions traced to committee approval",
+   "Model documentation linked to its validation evidence"
+  ]
+ },
+ {
+  "slug": "q-assurance",
+  "name": "Q-Assurance",
+  "industry": "Insurance",
+  "subtype": "Carrier / Underwriting & Claims",
+  "tagline": "Wordings, guidelines and claims practice in one answer",
+  "accent": "#8E44AD",
+  "accent_2": "#F5B301",
+  "logo": "tenants/q-assurance/brand/logo.svg",
+  "persona": "Chief Underwriting Officer",
+  "highlights": [
+   "Policy wording clause linked to the claims handling instruction",
+   "Endorsement history reconstructed across versions",
+   "Underwriting appetite reconciled with the filed wording"
+  ]
+ },
+ {
+  "slug": "q-cruise",
+  "name": "Q-Cruise",
+  "industry": "Cruise & Maritime",
+  "subtype": "Cruise Line Operations",
+  "tagline": "Ship, shore and guest operations under one safety system",
+  "accent": "#0077B6",
+  "accent_2": "#FFB703",
+  "logo": "tenants/q-cruise/brand/logo.svg",
+  "persona": "Director of Marine Operations",
+  "highlights": [
+   "Safety management procedure linked to the inspection finding it answers",
+   "Planned maintenance record traced to the equipment and the vessel",
+   "Guest-facing and shipboard operations connected across systems"
+  ]
+ },
+ {
+  "slug": "q-retail",
+  "name": "Q-Retail",
+  "industry": "Retail & Consumer",
+  "subtype": "Omnichannel Retail Operations",
+  "tagline": "Vendor compliance, store operations and product data, joined up",
+  "accent": "#E8590C",
+  "accent_2": "#1098AD",
+  "logo": "tenants/q-retail/brand/logo.svg",
+  "persona": "VP Supply Chain Compliance",
+  "highlights": [
+   "Vendor requirement traced to the product specification that fails it",
+   "Recall notice linked to affected article and store operating instruction",
+   "Traceability identifiers threading supplier, product and location"
+  ]
+ },
+ {
+  "slug": "q-quality",
+  "name": "Q-Quality",
+  "industry": "Quality Engineering",
+  "subtype": "Testing & QA Services",
+  "tagline": "Strategy, cases and defects \u2014 the practice, searchable",
+  "accent": "#E4002B",
+  "accent_2": "#2D3E50",
+  "logo": "tenants/q-quality/brand/logo.svg",
+  "persona": "Head of Quality Engineering",
+  "highlights": [
+   "Requirement traced through test case to defect and back",
+   "Test strategy aligned to the standard clause it claims to satisfy",
+   "Our own discipline, demonstrated on itself"
+  ]
+ }
+]
