@@ -1,1 +1,141 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Knowledge Fabric — Demonstration Tenants</title>
+<style>
+:root { color-scheme: dark; --ink:#F2F5FD; --ink2:#A2AECD; --bg:#0B1338; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--ink);
+  font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }
+header { padding:clamp(2rem,6vw,4.5rem) clamp(1rem,5vw,4rem) 1.5rem; max-width:1200px; margin:0 auto; }
+h1 { font-size:clamp(1.9rem,1.2rem+3vw,3.2rem); margin:0 0 .5rem; letter-spacing:-.02em; }
+.lede { color:var(--ink2); max-width:60ch; margin:0 0 .5rem; }
+.note { color:#7B87A8; font-size:.82rem; max-width:64ch; }
+main { display:grid; gap:1rem; padding:1rem clamp(1rem,5vw,4rem) 4rem; max-width:1200px; margin:0 auto;
+  grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); }
+.tcard { display:flex; flex-direction:column; gap:.4rem; padding:1.3rem; border-radius:16px;
+  text-decoration:none; color:inherit; background:rgba(255,255,255,.04);
+  border:1px solid rgba(150,170,255,.18); transition:transform .22s cubic-bezier(.22,1,.36,1),border-color .22s; }
+.tcard:hover { transform:translateY(-3px); border-color:rgba(150,170,255,.45); }
+.tcard::before { content:""; height:3px; border-radius:3px; margin:-.4rem 0 .6rem;
+  background:linear-gradient(90deg,var(--a),var(--b)); }
+.tlogo { border-radius:10px; }
+.tind { font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink2); }
+h2 { margin:.1rem 0 0; font-size:1.15rem; letter-spacing:-.01em; }
+.tsub { margin:0; font-size:.82rem; color:var(--ink2); }
+.ttag { margin:.3rem 0 .6rem; font-size:.85rem; color:#C3CBE6; }
+.tgo { margin-top:auto; font-size:.78rem; font-weight:600; color:var(--a); }
+footer { padding:0 clamp(1rem,5vw,4rem) 3rem; max-width:1200px; margin:0 auto;
+  color:#7B87A8; font-size:.78rem; }
+</style></head><body>
+<header>
+  <h1>Knowledge Fabric</h1>
+  <p class="lede">Every answer, traced to its source. Eleven demonstration tenants
+  across nine industry subtypes — each with its own corpus, vocabulary, knowledge
+  graph and question set.</p>
+  <p class="note">Every tenant is fictional and every document synthetic. No client
+  name, document or dataset appears anywhere in this build.</p>
+</header>
+<main>
+      <a class="tcard" href="t/q-airlines/" style="--a:#0B6FD4;--b:#00C2A8">
+        <img class="tlogo" src="tenants/q-airlines/brand/logo.svg" alt="" width="44" height="44"/>
+        <span class="tind">Aviation</span>
+        <h2>Q-Airlines</h2>
+        <p class="tsub">Airline Operations & Continuing Airworthiness</p>
+        <p class="ttag">Fleet documentation, airworthiness and operations in one fabric</p>
+        <span class="tgo">Open demonstration &rarr;</span>
+      </a>
 
+      <a class="tcard" href="t/q-aerotech/" style="--a:#1F4E8C;--b:#F4A32B">
+        <img class="tlogo" src="tenants/q-aerotech/brand/logo.svg" alt="" width="44" height="44"/>
+        <span class="tind">Aviation</span>
+        <h2>Q-AeroTech</h2>
+        <p class="tsub">MRO & Component Overhaul</p>
+        <p class="ttag">Maintenance, repair and overhaul knowledge that survives an audit</p>
+        <span class="tgo">Open demonstration &rarr;</span>
+      </a>
+
+      <a class="tcard" href="t/q-health/" style="--a:#0E9F6E;--b:#2F80ED">
+        <img class="tlogo" src="tenants/q-health/brand/logo.svg" alt="" width="44" height="44"/>
+        <span class="tind">Healthcare</span>
+        <h2>Q-Health</h2>
+        <p class="tsub">Provider / Clinical (EMR)</p>
+        <p class="ttag">Clinical policy, pathways and orders, answerable at the bedside</p>
+        <span class="tgo">Open demonstration &rarr;</span>
+      </a>
+
+      <a class="tcard" href="t/q-assure-claims/" style="--a:#7A5AF8;--b:#F2994A">
+        <img class="tlogo" src="tenants/q-assure-claims/brand/logo.svg" alt="" width="44" height="44"/>
+        <span class="tind">Healthcare</span>
+        <h2>Q-Assure Claims</h2>
+        <p class="tsub">Payer / Claims & Revenue Cycle</p>
+        <p class="ttag">Coverage, coding and denials — with the policy that decided it</p>
+        <span class="tgo">Open demonstration &rarr;</span>
+      </a>
+
+      <a class="tcard" href="t/q-pharma/" style="--a:#D4145A;--b:#6C63FF">
+        <img class="tlogo" src="tenants/q-pharma/brand/logo.svg" alt="" width="44" height="44"/>
+        <span class="tind">Life Sciences</span>
+        <h2>Q-Pharma</h2>
+        <p class="tsub">Clinical Development & GxP</p>
+        <p class="ttag">Protocol to submission, inspection-ready</p>
+        <span class="tgo">Open demonstration &rarr;</span>
+      </a>
+
+      <a class="tcard" href="t/q-devicelab/" style="--a:#00A3A3;--b:#FF6B6B">
+        <img class="tlogo" src="tenants/q-devicelab/brand/logo.svg" alt="" width="44" height="44"/>
+        <span class="tind">Medical Devices</span>
+        <h2>Q-DeviceLab</h2>
+        <p class="tsub">Device Manufacturer / QMS</p>
+        <p class="ttag">Design history, complaints and clearances, connected</p>
+        <span class="tgo">Open demonstration &rarr;</span>
+      </a>
+
+      <a class="tcard" href="t/q-bank/" style="--a:#14487F;--b:#3DDC97">
+        <img class="tlogo" src="tenants/q-bank/brand/logo.svg" alt="" width="44" height="44"/>
+        <span class="tind">Financial Services</span>
+        <h2>Q-Bank</h2>
+        <p class="tsub">Retail & Commercial Banking</p>
+        <p class="ttag">Credit policy, controls and obligations without the hunt</p>
+        <span class="tgo">Open demonstration &rarr;</span>
+      </a>
+
+      <a class="tcard" href="t/q-assurance/" style="--a:#8E44AD;--b:#F5B301">
+        <img class="tlogo" src="tenants/q-assurance/brand/logo.svg" alt="" width="44" height="44"/>
+        <span class="tind">Insurance</span>
+        <h2>Q-Assurance</h2>
+        <p class="tsub">Carrier / Underwriting & Claims</p>
+        <p class="ttag">Wordings, guidelines and claims practice in one answer</p>
+        <span class="tgo">Open demonstration &rarr;</span>
+      </a>
+
+      <a class="tcard" href="t/q-cruise/" style="--a:#0077B6;--b:#FFB703">
+        <img class="tlogo" src="tenants/q-cruise/brand/logo.svg" alt="" width="44" height="44"/>
+        <span class="tind">Cruise & Maritime</span>
+        <h2>Q-Cruise</h2>
+        <p class="tsub">Cruise Line Operations</p>
+        <p class="ttag">Ship, shore and guest operations under one safety system</p>
+        <span class="tgo">Open demonstration &rarr;</span>
+      </a>
+
+      <a class="tcard" href="t/q-retail/" style="--a:#E8590C;--b:#1098AD">
+        <img class="tlogo" src="tenants/q-retail/brand/logo.svg" alt="" width="44" height="44"/>
+        <span class="tind">Retail & Consumer</span>
+        <h2>Q-Retail</h2>
+        <p class="tsub">Omnichannel Retail Operations</p>
+        <p class="ttag">Vendor compliance, store operations and product data, joined up</p>
+        <span class="tgo">Open demonstration &rarr;</span>
+      </a>
+
+      <a class="tcard" href="t/q-quality/" style="--a:#E4002B;--b:#2D3E50">
+        <img class="tlogo" src="tenants/q-quality/brand/logo.svg" alt="" width="44" height="44"/>
+        <span class="tind">Quality Engineering</span>
+        <h2>Q-Quality</h2>
+        <p class="tsub">Testing & QA Services</p>
+        <p class="ttag">Strategy, cases and defects — the practice, searchable</p>
+        <span class="tgo">Open demonstration &rarr;</span>
+      </a>
+</main>
+<footer>A QualiZeal AI Center of Excellence demonstration. Prepared for evaluation purposes.</footer>
+</body></html>
