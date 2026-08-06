@@ -222,3 +222,66 @@ def test_build_site_is_idempotent(assembled_site):
     after = (assembled_site / "t/q-airlines/index.html").read_text()
     assert before == after, "build_site is not idempotent"
     assert "composer-input" in after, "second run destroyed the tenant page"
+
+
+# =============================================================================
+# Brand assets and hero layout
+# =============================================================================
+
+def test_every_tenant_has_brand_assets():
+    """A missing mark shows as a broken image on the directory card — the first
+    thing a reviewer sees."""
+    missing = []
+    for t in registry()["tenants"]:
+        for kind in ("mark", "lockup"):
+            if not (ROOT / "site" / "brand" / f"{t['slug']}-{kind}.png").exists():
+                missing.append(f"{t['slug']}-{kind}.png")
+    assert not missing, f"brand assets missing: {missing}"
+
+
+def test_brand_assets_are_referenced_from_inside_site():
+    """The directory previously pointed at tenants/<slug>/brand/logo.svg, a path
+    OUTSIDE site/. It resolved locally and 404'd on every deployment."""
+    src = (ROOT / "pipeline" / "build_site.py").read_text()
+    assert 'src="tenants/' not in src, (
+        "the directory page references a path outside site/ — it will 404 once deployed")
+    assert 'brand/{t[' in src or "brand/" in src, "no brand asset reference at all"
+
+
+def test_brand_assets_are_not_oversized():
+    """Eleven marks load on the directory page at once."""
+    for p in (ROOT / "site" / "brand").glob("*-mark.png"):
+        kb = p.stat().st_size / 1024
+        assert kb < 90, f"{p.name} is {kb:.0f} KB — too heavy for a card thumbnail"
+
+
+def test_hero_is_a_split_layout_on_desktop():
+    """The graph had been full-bleed with the copy floating over it, so node
+    labels collided with the headline and the ask box sat on live edges."""
+    import re
+    css = (ROOT / "site" / "styles" / "main.css").read_text()
+    m = re.search(r"@media \(min-width: 1001px\)\s*\{(.*?)\n\}", css, re.S)
+    assert m, "no desktop hero rules"
+    block = m.group(1)
+
+    def decl(sel, prop):
+        r = re.search(re.escape(sel) + r"[^{}]*\{([^}]*)\}", block)
+        if not r:
+            return ""
+        v = re.search(prop + r"\s*:\s*([^;]+)", r.group(1))
+        return v.group(1).strip() if v else ""
+
+    assert "grid" in decl(".hero-section", "display"), "hero is not a grid"
+    assert "relative" in decl(".hero-overlay", "position"), "copy still floats over the graph"
+    assert "relative" in decl(".hero-galaxy", "position"), "graph is still full-bleed"
+    assert decl(".hero-galaxy", "grid-column") == "2", "graph is not in the right column"
+    assert decl(".hero-overlay", "grid-column") == "1", "copy is not in the left column"
+
+
+def test_navbar_shows_the_tenant_mark():
+    html = (ROOT / "site" / "app.html").read_text()
+    assert 'id="tenant-mark"' in html, "no tenant mark in the navbar"
+    js = (ROOT / "site" / "js" / "brand.js").read_text()
+    assert "tenant-mark" in js, "the mark is never given the tenant's identity"
+    assert "style.display = 'none'" in js, (
+        "a missing mark would render as a broken image rather than being hidden")
