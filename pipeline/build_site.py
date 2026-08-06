@@ -48,9 +48,18 @@ def main():
                 "without it.")
         (dest / "index.html").write_text(shell.read_text(encoding="utf-8"),
                                          encoding="utf-8")
-        logo = ROOT / "tenants" / t["slug"] / "brand" / "logo.svg"
-        if logo.exists():
-            (dest / "logo.svg").write_text(logo.read_text(encoding="utf-8"), encoding="utf-8")
+        # Brand assets. The directory page previously pointed at
+        # tenants/<slug>/brand/logo.svg — a path OUTSIDE site/, so every card
+        # image 404'd once deployed. Assets that the site references must live
+        # under site/.
+        for kind in ("mark", "lockup"):
+            src = ROOT / "site" / "brand" / f"{t['slug']}-{kind}.png"
+            if src.exists():
+                shutil.copy(src, dest / f"{kind}.png")
+        generated = ROOT / "tenants" / t["slug"] / "brand" / "logo.svg"
+        if generated.exists():
+            (dest / "logo.svg").write_text(generated.read_text(encoding="utf-8"),
+                                           encoding="utf-8")
 
         # tenant.json beside the app so the shell can brand itself at runtime
         # instead of being rebuilt per tenant.
@@ -73,7 +82,7 @@ def main():
 def _write_directory(tenants: list[dict]):
     cards = "\n".join(f"""
       <a class="tcard" href="t/{t['slug']}/" style="--a:{t['accent']};--b:{t.get('accent_2', t['accent'])}">
-        <img class="tlogo" src="tenants/{t['slug']}/brand/logo.svg" alt="" width="44" height="44"/>
+        <img class="tlogo" src="brand/{t['slug']}-mark.png" alt="" width="52" height="52" loading="lazy"/>
         <span class="tind">{t['industry']}</span>
         <h2>{t['name']}</h2>
         <p class="tsub">{t['subtype']}</p>
@@ -103,7 +112,7 @@ main {{ display:grid; gap:1rem; padding:1rem clamp(1rem,5vw,4rem) 4rem; max-widt
 .tcard:hover {{ transform:translateY(-3px); border-color:rgba(150,170,255,.45); }}
 .tcard::before {{ content:""; height:3px; border-radius:3px; margin:-.4rem 0 .6rem;
   background:linear-gradient(90deg,var(--a),var(--b)); }}
-.tlogo {{ border-radius:10px; }}
+.tlogo {{ border-radius:10px; background:#fff; padding:3px; }}
 .tind {{ font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:var(--ink2); }}
 h2 {{ margin:.1rem 0 0; font-size:1.15rem; letter-spacing:-.01em; }}
 .tsub {{ margin:0; font-size:.82rem; color:var(--ink2); }}
