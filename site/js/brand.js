@@ -148,6 +148,12 @@ export async function loadTenant(url = 'data/tenant.json') {
     const t = await res.json();
     BRAND.client = { name: t.name, url: '#', corpusDescription: t.subtype };
     BRAND.tenant = t;
+    // Hide the mark rather than showing a broken image if the asset is absent.
+    const mark = document.getElementById('tenant-mark');
+    if (mark) {
+      mark.alt = t.name || '';
+      mark.addEventListener('error', () => { mark.style.display = 'none'; }, { once: true });
+    }
     if (t.accent) {
       document.documentElement.style.setProperty('--tenant-accent', t.accent);
       document.documentElement.style.setProperty('--tenant-accent-2',

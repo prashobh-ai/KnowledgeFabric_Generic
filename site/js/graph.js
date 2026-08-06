@@ -111,6 +111,13 @@ export class KnowledgeGraph {
     // before it finishes still refits.
     setTimeout(() => this.bindResponsive(), 1200);
 
+    // The hero graph now lives in a grid column rather than filling the
+    // viewport. Its box is established after first layout, so fit once more
+    // when that settles or it renders cropped to the old full-bleed geometry.
+    setTimeout(() => {
+      try { this.network.fit({ animation: { duration: 380 } }); } catch (_) {}
+    }, 1800);
+
     // Re-color nodes + edges when theme toggles
     this._lastTrace = null;
     this._themeObserver = new MutationObserver(() => this._recolor());
