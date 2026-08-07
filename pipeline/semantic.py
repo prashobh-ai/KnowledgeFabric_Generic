@@ -1,142 +1,133 @@
-"""Semantic retrieval layer — dense vectors without a server, an API key, or a model download.
+"""Dense semantic retrieval without a server, an API key, or a model download.
 
-Why LSA and not a transformer:
-    A sentence-transformer would mean a ~90 MB model at build time and either a
-    serving process or a 20 MB+ ONNX payload in the browser. That breaks the
-    zero-cost, static-hosting constraint this project is built on.
+Why LSA and not a transformer
+-----------------------------
+A sentence-transformer means a ~90 MB model at build time and either a serving
+process or a 20 MB+ ONNX payload in the browser. This demonstration is static
+files on a CDN, so that is not available.
 
-    Truncated SVD over TF-IDF (Latent Semantic Analysis) gives genuine distributional
-    semantics — 'renal', 'kidney', 'creatinine', 'eGFR' land near each other because
-    they co-occur — at roughly 1 MB total payload, deterministic across builds, and
-    with a projection simple enough to run in JavaScript in under a millisecond.
+Truncated SVD over TF-IDF gives genuine distributional semantics — in the
+aerospace corpus "corrosion", "pitting" and "structural" land near each other
+because they co-occur — at roughly 1 MB, deterministic across builds, and with
+a projection simple enough to run in JavaScript in well under a millisecond.
 
-    It is weaker than a transformer on paraphrase. It is dramatically better than
-    BM25 alone on vocabulary mismatch, which is the actual failure mode in this
-    corpus: clinicians say 'kidney', the IFU says 'creatinine clearance'.
+It is weaker than a transformer on paraphrase. It is dramatically better than
+BM25 alone on vocabulary mismatch, which is the actual failure mode here: a
+user asks about "kidney function" and the corpus says "creatinine"; a user asks
+"who signs off a repair" and the corpus says "certifying staff".
 
-The browser receives: term->vector table, IDF weights, and chunk vectors — all int8
-quantised. Query embedding is an IDF-weighted mean of its term vectors, L2-normalised.
-That is the same operation the pipeline performs, so client and server agree exactly.
+Payload
+-------
+The browser receives a term → vector table, IDF weights, and passage vectors,
+all int8 quantised. Query embedding is an IDF-weighted mean of its term vectors,
+L2-normalised — the same operation performed here, so client and pipeline agree
+exactly rather than approximately.
 """
+
 from __future__ import annotations
 
 import numpy as np
 from sklearn.decomposition import TruncatedSVD
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-# Tuned for payload size vs. retrieval quality on a corpus of this scale.
-MAX_TERMS = 6000
-N_COMPONENTS = 96
+# Tuned against payload size. 160 components retains enough variance on a
+# ~1,000-passage corpus that semantic recall stops improving materially, while
+# keeping the term table near 1 MB after quantisation.
+MAX_TERMS = 9000
+N_COMPONENTS = 160
+MIN_COMPONENTS = 32
+VARIANCE_TARGET = 0.88
 MIN_DF = 2
 
 
-def _quantize(mat: np.ndarray) -> tuple[list, float]:
-    """int8 quantisation. Cuts payload 4x against float32 with negligible
-    cosine-similarity error once vectors are L2-normalised."""
+def _quantise(mat: np.ndarray) -> tuple[list, float]:
+    """int8 quantisation.
+
+    Cuts payload 4x against float32 with negligible cosine error once vectors
+    are L2-normalised — the rounding noise is orders of magnitude below the
+    separation between a relevant and an irrelevant passage.
+    """
     scale = float(np.abs(mat).max()) or 1.0
     q = np.clip(np.round(mat / scale * 127.0), -127, 127).astype(np.int8)
     return q.tolist(), scale
 
 
 def build_semantic_index(texts: list[str]) -> dict:
-    """Fit LSA over the corpus and emit a browser-consumable semantic index."""
-    if len(texts) < 3:
+    """Fit LSA over the passages and emit a browser-consumable index."""
+    if len(texts) < 8:
         return {"enabled": False, "reason": "corpus too small for LSA"}
 
-    # Small corpora cannot support min_df=2 — every term looks rare and pruning
-    # empties the vocabulary. Adapt rather than fail.
-    min_df = 1 if len(texts) < 50 else MIN_DF
-
-    vectorizer = TfidfVectorizer(
+    vec = TfidfVectorizer(
         max_features=MAX_TERMS,
-        min_df=min_df,
+        min_df=MIN_DF,
         sublinear_tf=True,
         lowercase=True,
-        token_pattern=r"[A-Za-z0-9]{2,}",
+        token_pattern=r"[A-Za-z][A-Za-z0-9\-]{1,}",
         stop_words="english",
     )
     try:
-        tfidf = vectorizer.fit_transform(texts)
+        tfidf = vec.fit_transform(texts)
     except ValueError as exc:
-        # Degenerate corpus (all stop words, empty docs). Retrieval falls back to
-        # BM25 alone; the fabric stays up.
+        # Degenerate corpus. Retrieval falls back to BM25 alone rather than
+        # taking the whole fabric down.
         return {"enabled": False, "reason": f"vectorizer: {exc}"}
 
-    if tfidf.shape[1] < 4:
-        return {"enabled": False, "reason": "vocabulary too small for LSA"}
+    if tfidf.shape[1] < 8:
+        return {"enabled": False, "reason": "vocabulary too small"}
 
-    # Rank is bounded by both vocabulary and corpus size. Small corpora get a
-    # low-rank projection rather than no semantics at all.
-    n_components = min(N_COMPONENTS, tfidf.shape[1] - 1, tfidf.shape[0] - 1)
-    if n_components < 2:
-        return {"enabled": False, "reason": "insufficient rank for LSA"}
+    # Rank selection is variance-targeted rather than fixed.
+    #
+    # A fixed 160 components over this corpus's ~500-term vocabulary retains
+    # 100% of variance, which means the projection is a lossless rotation: it
+    # reproduces TF-IDF cosine exactly and generalises nothing. The whole value
+    # of LSA is the *discarded* tail, where co-occurrence smoothing lets
+    # "corrosion" and "pitting" collapse toward one another.
+    #
+    # Targeting ~88% forces genuine compression whatever the vocabulary size,
+    # so the semantic retriever stays semantic as corpora grow or shrink.
+    max_rank = min(N_COMPONENTS, tfidf.shape[1] - 1, tfidf.shape[0] - 1)
+    if max_rank < 2:
+        return {"enabled": False, "reason": "insufficient rank"}
 
-    svd = TruncatedSVD(n_components=n_components, random_state=42, algorithm="randomized")
-    try:
-        doc_vectors = svd.fit_transform(tfidf)
-    except ValueError as exc:
-        return {"enabled": False, "reason": f"svd: {exc}"}
+    probe = TruncatedSVD(n_components=max_rank, random_state=42,
+                         algorithm="randomized")
+    probe.fit(tfidf)
+    cumulative = probe.explained_variance_ratio_.cumsum()
+    n_comp = int(np.searchsorted(cumulative, VARIANCE_TARGET) + 1)
+    n_comp = max(MIN_COMPONENTS, min(n_comp, max_rank))
 
-    # L2-normalise so cosine similarity reduces to a dot product in the client.
+    svd = TruncatedSVD(n_components=n_comp, random_state=42, algorithm="randomized")
+    doc_vectors = svd.fit_transform(tfidf)
+
+    # L2-normalise so a dot product in the browser *is* cosine similarity.
+    # Doing the normalisation here rather than at query time removes a
+    # per-query square root over every passage.
     norms = np.linalg.norm(doc_vectors, axis=1, keepdims=True)
     norms[norms == 0] = 1.0
     doc_vectors = doc_vectors / norms
 
-    # Term vectors: project each vocabulary term through the same space.
-    # svd.components_ is (n_components, n_terms) — transpose gives per-term vectors.
-    term_vectors = svd.components_.T                     # (n_terms, n_components)
-    t_norms = np.linalg.norm(term_vectors, axis=1, keepdims=True)
-    t_norms[t_norms == 0] = 1.0
-    term_vectors = term_vectors / t_norms
+    # Term vectors: a term's position in concept space is its row of V.
+    # Projecting a query as the IDF-weighted mean of its term vectors is the
+    # standard LSA fold-in and avoids shipping the full TF-IDF matrix.
+    term_vectors = svd.components_.T          # (vocab, components)
+    tnorms = np.linalg.norm(term_vectors, axis=1, keepdims=True)
+    tnorms[tnorms == 0] = 1.0
+    term_vectors = term_vectors / tnorms
 
-    doc_q, doc_scale = _quantize(doc_vectors.astype(np.float32))
-    term_q, term_scale = _quantize(term_vectors.astype(np.float32))
+    qdocs, dscale = _quantise(doc_vectors.astype(np.float32))
+    qterms, tscale = _quantise(term_vectors.astype(np.float32))
 
-    vocab = vectorizer.vocabulary_
-    terms_sorted = sorted(vocab.items(), key=lambda kv: kv[1])
-    idf = vectorizer.idf_
+    vocab = vec.get_feature_names_out().tolist()
+    idf = vec.idf_.round(4).tolist()
 
     return {
         "enabled": True,
-        "method": "tfidf+truncated_svd(lsa)",
-        "dims": int(n_components),
-        "explained_variance": round(float(svd.explained_variance_ratio_.sum()), 4),
-        "terms": [t for t, _ in terms_sorted],
-        "idf": [round(float(x), 4) for x in idf],
-        "term_vectors": term_q,
-        "term_scale": term_scale,
-        "doc_vectors": doc_q,
-        "doc_scale": doc_scale,
-        "stats": {
-            "vocabulary": len(vocab),
-            "documents": int(tfidf.shape[0]),
-            "payload_vectors": int(tfidf.shape[0] * n_components + len(vocab) * n_components),
-        },
+        "components": int(n_comp),
+        "variance": round(float(svd.explained_variance_ratio_.sum()), 4),
+        "vocab": vocab,
+        "idf": idf,
+        "termScale": tscale,
+        "terms": qterms,
+        "docScale": dscale,
+        "docs": qdocs,
     }
-
-
-def embed_query(semantic: dict, query: str) -> np.ndarray | None:
-    """Reference implementation of the client-side query embedding.
-    The evaluation harness uses this so we measure exactly what users experience."""
-    if not semantic.get("enabled"):
-        return None
-    import re
-
-    term_index = {t: i for i, t in enumerate(semantic["terms"])}
-    tv = np.array(semantic["term_vectors"], dtype=np.float32) * semantic["term_scale"] / 127.0
-    idf = np.array(semantic["idf"], dtype=np.float32)
-
-    tokens = [t.lower() for t in re.findall(r"[A-Za-z0-9]{2,}", query)]
-    hits = [term_index[t] for t in tokens if t in term_index]
-    if not hits:
-        return None
-
-    weights = idf[hits][:, None]
-    vec = (tv[hits] * weights).sum(axis=0)
-    norm = np.linalg.norm(vec)
-    return vec / norm if norm else None
-
-
-def semantic_scores(semantic: dict, query_vec: np.ndarray) -> np.ndarray:
-    dv = np.array(semantic["doc_vectors"], dtype=np.float32) * semantic["doc_scale"] / 127.0
-    return dv @ query_vec
