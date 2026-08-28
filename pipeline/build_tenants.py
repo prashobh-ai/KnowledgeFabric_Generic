@@ -24,6 +24,7 @@ from pathlib import Path
 
 from . import packs as packlib
 from .docgen import DocumentBuilder
+from .engine import DISCLAIMER
 from .fabric import (BM25, build_graph, build_health, build_insights,
                      extract_passages, link_passages_to_entities)
 from .clusters import build_dendrogram
@@ -74,8 +75,13 @@ def build_tenant(pack, docs_target: int) -> dict:
                               peak_month=PEAK_MONTH.get(pack.slug, 6))
     docs = builder.build_corpus(docs_target)
 
+    # The banner is prepended to the file, not to d["body"]. Everything
+    # downstream — extract_passages, the graph, BM25 — reads the body from
+    # memory, so the declaration lands in the artefact a human opens without
+    # ever entering a passage, a citation or an answer.
     for d in docs:
-        (docs_dir / d["filename"]).write_text(d["body"], encoding="utf-8")
+        (docs_dir / d["filename"]).write_text(DISCLAIMER + d["body"],
+                                              encoding="utf-8")
 
     passages = [p for d in docs for p in extract_passages(d)]
     graph = build_graph(pack, docs, builder.world, builder.world_rels)

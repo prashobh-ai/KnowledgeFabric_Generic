@@ -3,3 +3,5 @@ numpy>=1.26
 scikit-learn>=1.4
 scipy>=1.11
 Pillow>=10.4
+markdown>=3.6
+beautifulsoup4>=4.12
