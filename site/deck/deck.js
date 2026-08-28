@@ -69,11 +69,9 @@ const SLIDES = [
     {h: "Still insufficient",
      p: "The system returns the nearest approved sources and guidance on how to rephrase. Never a bare refusal, and never an invented answer."}]},
 
-/* 5 */ {kind: "figure", nav: "Architecture",
+/* 5 */ {kind: "archlive", nav: "Architecture",
   title: "Reference architecture",
-  sub: "Five zones. Three carry the flow of work; two are cross-cutting.",
-  src: "../downloads/knowledge-fabric-architecture.jpg",
-  alt: "Knowledge Fabric reference architecture — access and roles, content pipeline, grounded answering, trust and telemetry, security and operations",
+  sub: "Five zones — and one question making the journey, live.",
   full: "../downloads/knowledge-fabric-architecture.jpg"},
 
 /* 6 */ {kind: "zones", nav: "The zones",
@@ -236,7 +234,7 @@ function body(s) {
 
   case "cards4":
     return `<div class="g4">${s.items.map((c, i) => `
-      <div class="card" style="--h:${hue(c.hue)};--t:${tint(c.hue)}">
+      <div class="card" style="--h:${hue(c.hue)};--t:${tint(c.hue)};--i:${i}">
         <span class="num">${i + 1}</span>
         <h3>${esc(c.h)}</h3>
         <p>${esc(c.p)}</p>
@@ -247,10 +245,10 @@ function body(s) {
       <div>
         <div class="mini-label">${esc(s.label)}</div>
         <ol class="probs">${s.items.map((c, i) => `
-          <li><span class="pn">${i + 1}</span>
+          <li style="--i:${i}"><span class="pn">${i + 1}</span>
             <div><h3>${esc(c.h)}</h3><p>${esc(c.p)}</p></div></li>`).join("")}</ol>
       </div>
-      <aside class="pull">
+      <aside class="pull" style="--i:5">
         ${s.quote.map(q => `<p class="q">${esc(q)}</p>`).join("")}
         <p class="qb">${esc(s.quoteBody)}</p>
       </aside>
@@ -259,15 +257,22 @@ function body(s) {
 
   case "flow":
     return `<div class="flow">${s.steps.map((c, i) => `
-      <div class="step${c.gate ? " gate" : ""}" style="--h:${hue(c.hue)};--t:${tint(c.hue)}">
+      <div class="step${c.gate ? " gate" : ""}" style="--h:${hue(c.hue)};--t:${tint(c.hue)};--i:${i}">
         <span class="sn">${i + 1}</span>
         <h3>${esc(c.h)}</h3><p>${esc(c.p)}</p>
         ${c.gate ? `<span class="gate-tag">gate</span>` : ""}
       </div>`).join("")}</div>
-    <div class="band">
+    <div class="band" style="--i:6">
       <div class="band-head"><span>${esc(s.bandLabel)}</span><i>${esc(s.bandSub)}</i></div>
       <div class="band-body">${s.band.map(c => `
         <div><h4>${esc(c.h)}</h4><p>${esc(c.p)}</p></div>`).join("")}</div>
+    </div>`;
+
+  case "archlive":
+    return `<div class="archlive">
+      <div class="archlive-scene" data-archscene></div>
+      <p class="archlive-note">Static full-resolution diagram for print and proposals:
+        <a href="${s.full}" target="_blank" rel="noopener">3800&nbsp;px JPEG</a></p>
     </div>`;
 
   case "figure":
@@ -278,15 +283,15 @@ function body(s) {
     </figure>`;
 
   case "zones":
-    return `<div class="zones">${s.items.map(c => `
-      <div class="zone" style="--h:${hue(c.hue)};--t:${tint(c.hue)}">
+    return `<div class="zones">${s.items.map((c, i) => `
+      <div class="zone" style="--h:${hue(c.hue)};--t:${tint(c.hue)};--i:${i}">
         <div class="z-head"><h3>${esc(c.h)}</h3><i>${esc(c.t)}</i></div>
         <div class="chips">${c.chips.map(x => `<span>${esc(x)}</span>`).join("")}</div>
       </div>`).join("")}</div>
     <p class="loop-note">${esc(s.loop)}</p>`;
 
   case "table":
-    return `<div class="tbl-wrap"><table class="tbl">
+    return `<div class="tbl-wrap" style="--i:0"><table class="tbl">
       <thead><tr>${s.head.map(h => `<th>${esc(h)}</th>`).join("")}</tr></thead>
       <tbody>${s.rows.map(r => `<tr>
         <td class="c1">${esc(r[0])}</td><td>${esc(r[1])}</td>
@@ -294,14 +299,14 @@ function body(s) {
     </table></div>`;
 
   case "cards6":
-    return `<div class="g6">${s.items.map(c => `
-      <div class="card" style="--h:${hue(c.hue)};--t:${tint(c.hue)}">
+    return `<div class="g6">${s.items.map((c, i) => `
+      <div class="card" style="--h:${hue(c.hue)};--t:${tint(c.hue)};--i:${i}">
         <h3>${esc(c.h)}</h3><p>${esc(c.p)}</p>
       </div>`).join("")}</div>`;
 
   case "value":
-    return `<div class="g5">${s.items.map(c => `
-      <div class="vcol" style="--h:${hue(c.hue)};--t:${tint(c.hue)}">
+    return `<div class="g5">${s.items.map((c, i) => `
+      <div class="vcol" style="--h:${hue(c.hue)};--t:${tint(c.hue)};--i:${i}">
         <h3>${esc(c.h)}</h3>
         <ul>${c.li.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
       </div>`).join("")}</div>`;
@@ -310,13 +315,13 @@ function body(s) {
     return `<div class="deploy">
       <div>
         <div class="mini-label">${esc(s.pluggableLabel)}</div>
-        <div class="plug">${s.pluggable.map(c => `
-          <div><h4>${esc(c.h)}</h4><p>${esc(c.p)}</p></div>`).join("")}</div>
+        <div class="plug">${s.pluggable.map((c, i) => `
+          <div style="--i:${i}"><h4>${esc(c.h)}</h4><p>${esc(c.p)}</p></div>`).join("")}</div>
       </div>
       <div>
         <div class="mini-label">${esc(s.modesLabel)}</div>
         <div class="modes">${s.modes.map((c, i) => `
-          <div style="--h:${hue(c.hue)};--t:${tint(c.hue)}">
+          <div style="--h:${hue(c.hue)};--t:${tint(c.hue)};--i:${i + 4}">
             <span class="mn">${i + 1}</span>
             <h4>${esc(c.h)}</h4><p>${esc(c.p)}</p></div>`).join("")}</div>
       </div>
@@ -324,8 +329,8 @@ function body(s) {
     <p class="s-foot">${esc(s.foot)}</p>`;
 
   case "phases":
-    return `<div class="phases">${s.items.map(c => `
-      <div class="phase" style="--h:${hue(c.hue)};--t:${tint(c.hue)}">
+    return `<div class="phases">${s.items.map((c, i) => `
+      <div class="phase" style="--h:${hue(c.hue)};--t:${tint(c.hue)};--i:${i}">
         <div class="p-top"><span class="p-n">${esc(c.n)}</span><span class="p-d">${esc(c.dur)}</span></div>
         <h3>${esc(c.h)}</h3>
         <p>${esc(c.p)}</p>
@@ -334,7 +339,7 @@ function body(s) {
 
   case "diff":
     return `<div class="diffs">${s.items.map((c, i) => `
-      <div class="diff" style="--h:${hue(c.hue)};--t:${tint(c.hue)}">
+      <div class="diff" style="--h:${hue(c.hue)};--t:${tint(c.hue)};--i:${i}">
         <span class="dn">${i + 1}</span>
         <div><h3>${esc(c.h)}</h3><p>${esc(c.p)}</p></div>
       </div>`).join("")}</div>`;

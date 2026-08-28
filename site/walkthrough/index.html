@@ -34,6 +34,25 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);
 h1,h2,h3{font-family:var(--display);font-weight:400;letter-spacing:-.02em;line-height:1.08}
 a{color:inherit}
 
+/* ---------- film ---------- */
+.film-frame{margin-top:44px;border-radius:18px;overflow:hidden;border:1px solid var(--rule);
+  box-shadow:0 30px 70px -38px rgba(10,22,38,.4);background:#0A1626}
+.film-frame video{display:block;width:100%;height:auto}
+.film-note{margin-top:14px;font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+
+/* ---------- built for you ---------- */
+.build-grid{margin-top:46px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.build-card{background:var(--t,#fff);border:1px solid var(--rule);border-top:3px solid var(--h,var(--blue));
+  border-radius:14px;padding:22px}
+.build-card h3{font-size:19px;margin-bottom:9px}
+.build-card p{font-size:14px;line-height:1.55;color:var(--ink-2)}
+.fit-cta{margin-top:26px;display:flex;align-items:center;justify-content:space-between;gap:22px;
+  text-decoration:none;background:linear-gradient(120deg,#0A1626,#17314D);color:#C4D3E1;
+  border-radius:16px;padding:24px 28px;transition:transform .2s}
+.fit-cta:hover{transform:translateY(-2px)}
+.fit-cta b{color:#fff;font-size:18px}
+.fit-cta svg{flex:none;color:#8FC9F5}
+
 /* ---------- weave backdrop ---------- */
 .weave{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;
   pointer-events:none;opacity:.45}
@@ -88,6 +107,41 @@ section{position:relative;z-index:1}
   animation:drop 2.1s ease-in-out infinite}
 @keyframes drop{0%,100%{transform:scaleY(.35);opacity:.4}50%{transform:scaleY(1);opacity:1}}
 
+/* ---------- search-vs-answer contrast ---------- */
+.contrast{margin-top:56px;display:grid;gap:18px;max-width:860px}
+.con-row{display:grid;grid-template-columns:130px 1fr;gap:6px 18px;align-items:center}
+.con-label{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--mute)}
+.con-new .con-label{color:var(--emerald)}
+.con-track{height:10px;border-radius:5px;background:#EEF2F6;overflow:hidden;position:relative}
+.con-note{grid-column:2;font-size:13.5px;color:var(--mute);display:flex;align-items:center;gap:8px}
+.con-new .con-note{color:var(--ink-2)}
+.con-crawl,.con-instant{position:absolute;inset:0;border-radius:5px;transform:scaleX(0);transform-origin:left}
+.con-crawl{background:repeating-linear-gradient(-45deg,#C3D2DF,#C3D2DF 8px,#D5E0EA 8px,#D5E0EA 16px)}
+.con-instant{background:linear-gradient(90deg,var(--blue),var(--emerald))}
+.contrast.in .con-crawl{animation:crawl 14s cubic-bezier(.3,.6,.7,.4) infinite}
+.contrast.in .con-instant{animation:instant 1s .5s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes crawl{0%{transform:scaleX(0)}18%{transform:scaleX(.22)}45%{transform:scaleX(.34)}
+  70%{transform:scaleX(.52)}100%{transform:scaleX(.62)}}
+@keyframes instant{to{transform:scaleX(1)}}
+@media(prefers-reduced-motion:reduce){
+  .contrast.in .con-crawl{animation:none;transform:scaleX(.55)}
+  .contrast.in .con-instant{animation:none;transform:scaleX(1)}}
+
+/* ---------- the live architecture ---------- */
+.arch-live{margin-top:52px;background:var(--panel);border:1px solid var(--rule);
+  border-radius:18px;padding:clamp(14px,2.4vw,30px);
+  box-shadow:0 24px 60px -34px rgba(10,22,38,.25)}
+@media(max-width:700px){.arch-live{padding:10px;border-radius:12px}}
+
+/* hero pills enter in sequence */
+.hero .meta .pill{opacity:0;transform:translateY(8px);
+  animation:pillIn .6s cubic-bezier(.16,1,.3,1) forwards}
+.hero .meta .pill:nth-child(1){animation-delay:1.1s}
+.hero .meta .pill:nth-child(2){animation-delay:1.3s}
+.hero .meta .pill:nth-child(3){animation-delay:1.5s}
+@keyframes pillIn{to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.hero .meta .pill{animation:none;opacity:1;transform:none}}
+
 /* the loom */
 .loomwrap{display:flex;flex-direction:column}
 .loom{position:relative;aspect-ratio:1/1;max-height:56vh;margin-inline:auto;width:100%}
@@ -136,6 +190,9 @@ section{position:relative;z-index:1}
   margin-top:56px;background:var(--rule);border:1px solid var(--rule);border-radius:14px;overflow:hidden}
 .prob{background:#fff;padding:26px 22px;transition:background .35s}
 .prob:hover{background:#F7FAFC}
+/* The fifth problem is the punchline — and on most widths it would
+   otherwise sit orphaned beside empty grid cells. Full width, always. */
+.prob:last-child{grid-column:1/-1}
 .prob b{display:block;font-family:var(--display);font-size:20px;font-weight:500;margin-bottom:9px}
 .prob span{font-size:14px;color:var(--mute);line-height:1.55}
 .prob i{font-family:var(--mono);font-style:normal;font-size:11px;color:var(--coral);
@@ -313,6 +370,7 @@ footer b{color:#C7D6E3;font-weight:500}
 
 <nav class="rail" aria-label="Section navigation">
   <button data-go="hero"><span class="tick"></span><span class="lbl">Start</span></button>
+  <button data-go="film"><span class="tick"></span><span class="lbl">The film</span></button>
   <button data-go="problem"><span class="tick"></span><span class="lbl">The problem</span></button>
   <button data-go="how"><span class="tick"></span><span class="lbl">How it works</span></button>
   <button data-go="clarify"><span class="tick"></span><span class="lbl">Clarify-back</span></button>
@@ -320,6 +378,7 @@ footer b{color:#C7D6E3;font-weight:500}
   <button data-go="caps"><span class="tick"></span><span class="lbl">Capabilities</span></button>
   <button data-go="covers"><span class="tick"></span><span class="lbl">Coverage</span></button>
   <button data-go="value"><span class="tick"></span><span class="lbl">Value</span></button>
+  <button data-go="build"><span class="tick"></span><span class="lbl">Built for you</span></button>
   <button data-go="delivery"><span class="tick"></span><span class="lbl">Delivery</span></button>
   <button data-go="close"><span class="tick"></span><span class="lbl">Difference</span></button>
 </nav>
@@ -352,12 +411,44 @@ footer b{color:#C7D6E3;font-weight:500}
   </div>
 </div></section>
 
+<!-- ================= FILM ================= -->
+<section id="film" class="band"><div class="wrap">
+  <div class="rv"><div class="eyebrow">In its own words</div>
+  <h2>Seventy seconds. <em>No slides, no jargon.</em></h2>
+  <p class="sub">The fabric introduces itself: what goes in, what happens to it, and what comes
+  out — for the person asking, for your curators, and for your admins. Silent by design, with
+  the narration carried in captions, so it plays anywhere from a stand to a boardroom.</p></div>
+  <div class="film-frame rv">
+    <video controls playsinline preload="metadata"
+      poster="media/fabric-explainer-poster.jpg" aria-label="Knowledge Fabric explainer film">
+      <source src="media/fabric-explainer.webm" type="video/webm">
+      Your browser cannot play this film — the sections below tell the same story live.
+    </video>
+  </div>
+  <p class="film-note rv">Every scene in the film is the product's own animation system —
+  nothing staged, nothing mocked that we have not built.</p>
+</div></section>
+
 <!-- ================= PROBLEM ================= -->
 <section id="problem" class="band"><div class="wrap">
   <div class="rv"><div class="eyebrow">The problem</div>
   <h2>The right answer already exists. It is just <em>unreachable in time</em>.</h2>
   <p class="sub">It sits three revisions deep in a controlled document, inside a system one team owns, in a language the person asking does not read, or in the memory of a colleague who has moved on. The damage is rarely a wrong answer — it is a slow one, or a confident one taken from a superseded revision.</p></div>
   <div class="probs rv" id="probs"></div>
+
+  <div class="contrast rv" aria-hidden="true">
+    <div class="con-row con-old">
+      <span class="con-label">Today</span>
+      <div class="con-track"><i class="con-crawl"></i></div>
+      <span class="con-note">a search through systems, revisions and colleagues — still going</span>
+    </div>
+    <div class="con-row con-new">
+      <span class="con-label">With the fabric</span>
+      <div class="con-track"><i class="con-instant"></i></div>
+      <span class="con-note">the current, approved answer — <b>cited</b>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="3" stroke-linecap="round"><path d="M4 13l5 5L20 6"/></svg></span>
+    </div>
+  </div>
 </div></section>
 
 <!-- ================= HOW IT WORKS ================= -->
@@ -384,7 +475,8 @@ footer b{color:#C7D6E3;font-weight:500}
 <section id="arch" class="band arch"><div class="wrap">
   <div class="rv"><div class="eyebrow">Architecture</div>
   <h2>Five zones. <em>One loop.</em></h2>
-  <p class="sub">Three zones carry the flow of work — content in, answer out, proof recorded. Two are cross-cutting: who is allowed to ask, and the foundation everything runs on.</p></div>
+  <p class="sub">Three zones carry the flow of work — content in, answer out, proof recorded. Two are cross-cutting: who is allowed to ask, and the foundation everything runs on. Watch one question make the journey.</p></div>
+  <div class="arch-live rv" data-archscene></div>
   <div class="zones rv" id="zones"></div>
   <div class="loopback rv">
     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 12a8.4 8.4 0 0 1 14.4-5.9l2.4 2.3"/><path d="M20.4 4v4.4H16"/><path d="M20.4 12a8.4 8.4 0 0 1-14.4 5.9L3.6 15.6"/><path d="M3.6 20v-4.4H8"/></svg>
@@ -417,6 +509,47 @@ footer b{color:#C7D6E3;font-weight:500}
   <div class="val rv" id="valGrid"></div>
 </div></section>
 
+<!-- ================= BUILT FOR YOU ================= -->
+<section id="build" class="band" style="background:#F4F8FB;border-block:1px solid var(--rule)"><div class="wrap">
+  <div class="rv"><div class="eyebrow">What QualiZeal builds on the fabric</div>
+  <h2>The platform is the floor. <em>We build your rooms.</em></h2>
+  <p class="sub">Every deployment is shaped to its owner: how the answering behaves, how content
+  arrives, and what each of your roles gets to see and control.</p></div>
+  <div class="build-grid rv">
+    <div class="build-card" style="--h:var(--blue);--t:var(--blue-t)">
+      <h3>Question-answering, tuned to your house rules</h3>
+      <p>Confidence thresholds, clarify-back style, terminology packs, answer length and tone,
+      which sources outrank which — the answering engine is configured against your prioritised
+      question set, not shipped as a default.</p>
+    </div>
+    <div class="build-card" style="--h:var(--emerald);--t:var(--emerald-t)">
+      <h3>Ingestion pipelines for your systems</h3>
+      <p>Connectors to your document management, quality and ticketing systems, event-driven or
+      scheduled, with OCR for scanned paper — so the knowledge base refreshes itself on your
+      cadence instead of by project.</p>
+    </div>
+    <div class="build-card" style="--h:var(--amber);--t:var(--amber-t)">
+      <h3>Dashboards for curators</h3>
+      <p>An answer-monitoring view: flagged answers, clarification hot-spots, conflict and
+      superseded queues, and the demand-ranked gap backlog — so content work follows real use.</p>
+    </div>
+    <div class="build-card" style="--h:var(--violet);--t:var(--violet-t)">
+      <h3>Model governance for admins</h3>
+      <p>Route questions to models by complexity — efficient models for routine asks, premium
+      models only where reasoning earns it — with per-team caps, budgets and full usage
+      visibility.</p>
+    </div>
+  </div>
+  <a class="fit-cta rv" href="../configurator/">
+    <span><b>Four questions. Your architecture.</b><br>
+    Tell us your infrastructure, your approved models and your ambitions — we answer with the
+    fabric we would propose, its limitations stated out loud, and the demonstration closest to
+    your domain.</span>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2.4" stroke-linecap="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+  </a>
+</div></section>
+
 <!-- ================= DELIVERY ================= -->
 <section id="delivery" class="band" style="background:#F4F8FB;border-block:1px solid var(--rule)"><div class="wrap">
   <div class="rv"><div class="eyebrow">Delivery</div>
@@ -433,9 +566,10 @@ footer b{color:#C7D6E3;font-weight:500}
 <footer><div class="wrap fw">
   <span class="fbrand"><img src="../assets/brand/qualizeal-icon.png" alt="QualiZeal" width="26" height="26">
     <span><b>Knowledge Fabric</b> · Enterprise Knowledge Intelligence</span></span>
-  <span class="fnav"><a href="../kit/">Presenter kit</a> · <a href="../deck/">Overview deck</a> · <a href="../index.html#domains">Demonstrations</a> · QualiZeal · AI Center of Excellence</span>
+  <span class="fnav"><a href="../configurator/">Solution fit</a> · <a href="../kit/">Presenter kit</a> · <a href="../deck/">Overview deck</a> · <a href="../index.html#domains">Demonstrations</a> · QualiZeal · AI Center of Excellence</span>
 </div></footer>
 
+<script src="../assets/js/archscene.js"></script>
 <script src="walkthrough.js"></script>
 </body>
 </html>

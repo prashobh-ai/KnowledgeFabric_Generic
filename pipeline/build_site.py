@@ -162,7 +162,7 @@ def build_index(registry: dict) -> str:
       </a>""")
 
     links = [("Domains", "#domains"), ("How it works", "#how"),
-             ("Provenance", "#provenance"), ("Walkthrough", "walkthrough/"),
+             ("Walkthrough", "walkthrough/"), ("Solution fit", "configurator/"),
              ("Resources", "kit/")]
 
     return head(
@@ -369,7 +369,7 @@ DOWNLOADS = [
      "Overview deck — 12 slides",
      "The editable deck. Send it when the meeting expects an attachment, or "
      "when someone needs to lift a slide into their own pack.",
-     "Same twelve slides as the browser deck."),
+     "Same twelve slides as the browser deck, with fade transitions set."),
     ("Knowledge-Fabric-Capability-Overview.docx", "Word",
      "Capability overview — 11 pages",
      "The written record. The leave-behind for people who read rather than "
@@ -499,8 +499,8 @@ def build_kit(registry: dict) -> str:
         <span class="small">{html.escape(v)}</span></li>""" for k, v in SAY)
 
     links = [("Present", "#present"), ("Demonstrations", "#demos"),
-             ("Downloads", "#downloads"), ("Run the meeting", "#runbook"),
-             ("Ground rules", "#rules")]
+             ("Qualify", "#qualify"), ("Downloads", "#downloads"),
+             ("Run the meeting", "#runbook"), ("Ground rules", "#rules")]
 
     return head(
         "Presenter kit · Knowledge Fabric",
@@ -547,9 +547,12 @@ def build_kit(registry: dict) -> str:
             <span class="badge">Live walkthrough</span>
             <h3 style="margin:1rem 0 .6rem;font-size:1.4rem">Scroll-driven, one page</h3>
             <p class="small">Built to be driven in front of a client instead
-            of sending a deck. The loom animates on load, the six stages
-            advance as you scroll, and a left rail jumps to any section when
-            somebody wants to skip ahead or double back.</p>
+            of sending a deck. It opens with a seventy-second film in which
+            the fabric introduces itself, the six stages advance as you
+            scroll, and in the architecture section the audience watches a
+            live question make the whole journey — held at the evidence gate,
+            clarified, then answered with citations. A left rail jumps
+            anywhere when somebody wants to skip ahead.</p>
             <p class="tiny muted" style="margin-top:.9rem">Best for discovery
             calls and technical audiences · 20–30 minutes · keyboard navigable</p>
             <div class="go" style="margin-top:1.2rem">Open the walkthrough
@@ -564,9 +567,10 @@ def build_kit(registry: dict) -> str:
             <h3 style="margin:1rem 0 .6rem;font-size:1.4rem">Twelve slides, in the browser</h3>
             <p class="small">The same twelve slides as the PowerPoint,
             rendered natively — no PowerPoint installed, no fonts to go
-            missing on a borrowed laptop. Arrow keys to advance, <b>G</b> for
-            the slide overview, <b>F</b> for full screen, <b>Ctrl+P</b> to
-            save the whole deck as a PDF.</p>
+            missing on a borrowed laptop. Slides build as they open, and the
+            architecture slide runs the animated answer journey live. Arrow
+            keys to advance, <b>G</b> for the overview, <b>F</b> for full
+            screen, <b>Ctrl+P</b> for a clean PDF.</p>
             <p class="tiny muted" style="margin-top:.9rem">Best for leadership
             and procurement · 15–25 minutes · projector-safe</p>
             <div class="go" style="margin-top:1.2rem">Open the deck
@@ -597,6 +601,34 @@ def build_kit(registry: dict) -> str:
         scaffolding — document types, approval chains, code systems — is what
         transfers, not the industry label.</p>
       </div></div>
+    </div>
+  </section>
+
+  <section id="qualify">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow rise">Qualify</div>
+        <h2 class="rise">Turn their constraints into their architecture.</h2>
+        <p class="lede rise" style="margin-top:1rem">
+          When the room starts asking "would this work for us?", open the solution-fit
+          questionnaire together. Four choices — domain, infrastructure, approved models,
+          scope — and the page composes the architecture we would propose, lists what
+          ships, states the limitations out loud, and hands them the demonstration
+          closest to their world. Every combination has a prepared answer; the result is
+          a link you can leave in the follow-up email.
+        </p>
+      </div>
+      <a class="card tilt rise" href="../configurator/" style="display:block"><div class="sheen"></div>
+        <div class="card-pad" style="display:flex;align-items:center;justify-content:space-between;gap:2rem;padding:2rem">
+          <div>
+            <span class="badge">Solution fit</span>
+            <h3 style="margin:.9rem 0 .5rem;font-size:1.35rem">Four questions. Their fabric.</h3>
+            <p class="small" style="margin:0">Rule-based, honest and shareable — the
+            limitations panel is the part prospects remember.</p>
+          </div>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--qz-blue)"
+            stroke-width="2.4" stroke-linecap="round" style="flex:none"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+        </div></a>
     </div>
   </section>
 
