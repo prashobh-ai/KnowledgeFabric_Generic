@@ -83,6 +83,13 @@ class Pack:
     ontology: tuple[tuple[str, str, str], ...] = ()
     # Seed questions the demo answers well, chosen to exercise the graph.
     questions: tuple[str, ...] = ()
+    # The world instance kind this domain threads on — the tail number, the care
+    # pathway, the vessel. Every document cites it, which is what makes
+    # "one identifier across maintenance, operations and safety" true of the
+    # corpus rather than merely claimed on the landing page. Without a declared
+    # spine each document sampled kinds uniformly, so the identifier a
+    # practitioner would actually follow appeared in the fewest documents.
+    spine: str = ""
 
     def doc_type(self, key: str) -> DocType:
         for d in self.doc_types:

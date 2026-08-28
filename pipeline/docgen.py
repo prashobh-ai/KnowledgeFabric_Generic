@@ -477,11 +477,31 @@ class DocumentBuilder:
         # without any single document becoming a directory listing.
         cited: list = []
         if self.world_kinds:
-            kinds = rng.sample(self.world_kinds,
-                               k=min(2, len(self.world_kinds)))
+            # The spine kind is cited by every document; the rest are sampled.
+            # Uniform sampling spread every kind equally thin, which meant the
+            # identifier the domain actually threads on — the tail number, the
+            # care pathway — appeared in the fewest documents of all, and
+            # cross-document retrieval had nothing genuine to bridge.
+            spine = self.pack.spine if self.pack.spine in self.world else ""
+            others = [k for k in self.world_kinds if k != spine]
+            kinds = ([spine] if spine else []) + rng.sample(
+                others, k=min(2, len(others)))
             for k in kinds:
                 pool = self.world.get(k) or []
-                if pool:
+                if not pool:
+                    continue
+                if k == spine:
+                    # A document estate concentrates: a minority of the fleet
+                    # generates most of the paperwork, so draw the spine from a
+                    # hot head and let instances genuinely recur across document
+                    # types, with the tail still reachable. That head is roughly
+                    # constant in size rather than proportional to the catalogue
+                    # — a fleet of 29 components and one of 43 both have about a
+                    # dozen that account for most of the filing.
+                    head = pool[:max(6, min(len(pool) * 2 // 5, 14))]
+                    src = head if rng.random() < 0.85 else pool
+                    cited += rng.sample(src, k=min(2, len(src)))
+                else:
                     cited += rng.sample(pool, k=min(rng.randint(1, 2), len(pool)))
         ctx["cited"] = cited
 

@@ -65,6 +65,7 @@ HL7V2_MESSAGES = (
 
 HEALTH = Pack(
     slug="q-health",
+    spine="pathway",
     tenant="Q-Health",
     industry="Integrated Healthcare Delivery",
     tagline="4 acute sites · 1,180 beds · Level II trauma",
@@ -319,6 +320,7 @@ HEALTH = Pack(
 
 CLAIMS = Pack(
     slug="q-assure-claims",
+    spine="policy",
     tenant="Q-Assure Claims",
     industry="Health Plan Operations and Claims",
     tagline="2.1M members · commercial, Medicare Advantage, ASO",
@@ -593,6 +595,7 @@ CLAIMS = Pack(
 
 PHARMA = Pack(
     slug="q-pharma",
+    spine="product",
     tenant="Q-Pharma",
     industry="Pharmaceutical Development and Manufacturing",
     tagline="Clinical stage to commercial · GMP sterile fill-finish",
@@ -880,6 +883,7 @@ PHARMA = Pack(
 
 DEVICELAB = Pack(
     slug="q-devicelab",
+    spine="device",
     tenant="Q-DeviceLab",
     industry="Medical Device Design and Manufacture",
     tagline="Class II and III · ISO 13485 · EU MDR",
