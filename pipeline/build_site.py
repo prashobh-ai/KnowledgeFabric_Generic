@@ -5,9 +5,17 @@
 Routes produced:
 
     site/index.html                the landing page, all eleven tenants
+    site/kit/index.html            the presenter kit — how to run the meeting
     site/demo/<slug>/index.html    one tenant demonstration
     site/data/<slug>/*.json        that tenant's fabric artefacts
     site/data/<slug>/docs/*.md     the corpus, fetched by the document viewer
+
+Hand-written and never touched by this script:
+
+    site/assets/                   stylesheet, brand marks, vendored JS
+    site/walkthrough/              the scroll-driven client walkthrough
+    site/deck/                     the twelve-slide deck, rendered in-browser
+    site/downloads/                the .pptx, the .docx and the diagrams
 
 The route segment is `demo`, not `t` — a URL is part of the interface, and
 `/demo/q-airlines/` tells a reader what they are about to open while `/t/…`
@@ -154,7 +162,8 @@ def build_index(registry: dict) -> str:
       </a>""")
 
     links = [("Domains", "#domains"), ("How it works", "#how"),
-             ("Provenance", "#provenance")]
+             ("Provenance", "#provenance"), ("Walkthrough", "walkthrough/"),
+             ("Resources", "kit/")]
 
     return head(
         "Knowledge Fabric · Enterprise Knowledge Intelligence",
@@ -339,6 +348,340 @@ def build_index(registry: dict) -> str:
     gx.setGraph(g, '#0B66E1');
     window.addEventListener('resize', function(){{ gx.resize(); }});
   }});
+}})();
+</script>
+</body></html>
+"""
+
+
+# ---------------------------------------------------------------------------
+# Presenter kit
+#
+# One page a salesperson or a sponsor can open cold: the two ways to present,
+# the eleven demonstrations, every file worth sending, and the talk track.
+# The point is that nobody has to ask the author how to run the meeting.
+# ---------------------------------------------------------------------------
+
+# Files under site/downloads/, committed rather than generated. Sizes are read
+# from disk at build time so the page can never advertise a stale figure.
+DOWNLOADS = [
+    ("Knowledge-Fabric-Overview.pptx", "PowerPoint",
+     "Overview deck — 12 slides",
+     "The editable deck. Send it when the meeting expects an attachment, or "
+     "when someone needs to lift a slide into their own pack.",
+     "Same twelve slides as the browser deck."),
+    ("Knowledge-Fabric-Capability-Overview.docx", "Word",
+     "Capability overview — 11 pages",
+     "The written record. The leave-behind for people who read rather than "
+     "watch, and the attachment that survives being forwarded.",
+     "Covers capability, coverage, value, deployment and delivery."),
+    ("knowledge-fabric-architecture.jpg", "Image · 3800 px",
+     "Reference architecture",
+     "The five zones and the loop that returns unanswered questions to the "
+     "content pipeline. Drops into a proposal or a whiteboard session.",
+     "Print quality. Also slide 5 of the deck."),
+    ("knowledge-fabric-answer-workflow.jpg", "Image · 3800 px",
+     "Answer workflow",
+     "The six stages, with the two gates and the clarify-back loop drawn out. "
+     "Use it when the question is \"but how does it actually answer?\"",
+     "Print quality. Pairs with slide 4."),
+]
+
+# The talk track. Section, and the single point to make there — lifted from
+# how the walkthrough is meant to be driven, so a presenter who has never
+# seen it delivered still knows where to slow down.
+TALK = [
+    ("Hero", "The loom weaves itself on load. Vertical threads are source "
+     "documents, horizontal threads are questions, each knot is a citation. "
+     "Let it finish before you speak."),
+    ("The problem", "The right answer already exists — it is unreachable in "
+     "time. Not a wrong answer: a slow one, or a confident one taken from a "
+     "superseded revision."),
+    ("How it works", "Six stages. Pause on stages 2 and 4 — permissions "
+     "before searching, evidence before writing. Those are the two gates, "
+     "and they are the argument."),
+    ("Clarify-back", "The differentiator. Most systems refuse or invent. "
+     "This one asks one question and retries, and logs what was missing."),
+    ("Architecture", "Five zones, and the violet loop at the bottom that "
+     "returns unanswered questions as a ranked content backlog."),
+    ("Capabilities → Value", "Scan, don't read aloud. Let the client stop "
+     "you where they care — that is the discovery."),
+    ("Delivery", "Four phases, each ending in something they can judge for "
+     "themselves. Phase 2 is the one they will ask about."),
+    ("Close", "Five things most systems don't do. Leave this on screen "
+     "while you talk about next steps."),
+]
+
+AGENDA = [
+    ("0–2 min", "Open the walkthrough", "Let the hero animation finish. One "
+     "sentence: answers drawn only from documents you have already approved."),
+    ("2–6 min", "The problem, in their words", "Scroll to the problem "
+     "section and ask which of the five they recognise. Stop talking."),
+    ("6–14 min", "How an answer is produced", "Walk the six stages. Slow at "
+     "the two gates, then the clarify-back loop."),
+    ("14–22 min", "Open a demonstration", "Pick the domain closest to their "
+     "industry. Ask their question, not a rehearsed one. Open a citation."),
+    ("22–28 min", "Delivery and portability", "Four phases; nothing in the "
+     "stack is a lock-in. This is the leadership conversation."),
+    ("28–30 min", "Close and leave-behind", "Send the deck and the "
+     "capability overview from this page before you leave the room."),
+]
+
+SAY = [
+    ("Say", "Every answer is traced to the document, page and paragraph it "
+     "came from."),
+    ("Say", "The demonstrations run on synthetic corpora built from real "
+     "industry standards — ATA chapters, HL7 FHIR, X12, PCAOB, GS1, ISO 29119."),
+    ("Say", "Model, vector store, embedding and identity provider are all "
+     "deployment choices. None of them is the product."),
+    ("Don't", "Don't present the demonstration corpora as a customer "
+     "deployment or a case study. Every tenant, person and document in them "
+     "is invented."),
+    ("Don't", "Don't quote commercial figures, savings percentages or "
+     "timelines beyond the phase durations shown. None are published here, "
+     "and none should be improvised."),
+    ("Don't", "Don't name a client. The material is generic by construction "
+     "so that it can be shown to anyone."),
+]
+
+
+def _size(name: str) -> str:
+    p = SITE / "downloads" / name
+    if not p.exists():
+        return "—"
+    mb = p.stat().st_size / 1024 / 1024
+    return f"{mb:.1f} MB" if mb >= 1 else f"{p.stat().st_size / 1024:.0f} KB"
+
+
+def build_kit(registry: dict) -> str:
+    t = registry["totals"]
+
+    domains = "".join(
+        f"""<a class="chip" href="../demo/{x['slug']}/">
+              <span class="dot" style="background:{x['accent']}"></span>
+              {html.escape(x['industry'])}</a>"""
+        for x in registry["tenants"])
+
+    files = "".join(f"""
+      <div class="card rise">
+        <div class="card-pad" style="display:flex;flex-direction:column;height:100%">
+          <span class="tiny mono muted">{html.escape(kind)} · {_size(name)}</span>
+          <h3 style="font-size:1.05rem;margin:.35rem 0 .55rem">{html.escape(title)}</h3>
+          <p class="small" style="margin:0 0 .7rem">{html.escape(what)}</p>
+          <p class="tiny muted" style="margin:0 0 1.1rem">{html.escape(note)}</p>
+          <a class="btn btn-ghost btn-sm" href="../downloads/{name}" download
+             style="margin-top:auto;align-self:flex-start">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.4" stroke-linecap="round"><path d="M12 4v12M6 11l6 6 6-6"/>
+              <path d="M4 20h16"/></svg>
+            Download</a>
+        </div></div>""" for name, kind, title, what, note in DOWNLOADS)
+
+    talk = "".join(f"""
+      <tr>
+        <td class="mono tiny" style="white-space:nowrap;vertical-align:top;
+            color:var(--qz-blue);padding:.5rem 2rem .5rem 0">{html.escape(s)}</td>
+        <td class="small" style="padding:.5rem 0">{html.escape(p)}</td>
+      </tr>"""
+        for s, p in TALK)
+
+    agenda = "".join(f"""
+      <div class="card rise"><div class="card-pad" style="padding:1.2rem 1.4rem">
+        <span class="tiny mono muted">{html.escape(when)}</span>
+        <h3 style="font-size:1rem;margin:.4rem 0 .5rem">{html.escape(what)}</h3>
+        <p class="tiny muted" style="margin:0">{html.escape(how)}</p>
+      </div></div>""" for when, what, how in AGENDA)
+
+    rules = "".join(f"""
+      <li style="display:flex;gap:.9rem;padding:.7rem 0;border-bottom:1px solid var(--line)">
+        <span class="badge{' red' if k == "Don't" else ' green'}"
+              style="flex:none">{html.escape(k)}</span>
+        <span class="small">{html.escape(v)}</span></li>""" for k, v in SAY)
+
+    links = [("Present", "#present"), ("Demonstrations", "#demos"),
+             ("Downloads", "#downloads"), ("Run the meeting", "#runbook"),
+             ("Ground rules", "#rules")]
+
+    return head(
+        "Presenter kit · Knowledge Fabric",
+        "Everything needed to present Knowledge Fabric without a briefing: "
+        "the live walkthrough, the deck, eleven demonstrations, every "
+        "downloadable file and the talk track.",
+        "../", "#0B66E1"
+    ) + topbar("../", links) + f"""
+<main>
+
+  <section style="padding-top:clamp(2.6rem,6vh,5rem)">
+    <div class="wrap">
+      <div class="eyebrow rise">Presenter kit</div>
+      <h1 class="rise" style="font-size:clamp(2.1rem,4vw,3.4rem);max-width:20ch">
+        Everything you need to <span class="grad">run the meeting</span>.</h1>
+      <p class="lede rise" style="margin-top:1.4rem">
+        Two ways to present, eleven live demonstrations, four files to send
+        afterwards and the talk track that goes with them. Nothing here needs
+        a briefing first, and nothing here is tied to one client — the whole
+        kit is generic by construction, so it can be shown to anyone.
+      </p>
+      <div class="grid g4 rise" style="margin-top:2.6rem;gap:1.6rem">
+        <div class="stat"><div class="n" data-to="2">0</div><div class="l">Ways to present</div></div>
+        <div class="stat"><div class="n" data-to="11">0</div><div class="l">Live demonstrations</div></div>
+        <div class="stat"><div class="n" data-to="4">0</div><div class="l">Files to send</div></div>
+        <div class="stat"><div class="n" data-to="{t['documents']}">0</div><div class="l">Documents behind them</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="present">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow rise">Present</div>
+        <h2 class="rise">Two ways in. Pick by the room, not by habit.</h2>
+        <p class="lede rise" style="margin-top:1rem">
+          Both open in a browser and need nothing installed. The walkthrough
+          is a conversation; the deck is a deck.
+        </p>
+      </div>
+      <div class="grid g2">
+        <a class="card tilt rise" href="../walkthrough/"><div class="sheen"></div>
+          <div class="card-pad" style="padding:2rem">
+            <span class="badge">Live walkthrough</span>
+            <h3 style="margin:1rem 0 .6rem;font-size:1.4rem">Scroll-driven, one page</h3>
+            <p class="small">Built to be driven in front of a client instead
+            of sending a deck. The loom animates on load, the six stages
+            advance as you scroll, and a left rail jumps to any section when
+            somebody wants to skip ahead or double back.</p>
+            <p class="tiny muted" style="margin-top:.9rem">Best for discovery
+            calls and technical audiences · 20–30 minutes · keyboard navigable</p>
+            <div class="go" style="margin-top:1.2rem">Open the walkthrough
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2.4" stroke-linecap="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+            </div>
+          </div></a>
+
+        <a class="card tilt rise" href="../deck/"><div class="sheen"></div>
+          <div class="card-pad" style="padding:2rem">
+            <span class="badge">Overview deck</span>
+            <h3 style="margin:1rem 0 .6rem;font-size:1.4rem">Twelve slides, in the browser</h3>
+            <p class="small">The same twelve slides as the PowerPoint,
+            rendered natively — no PowerPoint installed, no fonts to go
+            missing on a borrowed laptop. Arrow keys to advance, <b>G</b> for
+            the slide overview, <b>F</b> for full screen, <b>Ctrl+P</b> to
+            save the whole deck as a PDF.</p>
+            <p class="tiny muted" style="margin-top:.9rem">Best for leadership
+            and procurement · 15–25 minutes · projector-safe</p>
+            <div class="go" style="margin-top:1.2rem">Open the deck
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2.4" stroke-linecap="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+            </div>
+          </div></a>
+      </div>
+    </div>
+  </section>
+
+  <section id="demos">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow rise">Demonstrate</div>
+        <h2 class="rise">Open the domain closest to the room.</h2>
+        <p class="lede rise" style="margin-top:1rem">
+          Eleven full corpora — {t['documents']} documents, {t['passages']}
+          cited passages, {t['entities']} entities. Ask a real question rather
+          than a rehearsed one, then open the citation it returns: the
+          paragraph it quoted is right there, which is the whole point.
+        </p>
+      </div>
+      <div class="row rise" style="flex-wrap:wrap;gap:.6rem">{domains}</div>
+      <div class="card rise" style="margin-top:2rem"><div class="card-pad">
+        <p class="small" style="margin:0"><b>If nothing matches their
+        industry</b>, open the closest regulated one and say so. The
+        scaffolding — document types, approval chains, code systems — is what
+        transfers, not the industry label.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <section id="downloads">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow rise">Send</div>
+        <h2 class="rise">Four files. Send them from the room.</h2>
+        <p class="lede rise" style="margin-top:1rem">
+          The deck and the written overview carry the same content model as
+          the walkthrough, so a client who watched the demonstration and a
+          colleague who only reads the attachment end up with the same story.
+        </p>
+      </div>
+      <div class="grid g4">{files}</div>
+    </div>
+  </section>
+
+  <section id="runbook">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow rise">Run the meeting</div>
+        <h2 class="rise">Thirty minutes, and where to slow down.</h2>
+      </div>
+      <div class="grid g3" style="margin-bottom:3rem">{agenda}</div>
+
+      <div class="card rise"><div class="card-pad" style="padding:2rem">
+        <div class="eyebrow" style="margin-bottom:1.4rem">The point to make, section by section</div>
+        <table style="width:100%;border-collapse:collapse">
+          <tbody>{talk}</tbody>
+        </table>
+        <p class="tiny muted" style="margin:1.4rem 0 0">
+          Two gates carry the argument: permissions applied before searching,
+          evidence scored before writing. If a room remembers one thing, make
+          it those.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <section id="rules">
+    <div class="wrap-narrow">
+      <div class="card rise"><div class="card-pad" style="padding:2.2rem">
+        <div class="eyebrow">Ground rules</div>
+        <h2 style="font-size:clamp(1.4rem,2.4vw,1.9rem)">What is safe to claim.</h2>
+        <p style="margin-top:1rem">
+          Everything in this kit is deliberately generic — no client names, no
+          commercial figures, no deployment tied to one customer. That is what
+          makes it safe to hand to anyone, and it only stays true if it is
+          presented as built.
+        </p>
+        <ul style="list-style:none;margin-top:1.4rem">{rules}</ul>
+      </div></div>
+    </div>
+  </section>
+
+</main>
+{FOOTER_TPL.replace('%LOGO%', logo('../', 24)).replace('</body></html>', '')}
+<script>
+(function(){{
+  var io = new IntersectionObserver(function(es){{
+    es.forEach(function(e){{ if(e.isIntersecting){{ e.target.classList.add('in'); io.unobserve(e.target); }} }});
+  }}, {{threshold:.12, rootMargin:'0px 0px -8% 0px'}});
+  document.querySelectorAll('.rise').forEach(function(el){{ io.observe(el); }});
+
+  document.querySelectorAll('.tilt').forEach(function(el){{
+    el.addEventListener('pointermove', function(e){{
+      var r = el.getBoundingClientRect();
+      el.style.setProperty('--mx', ((e.clientX-r.left)/r.width*100)+'%');
+      el.style.setProperty('--my', ((e.clientY-r.top)/r.height*100)+'%');
+    }});
+  }});
+
+  var co = new IntersectionObserver(function(es){{
+    es.forEach(function(e){{
+      if(!e.isIntersecting) return;
+      var el = e.target, to = +el.dataset.to, t0 = performance.now();
+      (function step(t){{
+        var k = Math.min(1,(t-t0)/1400), v = 1-Math.pow(1-k,3);
+        el.textContent = Math.round(to*v).toLocaleString();
+        if(k<1) requestAnimationFrame(step);
+      }})(t0);
+      co.unobserve(el);
+    }});
+  }}, {{threshold:.5}});
+  document.querySelectorAll('[data-to]').forEach(function(el){{ co.observe(el); }});
 }})();
 </script>
 </body></html>
@@ -696,12 +1039,19 @@ def main() -> None:
         json.dumps(overview, separators=(",", ":")), encoding="utf-8")
 
     (SITE / "index.html").write_text(build_index(registry), encoding="utf-8")
+
+    kit = SITE / "kit" / "index.html"
+    kit.parent.mkdir(parents=True, exist_ok=True)
+    kit.write_text(build_kit(registry), encoding="utf-8")
+
     (SITE / ".nojekyll").write_text("", encoding="utf-8")
 
     print("-" * 74)
     print(f"  {len(slugs)} demonstrations · {total_bytes / 1024 / 1024:.1f} MB payload")
     print(f"  landing: site/index.html")
     print(f"  routes:  site/demo/<slug>/index.html")
+    print(f"  kit:     site/kit/index.html")
+    print(f"  static:  site/walkthrough/  site/deck/  site/downloads/")
     print("=" * 74)
 
 

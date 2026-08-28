@@ -356,3 +356,53 @@ No client data was used to build any part of this. Standards, regulations and
 code systems are cited as public reference. CPT and SNOMED CT are licensed
 terminologies — they are referenced by name, authority and format only, and the
 test suite fails the build if descriptors are ever embedded.
+
+## The presenter kit
+
+Everything a salesperson or a sponsor needs to run a Knowledge Fabric meeting
+without a briefing lives under `site/`, alongside the generated demonstrations.
+Four routes, published together by the same Pages job:
+
+| Route | What it is |
+|---|---|
+| `/kit/` | The presenter kit — the two ways to present, the eleven demonstrations, the four downloadable files, a thirty-minute agenda and the talk track. Start here. |
+| `/walkthrough/` | The scroll-driven client walkthrough. Built to be driven in front of a client instead of sending a deck. |
+| `/deck/` | The twelve-slide overview deck rendered natively in the browser — arrow keys to advance, `G` for the slide overview, `F` for full screen, `Ctrl+P` to save the whole deck as a PDF. |
+| `/downloads/` | The `.pptx`, the `.docx` and the two 3800 px reference diagrams. |
+
+### What is generated and what is not
+
+`pipeline/build_site.py` regenerates `site/index.html` and `site/kit/index.html`
+on every run, and clears only `site/demo/` and `site/data/`. It never writes or
+deletes `site/assets/`, `site/walkthrough/`, `site/deck/` or `site/downloads/`,
+so those four are committed once and served as-is.
+
+The nav links to the walkthrough and the kit are emitted by `build_site.py` (the
+`links` list in `build_index`) rather than hand-added to the HTML, because the
+landing page is rewritten on every CI run and a hand-added link would not
+survive it.
+
+### Editing the content
+
+- **Walkthrough** — copy lives in plain arrays near the top of each block in
+  `site/walkthrough/walkthrough.js` (`PROBS`, `STEPS`, `TURNS`, `ZONES`, `CAPS`,
+  `COV`, `VALUE`, `PH`, `DIFF`). Headings and section intros are in
+  `index.html`. Edit, save, refresh — no build step.
+- **Deck** — all twelve slides are the `SLIDES` array at the top of
+  `site/deck/deck.js`. Each slide names a `kind`, and the renderer below has one
+  branch per kind. Change a slide here and change it in the `.pptx` too: the
+  download and the browser deck are meant to be the same deck.
+- **Kit** — the `DOWNLOADS`, `TALK`, `AGENDA` and `SAY` tables at the top of the
+  presenter-kit block in `pipeline/build_site.py`. File sizes are read from disk
+  at build time, so the page cannot advertise a stale figure.
+
+The deck is laid out on a fixed 1280×720 canvas and scaled to fit, so a
+projector, a laptop and a print sheet get identical geometry — which is also why
+`Ctrl+P` produces a clean one-slide-per-page PDF.
+
+### Presenting offline
+
+Both pages load Newsreader, Inter and JetBrains Mono from Google Fonts, with
+Georgia and the system sans as fallbacks. If the venue has no internet, the
+pages still work but the type substitutes — worth testing beforehand. The
+`.pptx` needs no network at all.
