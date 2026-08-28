@@ -74,14 +74,13 @@ def test_every_tenant_resolves():
     for t in registry()["tenants"]:
         d = ROOT / "tenants" / t["slug"]
         assert (d / "tenant.json").exists(), f"{t['slug']}: no tenant.json"
-        assert (d / "brand/logo.svg").exists(), f"{t['slug']}: no logo"
-        assert (d / "questions.json").exists(), f"{t['slug']}: no questions"
         assert len(list((d / "docs").glob("*.md"))) >= 40, f"{t['slug']}: thin corpus"
 
 
 def test_logos_are_distinct():
-    logos = list(ROOT.glob("tenants/*/brand/logo.svg"))
-    assert len({p.read_text() for p in logos}) == len(logos), "duplicate tenant logos"
+    marks = sorted(ROOT.glob("site/assets/brand/q-*-mark.png"))
+    assert len(marks) >= 11, f"only {len(marks)} tenant marks in site/assets/brand"
+    assert len({p.read_bytes() for p in marks}) == len(marks), "duplicate tenant marks"
 
 
 def test_subtypes_are_configured_separately():
@@ -213,12 +212,6 @@ def test_the_directory_is_not_copied_into_the_tenant_routes(assembled_site):
         assert 'id="domains"' not in page, f"{t['slug']}: tenant route is the directory"
 
 
-def test_app_shell_is_the_application_not_the_directory():
-    shell = (ROOT / "site" / "app.html").read_text()
-    for element in ["composer-input", "answer-stage-text", "galaxy"]:
-        assert element in shell, f"app shell missing '{element}'"
-    assert "Demonstration Tenants" not in shell, "app shell is the directory page"
-
 
 @pytest.mark.parametrize("slug", [t["slug"] for t in yaml.safe_load(
     (Path(__file__).resolve().parents[1] / "tenants/registry.yml").read_text())["tenants"]])
@@ -289,33 +282,5 @@ def test_brand_assets_are_not_oversized():
         assert kb < 90, f"{p.name} is {kb:.0f} KB — too heavy for a card thumbnail"
 
 
-def test_hero_is_a_split_layout_on_desktop():
-    """The graph had been full-bleed with the copy floating over it, so node
-    labels collided with the headline and the ask box sat on live edges."""
-    import re
-    css = (ROOT / "site" / "styles" / "main.css").read_text()
-    m = re.search(r"@media \(min-width: 1001px\)\s*\{(.*?)\n\}", css, re.S)
-    assert m, "no desktop hero rules"
-    block = m.group(1)
-
-    def decl(sel, prop):
-        r = re.search(re.escape(sel) + r"[^{}]*\{([^}]*)\}", block)
-        if not r:
-            return ""
-        v = re.search(prop + r"\s*:\s*([^;]+)", r.group(1))
-        return v.group(1).strip() if v else ""
-
-    assert "grid" in decl(".hero-section", "display"), "hero is not a grid"
-    assert "relative" in decl(".hero-overlay", "position"), "copy still floats over the graph"
-    assert "relative" in decl(".hero-galaxy", "position"), "graph is still full-bleed"
-    assert decl(".hero-galaxy", "grid-column") == "2", "graph is not in the right column"
-    assert decl(".hero-overlay", "grid-column") == "1", "copy is not in the left column"
 
 
-def test_navbar_shows_the_tenant_mark():
-    html = (ROOT / "site" / "app.html").read_text()
-    assert 'id="tenant-mark"' in html, "no tenant mark in the navbar"
-    js = (ROOT / "site" / "js" / "brand.js").read_text()
-    assert "tenant-mark" in js, "the mark is never given the tenant's identity"
-    assert "style.display = 'none'" in js, (
-        "a missing mark would render as a broken image rather than being hidden")

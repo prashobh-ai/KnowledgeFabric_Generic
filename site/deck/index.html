@@ -222,7 +222,7 @@ a{color:var(--blue)}
   transform-origin:left;transform:scaleX(0);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
 .hint{font-family:var(--mono);font-size:10.5px;color:var(--faint);letter-spacing:.04em}
 @media(max-width:860px){.hint,.bar .wm{display:none}}
-@media(max-width:560px){#fsBtn,.bar a.ctl{display:none}.bar{gap:9px;padding:0 10px}}
+@media(max-width:560px){#fsBtn,.bar a.ctl[download]{display:none}.bar{gap:9px;padding:0 10px}}
 
 /* ---------------- overview grid ---------------- */
 .grid-wrap{position:fixed;inset:0;background:var(--paper);z-index:40;overflow:auto;
@@ -281,6 +281,7 @@ body.grid-on .grid-wrap{display:block}
   <button class="ctl" id="next" aria-label="Next slide">Next</button>
   <button class="ctl" id="gridBtn" aria-expanded="false" aria-controls="gridWrap">Overview</button>
   <button class="ctl" id="fsBtn">Full screen</button>
+  <a class="ctl" href="../kit/" style="text-decoration:none">Presenter kit</a>
   <a class="ctl" href="../downloads/Knowledge-Fabric-Overview.pptx" download
      style="text-decoration:none">Download .pptx</a>
 </nav>

@@ -32,6 +32,9 @@ jobs:
       - name: Generate all tenant corpora
         run: python -m pipeline.build_tenants
 
+      - name: Derive brand assets from source art
+        run: python -m pipeline.build_brand_assets
+
       - name: Safety gate — no real-world names, no PII
         run: pytest tests/test_tenants.py -q -k "real_world or pii or synthetic"
 
@@ -49,13 +52,9 @@ jobs:
   # produces site/demo/ and site/data/ from tenants/, so there is no per-tenant
   # index build between the two.
   #
-  # There used to be one — a `fabric` matrix job running pipeline.build_index
-  # and pipeline.train_intent into site/t/<slug>/. It was removed because it
-  # fed nothing: site/t/ is a superseded route (build_site's own docstring says
-  # so), nothing links to it, and all eleven site/t/<slug>/index.html files are
-  # byte-identical copies of a stale landing page whose relative links are
-  # broken. build_index cannot run in any case — it imports four names from
-  # pipeline.textnorm that the module does not define.
+  # There used to be one — a `fabric` matrix job running a per-tenant index
+  # build into site/t/. It was removed, along with that whole superseded
+  # route and its code, because nothing served or linked to what it produced.
   publish:
     needs: corpora
     runs-on: ubuntu-latest
@@ -71,6 +70,11 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with: { name: corpora, path: tenants/ }
+
+      # Regenerate the site's brand PNGs from brand-assets/ so the published
+      # tree never depends on the committed copies being current.
+      - name: Derive brand assets from source art
+        run: python -m pipeline.build_brand_assets
 
       - name: Build the site
         run: python -m pipeline.build_site

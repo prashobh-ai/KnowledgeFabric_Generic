@@ -14,8 +14,10 @@ The source artwork in brand-assets/site/brand/ arrives as full lockups
 
 So for each tenant this script derives, deterministically, from the lockup:
 
-    tenants/<slug>/brand/mark.png     512x512, transparent, emblem only
-    tenants/<slug>/brand/lockup.png   trimmed full lockup, transparent
+    tenants/<slug>/brand/mark.png            512x512, transparent, emblem only
+    tenants/<slug>/brand/lockup.png          trimmed full lockup, transparent
+    site/assets/brand/<slug>-mark.png        the same mark, where the site serves it
+    site/assets/brand/<slug>-lockup.png      the same lockup, likewise
 
 How the emblem is isolated: after removing the border-connected white
 background, content rows are projected onto the vertical axis. A lockup is
@@ -43,8 +45,11 @@ try:
 except ImportError:  # pragma: no cover
     raise SystemExit("Pillow is required: pip install Pillow")
 
-ROOT = Path(".")
+ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "brand-assets" / "site" / "brand"
+# The names the site serves. Written on every run so the committed copies
+# can always be regenerated from brand-assets/ — CI runs this in both jobs.
+SITE_BRAND = ROOT / "site" / "assets" / "brand"
 
 # Whiteness thresholds for background removal. Pixels lighter than SOLID on
 # every channel become fully transparent; the FEATHER..SOLID band gets a
@@ -52,7 +57,7 @@ SRC = ROOT / "brand-assets" / "site" / "brand"
 SOLID = 246
 FEATHER = 224
 
-MARK_SIZE = 512          # output square for mark.png
+MARK_SIZE = 256          # output square for mark.png
 MARK_MARGIN = 0.07       # breathing room around the emblem, fraction of side
 LOCKUP_MAX_W = 880       # lockups are display assets, not print assets
 GAP_MERGE_FRAC = 0.008    # gaps thinner than 2% of height are intra-emblem
@@ -349,6 +354,14 @@ def extract_emblem(slug: str) -> tuple[Image.Image, str]:
     return fallback, "trimmed-lockup-fallback"
 
 
+def quantize(im: Image.Image) -> Image.Image:
+    """RGBA -> 256-colour palette with alpha. Logo art is flat colour with
+    anti-aliased edges, so this quarters the file size with no visible loss —
+    the committed assets are palette PNGs and eleven of them load on the
+    landing page at once."""
+    return im.quantize(colors=256, method=Image.Quantize.FASTOCTREE)
+
+
 def to_square(im: Image.Image, size: int, margin_frac: float) -> Image.Image:
     inner = int(size * (1 - 2 * margin_frac))
     scale = min(inner / im.width, inner / im.height)
@@ -368,10 +381,12 @@ def process(slug: str) -> str:
 
     dest = ROOT / "tenants" / slug / "brand"
     dest.mkdir(parents=True, exist_ok=True)
+    SITE_BRAND.mkdir(parents=True, exist_ok=True)
 
     emblem, note = extract_emblem(slug)
-    to_square(emblem, MARK_SIZE, MARK_MARGIN).save(dest / "mark.png",
-                                                   optimize=True)
+    mark = quantize(to_square(emblem, MARK_SIZE, MARK_MARGIN))
+    mark.save(dest / "mark.png", optimize=True)
+    mark.save(SITE_BRAND / f"{slug}-mark.png", optimize=True)
 
     lockup = remove_background(Image.open(lockup_src))
     lockup = lockup.crop(lockup.getbbox() or (0, 0, 1, 1))
@@ -379,7 +394,9 @@ def process(slug: str) -> str:
         s = LOCKUP_MAX_W / lockup.width
         lockup = lockup.resize((LOCKUP_MAX_W, round(lockup.height * s)),
                                Image.LANCZOS)
+    lockup = quantize(lockup)
     lockup.save(dest / "lockup.png", optimize=True)
+    lockup.save(SITE_BRAND / f"{slug}-lockup.png", optimize=True)
     return f"{slug}: mark + lockup written  [{note}]"
 
 
