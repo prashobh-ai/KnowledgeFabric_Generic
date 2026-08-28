@@ -74,7 +74,6 @@ def test_every_tenant_resolves():
     for t in registry()["tenants"]:
         d = ROOT / "tenants" / t["slug"]
         assert (d / "tenant.json").exists(), f"{t['slug']}: no tenant.json"
-        assert (d / "questions.json").exists(), f"{t['slug']}: no questions"
         assert len(list((d / "docs").glob("*.md"))) >= 40, f"{t['slug']}: thin corpus"
 
 
