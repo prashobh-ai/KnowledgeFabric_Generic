@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Knowledge Fabric — Overview deck</title>
+<meta name="description" content="The Knowledge Fabric overview deck, twelve slides, presentable straight from the browser. No PowerPoint required.">
+<meta name="theme-color" content="#FBFCFD">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="../assets/brand/favicon.png">
+<style>
+:root{
+  --ink:#0A1626; --ink-2:#22374D; --mute:#6A7F94; --faint:#93A6B8;
+  --paper:#EEF2F6; --panel:#FFFFFF; --rule:#DFE7EE;
+  --blue:#0086E6;    --blue-t:#E8F5FF;
+  --indigo:#4338CA;  --indigo-t:#EEF0FF;
+  --emerald:#047857; --emerald-t:#E7F8F1;
+  --amber:#DC6803;   --amber-t:#FEF4E2;
+  --violet:#9333EA;  --violet-t:#F8EDFE;
+  --slate:#344054;   --slate-t:#EEF1F5;
+  --coral:#F53E5A;
+  --display:'Newsreader',Georgia,serif;
+  --body:'Inter',system-ui,-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --k:1;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);
+  -webkit-font-smoothing:antialiased;overflow:hidden}
+h1,h2,h3{font-family:var(--display);font-weight:400;letter-spacing:-.02em;line-height:1.06}
+a{color:var(--blue)}
+::selection{background:#CFE9FF}
+
+/* ---------------- shell ---------------- */
+.deck{position:fixed;inset:0 0 44px 0}
+.slide{display:none}
+.slide.on{display:block}
+/* The stage is centred by absolute positioning rather than by a grid, because
+   a 1280px item inside a narrower grid area overflows to one side instead of
+   staying centred — which put the whole deck off-screen on a phone. */
+.stage{position:absolute;top:50%;left:50%;width:1280px;height:720px;
+  transform:translate(-50%,-50%) scale(var(--k));transform-origin:center;
+  background:var(--panel);border:1px solid var(--rule);border-radius:14px;
+  box-shadow:0 34px 80px -40px rgba(10,22,38,.45),0 2px 8px -2px rgba(10,22,38,.09);
+  padding:54px 62px 0;display:flex;flex-direction:column;overflow:hidden}
+.stage::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,var(--blue),var(--indigo) 46%,var(--coral))}
+
+.s-head{flex:none;margin-bottom:26px}
+.s-head h2{font-size:38px}
+.s-sub{font-size:16.5px;color:var(--mute);margin-top:10px;max-width:96ch;line-height:1.5}
+.s-body{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center}
+.s-foot{font-size:13.5px;color:var(--mute);margin-top:18px;font-style:italic}
+.s-foot-bar{flex:none;height:46px;display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid var(--rule);margin-top:auto;font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.09em;text-transform:uppercase;color:var(--faint)}
+.fb-n{color:var(--ink-2);font-weight:500}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.17em;text-transform:uppercase;
+  color:var(--blue)}
+.mini-label{font-family:var(--mono);font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--faint);margin-bottom:14px;display:flex;align-items:center;gap:9px}
+.mini-label::after{content:"";flex:1;height:1px;background:var(--rule)}
+
+/* ---------------- title slide ---------------- */
+.slide.is-title .stage{padding:0;justify-content:center}
+.title-slide{padding:0 84px;position:relative}
+.t-rule{width:74px;height:4px;border-radius:3px;
+  background:linear-gradient(90deg,var(--blue),var(--coral));margin-bottom:30px}
+.title-slide h1{font-size:82px;font-weight:300;margin:16px 0 0;letter-spacing:-.03em}
+.t-sub{font-family:var(--display);font-size:30px;font-style:italic;color:var(--blue);margin-top:10px}
+.t-lede{font-size:19px;color:var(--ink-2);max-width:56ch;margin-top:30px;line-height:1.55}
+.t-by{margin-top:54px;font-family:var(--mono);font-size:11.5px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--mute);padding-top:20px;border-top:1px solid var(--rule);
+  display:inline-block}
+
+/* ---------------- generic card grids ---------------- */
+.card{background:var(--t);border:1px solid var(--rule);border-radius:12px;padding:22px 22px 24px;
+  border-top:3px solid var(--h);position:relative}
+.card h3{font-size:19px;color:var(--ink);margin-bottom:9px}
+.card p{font-size:14px;line-height:1.55;color:var(--ink-2)}
+.card .num{position:absolute;top:16px;right:18px;font-family:var(--mono);font-size:11px;
+  color:var(--h);opacity:.65}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.g6{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:1fr 1fr;gap:18px}
+.g6 .card{border-top-width:3px}
+.g6 .card h3{font-size:17px}
+.g6 .card p{font-size:13px}
+
+/* ---------------- problem ---------------- */
+.prob-wrap{display:grid;grid-template-columns:1.35fr .9fr;gap:38px;align-items:stretch}
+.probs{list-style:none}
+.probs li{display:flex;gap:14px;padding:11px 0;border-bottom:1px dashed var(--rule)}
+.probs li:last-child{border-bottom:0}
+.pn{flex:none;width:24px;height:24px;border-radius:50%;background:var(--blue-t);color:var(--blue);
+  font-family:var(--mono);font-size:11px;display:grid;place-items:center;margin-top:2px}
+.probs h3{font-size:16.5px;margin-bottom:3px}
+.probs p{font-size:13.5px;color:var(--ink-2);line-height:1.5}
+.pull{background:linear-gradient(160deg,#0A1626,#17314D);border-radius:14px;padding:30px 28px;color:#fff;
+  display:flex;flex-direction:column;justify-content:center}
+.pull .q{font-family:var(--display);font-size:27px;line-height:1.2;font-weight:300}
+.pull .q:first-child{color:#8FC9F5}
+.pull .qb{font-size:13.5px;line-height:1.6;color:#C4D3E1;margin-top:20px;padding-top:18px;
+  border-top:1px solid rgba(255,255,255,.16)}
+
+/* ---------------- flow ---------------- */
+.flow{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+.step{background:var(--panel);border:1px solid var(--rule);border-radius:11px;padding:16px 14px 18px;
+  position:relative}
+.step.gate{background:var(--t);border-color:var(--h)}
+.sn{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--h);
+  color:#fff;font-family:var(--mono);font-size:11px;margin-bottom:11px}
+.step h3{font-size:15.5px;margin-bottom:6px}
+.step p{font-size:12.5px;line-height:1.45;color:var(--ink-2)}
+.gate-tag{position:absolute;top:14px;right:12px;font-family:var(--mono);font-size:9px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--h)}
+.band{margin-top:20px;border:1px solid #F0C594;border-radius:12px;overflow:hidden}
+.band-head{background:linear-gradient(90deg,#DC6803,#F2A03D);color:#fff;padding:9px 18px;
+  display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase}
+.band-head i{font-style:normal;opacity:.86;text-transform:none;letter-spacing:.03em}
+.band-body{background:#FFFBF4;display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:17px 18px}
+.band-body h4{font-size:14px;font-weight:600;color:#8A4708;margin-bottom:5px}
+.band-body p{font-size:12.5px;line-height:1.5;color:var(--ink-2)}
+
+/* ---------------- figure ---------------- */
+.fig{display:flex;flex-direction:column;align-items:center;gap:12px;height:100%;justify-content:center}
+.fig img{max-width:100%;max-height:472px;object-fit:contain;border:1px solid var(--rule);
+  border-radius:10px;background:#fff}
+.fig figcaption{font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.04em}
+
+/* ---------------- zones ---------------- */
+.zones{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.zone{background:var(--t);border:1px solid var(--rule);border-top:3px solid var(--h);
+  border-radius:12px;padding:18px 16px}
+.z-head h3{font-size:16.5px;color:var(--h)}
+.z-head i{display:block;font-style:normal;font-size:11.5px;color:var(--mute);margin:5px 0 14px;
+  line-height:1.35}
+.chips{display:flex;flex-direction:column;gap:7px}
+.chips span{background:#fff;border:1px solid var(--rule);border-radius:7px;padding:6px 9px;
+  font-size:12px;color:var(--ink-2)}
+.loop-note{margin-top:20px;background:var(--violet-t);border-left:3px solid var(--violet);
+  border-radius:0 9px 9px 0;padding:13px 17px;font-size:13px;line-height:1.55;color:#4A1FB8}
+
+/* ---------------- table ---------------- */
+.tbl-wrap{width:100%}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--faint);padding:0 12px 9px;border-bottom:1.5px solid var(--rule)}
+.tbl td{padding:7.5px 12px;border-bottom:1px solid #EEF2F6;color:var(--ink-2);line-height:1.4;
+  vertical-align:top}
+.tbl tbody tr:nth-child(odd){background:#FAFCFE}
+.tbl .c1{font-weight:600;color:var(--ink);width:23%}
+.tbl .c3{font-family:var(--mono);font-size:11px;color:var(--mute);width:19%;white-space:nowrap}
+
+/* ---------------- value ---------------- */
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.vcol{background:var(--t);border-radius:12px;border-top:3px solid var(--h);padding:18px 15px;
+  border-inline:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.vcol h3{font-size:15.5px;color:var(--h);margin-bottom:13px;min-height:34px}
+.vcol ul{list-style:none;display:flex;flex-direction:column;gap:11px}
+.vcol li{font-size:12.5px;line-height:1.5;color:var(--ink-2);padding-left:13px;position:relative}
+.vcol li::before{content:"";position:absolute;left:0;top:7px;width:5px;height:5px;border-radius:50%;
+  background:var(--h);opacity:.55}
+
+/* ---------------- deployment ---------------- */
+.deploy{display:grid;grid-template-columns:1fr 1.06fr;gap:38px}
+.plug{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.plug>div{background:#F7FAFC;border:1px solid var(--rule);border-radius:11px;padding:16px}
+.plug h4{font-size:14.5px;font-weight:600;margin-bottom:6px}
+.plug p{font-size:12.5px;line-height:1.5;color:var(--ink-2)}
+.modes{display:flex;flex-direction:column;gap:12px}
+.modes>div{background:var(--t);border:1px solid var(--rule);border-left:3px solid var(--h);
+  border-radius:0 11px 11px 0;padding:14px 18px;position:relative}
+.modes h4{font-size:15px;font-weight:600;color:var(--h);margin-bottom:5px}
+.modes p{font-size:12.5px;line-height:1.5;color:var(--ink-2)}
+.mn{position:absolute;top:13px;right:16px;font-family:var(--mono);font-size:11px;color:var(--h);opacity:.5}
+
+/* ---------------- phases ---------------- */
+.phases{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.phase{background:var(--panel);border:1px solid var(--rule);border-top:3px solid var(--h);
+  border-radius:12px;padding:18px 17px;display:flex;flex-direction:column}
+.p-top{display:flex;justify-content:space-between;align-items:center;
+  font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.p-n{color:var(--h)}
+.p-d{color:var(--faint)}
+.phase h3{font-size:22px;margin:9px 0 10px}
+.phase>p{font-size:12.5px;line-height:1.5;color:var(--ink-2);flex:1}
+.p-out{margin-top:14px;background:var(--t);border-radius:8px;padding:11px 12px;font-size:11.5px;
+  line-height:1.45;color:var(--ink-2)}
+.p-out span{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--h);margin-bottom:5px}
+
+/* ---------------- difference ---------------- */
+.diffs{display:flex;flex-direction:column;gap:12px}
+.diff{display:flex;gap:18px;align-items:flex-start;background:var(--t);border:1px solid var(--rule);
+  border-left:3px solid var(--h);border-radius:0 11px 11px 0;padding:15px 20px}
+.dn{flex:none;width:28px;height:28px;border-radius:50%;background:var(--h);color:#fff;
+  font-family:var(--mono);font-size:12px;display:grid;place-items:center}
+.diff h3{font-size:18px;margin-bottom:5px}
+.diff p{font-size:13.5px;line-height:1.5;color:var(--ink-2)}
+
+/* ---------------- controls ---------------- */
+.bar{position:fixed;left:0;right:0;bottom:0;height:44px;background:rgba(255,255,255,.92);
+  backdrop-filter:blur(10px);border-top:1px solid var(--rule);display:flex;align-items:center;
+  gap:14px;padding:0 16px;z-index:30}
+.bar a.home{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--ink)}
+.bar a.home img{height:19px;width:auto;display:block}
+.bar .wm{font-weight:700;font-size:13px;letter-spacing:-.01em}
+.bar .wm em{font-style:normal;color:var(--blue)}
+.spacer{flex:1}
+.ctl{all:unset;cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:.06em;
+  color:var(--ink-2);padding:6px 11px;border:1px solid var(--rule);border-radius:7px;background:#fff}
+.ctl:hover{border-color:var(--blue);color:var(--blue)}
+.ctl:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.pos{font-family:var(--mono);font-size:11.5px;color:var(--mute);min-width:52px;text-align:center}
+.pos b{color:var(--ink);font-weight:500}
+.track{position:fixed;left:0;right:0;bottom:44px;height:2px;background:var(--rule);z-index:31}
+#bar{height:100%;background:linear-gradient(90deg,var(--blue),var(--coral));
+  transform-origin:left;transform:scaleX(0);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.hint{font-family:var(--mono);font-size:10.5px;color:var(--faint);letter-spacing:.04em}
+@media(max-width:860px){.hint,.bar .wm{display:none}}
+@media(max-width:560px){#fsBtn,.bar a.ctl{display:none}.bar{gap:9px;padding:0 10px}}
+
+/* ---------------- overview grid ---------------- */
+.grid-wrap{position:fixed;inset:0;background:var(--paper);z-index:40;overflow:auto;
+  padding:34px 30px 70px;display:none}
+body.grid-on .grid-wrap{display:block}
+.grid-wrap h2{font-size:22px;margin-bottom:4px}
+.grid-wrap .gh{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--faint);margin-bottom:22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:20px}
+.thumb{all:unset;cursor:pointer;display:block}
+.t-frame{display:block;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:8px;
+  border:1px solid var(--rule);background:#fff;position:relative}
+.thumb.on .t-frame{border-color:var(--blue);box-shadow:0 0 0 2px rgba(0,134,230,.28)}
+.thumb:focus-visible .t-frame{outline:2px solid var(--blue);outline-offset:2px}
+.thumb-stage{position:absolute;inset:auto auto auto 0;top:0;transform:scale(.181);transform-origin:top left;
+  box-shadow:none;border:0;border-radius:0;pointer-events:none}
+.t-meta{display:block;margin-top:9px;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;
+  color:var(--mute);text-transform:uppercase}
+.t-meta b{color:var(--ink);margin-right:6px}
+
+/* ---------------- reduced motion / print ---------------- */
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+@media print{
+  @page{size:1280px 720px;margin:0}
+  body{overflow:visible;background:#fff}
+  .bar,.track,.grid-wrap{display:none!important}
+  .deck{position:static;display:block}
+  .slide{display:block!important;break-after:page;page-break-after:always}
+  .stage{position:static;transform:none;border:0;border-radius:0;box-shadow:none;
+         width:1280px;height:720px}
+}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck" aria-live="polite"></div>
+
+<div class="grid-wrap" id="gridWrap">
+  <h2>Knowledge Fabric — Overview</h2>
+  <div class="gh">Twelve slides · click one to jump · Esc to close</div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<div class="track"><div id="bar"></div></div>
+
+<nav class="bar" aria-label="Deck controls">
+  <a class="home" href="../index.html" aria-label="QualiZeal — Knowledge Fabric home">
+    <img src="../assets/brand/qualizeal-icon.png" alt="" width="19" height="19">
+    <span class="wm">QUALI<em>ZEAL</em></span>
+  </a>
+  <span class="hint">← → to move · G overview · F fullscreen · Ctrl+P to save as PDF</span>
+  <span class="spacer"></span>
+  <button class="ctl" id="prev" aria-label="Previous slide">Prev</button>
+  <span class="pos"><b id="now">1</b> / <span id="count">12</span></span>
+  <button class="ctl" id="next" aria-label="Next slide">Next</button>
+  <button class="ctl" id="gridBtn" aria-expanded="false" aria-controls="gridWrap">Overview</button>
+  <button class="ctl" id="fsBtn">Full screen</button>
+  <a class="ctl" href="../downloads/Knowledge-Fabric-Overview.pptx" download
+     style="text-decoration:none">Download .pptx</a>
+</nav>
+
+<script src="deck.js"></script>
+</body>
+</html>
