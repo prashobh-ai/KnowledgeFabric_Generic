@@ -202,133 +202,7 @@ function busy(btn, job) {
   }).then(() => { btn.textContent = t; delete btn.dataset.busy; });
 }
 
-/* -------------------------------------------------- architecture SVG */
-function arrowH(x1, x2, y, color) {          // horizontal, pointing +x
-  return `<path d="M${x1} ${y} H${x2 - 8}" stroke="${color}" stroke-width="2" fill="none"/>
-    <path d="M${x2} ${y} l-8 -4.5 v9 z" fill="${color}"/>`;
-}
-function zone(x, y, w, h, hue, tint, label, sub, rows, dim) {
-  const row = (r, i) => {
-    const t = typeof r === "string" ? { t: r } : r;
-    const logos = (t.logos || (t.logo ? [t.logo] : [])).filter(n => LOGOS[n]);
-    const tx = 8 + logos.length * 22 + (logos.length ? 6 : 2);
-    return `<g transform="translate(${x + 14},${y + 64 + i * 30})">
-       <rect width="${w - 28}" height="24" rx="6" fill="${dim ? "#F4F6F8" : tint}"/>
-       ${logos.map((n, j) => logoTag(n, 8 + j * 22, 4, 16, dim ? "#93A6B8" : "#22374D")).join("")}
-       <text x="${tx}" y="16" font-family="JetBrains Mono,monospace" font-size="10.5"
-             fill="${dim ? "#93A6B8" : "#22374D"}">${esc(t.t)}</text></g>`;
-  };
-  return `<g ${dim ? 'opacity=".55"' : ""}>
-    <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="12" fill="#fff" stroke="#DFE7EE"/>
-    <rect x="${x}" y="${y}" width="${w}" height="5" rx="2.5" fill="${hue}"/>
-    <text x="${x + 14}" y="${y + 28}" font-family="JetBrains Mono,monospace" font-size="11"
-          letter-spacing="1.5" fill="${hue}">${esc(label)}</text>
-    <text x="${x + 14}" y="${y + 45}" font-family="Inter,sans-serif" font-size="10.5"
-          fill="#93A6B8">${esc(sub)}</text>
-    ${rows.map(row).join("")}
-    ${dim ? `<text x="${x + w - 14}" y="${y + 28}" text-anchor="end"
-        font-family="JetBrains Mono,monospace" font-size="9.5" fill="#93A6B8">LATER PHASE</text>` : ""}
-  </g>`;
-}
-
-function archSVG(r) {
-  const tele = r.sel.scope === "governed" || r.sel.scope === "full";
-  const graph = r.sel.scope !== "core";
-  const extraRoles = r.roles.filter(x => x.ws);
-  const who = r.name || "your team";
-
-  const pipelineRows = [
-    r.infra.intake,
-    "docx · txt · xlsx · readable PDF",
-    "Parse · extract · rank",
-    r.sel.roles.includes("curator") ? "Curator resolve queue" : "Auto-resolve — admin weekly export",
-    { t: r.vector.label, logo: r.vector.logo },
-  ];
-  const answerRows = [
-    "Hybrid retrieval (lexical + semantic)",
-    "Grounding gate — evidence first",
-    r.sel.model === "none"
-      ? "Verbatim answer composer (extractive)"
-      : { t: `${r.model.badge} — grounded generation`, logos: r.model.logos },
-    graph ? "Entity graph & knowledge health" : "Citations & confidence",
-    r.sel.scope === "full" ? "Answer API & widget" : "Clarify-back when evidence is thin",
-  ];
-  const teleRows = [
-    ...extraRoles.map(x => x.ws),
-    "Per-answer scoring & tracing",
-    { t: r.obs.short, logos: r.obs.logos },
-  ];
-
-  /* role chips, right-aligned in the access band */
-  let chipX = 954;
-  const chipParts = [];
-  for (const x of r.roles.slice().reverse()) {
-    const w = Math.round(x.label.length * 6.6 + 22);
-    chipX -= w;
-    chipParts.push(`<rect x="${chipX}" y="30" width="${w}" height="22" rx="11"
-        fill="#fff" stroke="#D6DAFB"/>
-      <text x="${chipX + w / 2}" y="45" text-anchor="middle"
-        font-family="JetBrains Mono,monospace" font-size="10" fill="#4338CA">${esc(x.label)}</text>`);
-    chipX -= 8;
-  }
-  const chips = chipParts.join("");
-
-  return `<svg viewBox="0 0 980 544" width="980" height="544" xmlns="http://www.w3.org/2000/svg"
-      role="img" aria-label="Proposed architecture" font-family="Inter,sans-serif">
-    <title>Knowledge Fabric — proposed architecture</title>
-    <rect width="980" height="544" fill="#fff"/>
-    <text transform="rotate(-22 490 272)" x="490" y="300" text-anchor="middle"
-      font-family="Inter,sans-serif" font-size="110" font-weight="700"
-      fill="#0A1626" opacity="0.035" letter-spacing="14">QUALIZEAL</text>
-
-    <rect x="10" y="10" width="960" height="74" rx="12" fill="#EEF0FF" stroke="#D6DAFB"/>
-    <text x="26" y="31" font-family="JetBrains Mono,monospace" font-size="11" letter-spacing="1.5"
-          fill="#4338CA">ACCESS &amp; IDENTITY</text>
-    ${logoTag(r.identity.logo, 26, 40, 20, "#4338CA")}
-    <text x="${LOGOS[r.identity.logo] ? 54 : 26}" y="55" font-size="12.5" font-weight="600"
-          fill="#22374D">${esc(r.identity.label)}</text>
-    <text x="26" y="74" font-size="9.5" fill="#6A7F94">permissions applied before anything is searched</text>
-    ${chips}
-
-    <path d="M478 92 v24 M502 92 v24" stroke="#4338CA" stroke-width="2" fill="none"/>
-    <path d="M478 116 l-4.5 -8 h9 z" fill="#4338CA"/>
-    <path d="M502 92 l-4.5 8 h9 z" fill="#4338CA"/>
-    <text x="512" y="99" font-size="9.5" fill="#4338CA">questions in</text>
-    <text x="512" y="111" font-size="9.5" fill="#4338CA">cited answers back</text>
-
-    ${zone(10, 124, 296, 226, "#047857", "#E7F8F1", "CONTENT PIPELINE", "your sources, your cadence",
-      pipelineRows, false)}
-
-    ${zone(326, 124, 330, 226, "#0086E6", "#E8F5FF", "GROUNDED ANSWERING",
-      r.model.planeShort, answerRows, false)}
-
-    ${zone(676, 124, 294, 226, "#9333EA", "#F8EDFE", "ROLES & TELEMETRY",
-      tele ? "proof that it worked" : "arrives with the governed tier", teleRows, !tele)}
-
-    ${arrowH(306, 326, 237, "#8FA8BC")}
-    <g ${tele ? "" : 'opacity=".45"'}>${arrowH(656, 676, 237, "#8FA8BC")}</g>
-
-    ${tele ? `<path d="M823 350 v14 H158 v-6" stroke="#9333EA" stroke-width="2"
-        stroke-dasharray="4 7" fill="none"/>
-      <path d="M158 350 l-4.5 8 h9 z" fill="#9333EA"/>
-      <text x="490" y="378" text-anchor="middle" font-size="10.5"
-        fill="#9333EA">questions the corpus cannot answer return as a ranked content backlog</text>` : ""}
-
-    <rect x="10" y="390" width="960" height="56" rx="12" fill="#EEF1F5" stroke="#DCE2EA"/>
-    <text x="26" y="413" font-family="JetBrains Mono,monospace" font-size="11" letter-spacing="1.5"
-          fill="#344054">SECURITY &amp; OPERATIONS</text>
-    <text x="26" y="431" font-size="11" fill="#475467">${esc(r.infra.runtime)} · ${esc(r.infra.secrets)}</text>
-    ${logoTag(r.infra.logo, 926, 404, 28, "#344054")}
-
-    <rect x="10" y="460" width="960" height="50" rx="12" fill="none" stroke="#94A3B8" stroke-dasharray="7 6"/>
-    <text x="490" y="490" text-anchor="middle" font-size="12.5"
-          fill="#475467">Everything above runs ${esc(r.infra.boundary)} — identity, network, keys and content stay with you.</text>
-
-    <text x="10" y="532" font-size="10" fill="#6A7F94">Prepared for ${esc(who)}</text>
-    <text x="970" y="532" text-anchor="end" font-family="JetBrains Mono,monospace" font-size="10"
-      letter-spacing="1.2" fill="#0A1626">QUALI<tspan fill="#0086E6">ZEAL</tspan> · AI CENTER OF EXCELLENCE — KNOWLEDGE FABRIC</text>
-  </svg>`;
-}
+/* The architecture and journey drawings live in figures.js (archSVG, journeySVG). */
 
 /* ------------------------------------------------------- PDF plumbing */
 function pdfLib() {
@@ -413,70 +287,26 @@ function fileSlug(r) {
 /* ------------------------------------------------ architecture PDF */
 async function architecturePDF(r) {
   const who = r.name || "your team";
-  const [icon, png] = await Promise.all([brandIcon(), svgToPng(archSVG(r), 2940)]);
+  const [icon, archPng, jourPng] = await Promise.all([
+    brandIcon(), svgToPng(archSVG(r), 3800), svgToPng(journeySVG(r), 3800)]);
   const doc = newDoc("landscape");
-  const W = doc.internal.pageSize.getWidth();
-  chrome(doc, icon, "Knowledge Fabric — proposed architecture", who, 1, 1);
-  doc.setFont("helvetica", "bold"); doc.setFontSize(15); doc.setTextColor(...INK);
-  doc.text(`${r.domain.label}, running on ${r.infra.label}`, 12, 32);
-  doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(...MUTE);
-  doc.text(`${r.model.badge}  ·  ${r.vector.label}  ·  ${r.obs.short}  ·  ${r.scope.label}  ·  roles: ${r.roles.map(x => x.label.toLowerCase()).join(", ")}`,
-    12, 38);
-  const iw = W - 24, ih = iw * (png.h / png.w);
-  doc.addImage(png.data, "PNG", 12, 43, iw, ih, undefined, "FAST");
+  const W = doc.internal.pageSize.getWidth(), H = doc.internal.pageSize.getHeight();
+  const place = (png) => {
+    /* fit inside the chrome: x 12..W-12, y 26..H-18, centred */
+    const maxW = W - 24, maxH = H - 44;
+    let w = maxW, h = w * (png.h / png.w);
+    if (h > maxH) { h = maxH; w = h * (png.w / png.h); }
+    doc.addImage(png.data, "PNG", (W - w) / 2, 26 + (maxH - h) / 2, w, h, undefined, "FAST");
+  };
+  chrome(doc, icon, "Knowledge Fabric — proposed architecture", who, 1, 2);
+  place(archPng);
+  doc.addPage("a4", "landscape");
+  chrome(doc, icon, "Knowledge Fabric — how an answer is produced", who, 2, 2);
+  place(jourPng);
   doc.save(`Knowledge-Fabric-Architecture-${fileSlug(r)}.pdf`);
 }
 
 /* --------------------------------------------------- proposal PDF */
-function drawFlow(doc, y, steps, opts) {
-  /* one left-to-right workflow: boxes joined by arrows, laid out to fill the
-     text column; optional labelled return arrow drawn UNDER the row so no
-     line ever crosses a box. Returns the y below everything drawn. */
-  const x0 = 12, x1 = doc.internal.pageSize.getWidth() - 12;
-  const gap = 6, boxH = 14;
-  const wSum = x1 - x0 - gap * (steps.length - 1);
-  const weights = steps.map(s => Math.max(s.t.length, 8));
-  const wTot = weights.reduce((a, b) => a + b, 0);
-  let x = x0;
-  const centers = [];
-  steps.forEach((s, i) => {
-    const w = Math.max(16, wSum * weights[i] / wTot);
-    doc.setFillColor(...(s.hue ? [232, 245, 255] : [244, 246, 248]));
-    doc.setDrawColor(...RULE); doc.setLineWidth(0.3);
-    doc.roundedRect(x, y, w, boxH, 1.6, 1.6, "FD");
-    doc.setFont("courier", "normal"); doc.setFontSize(6.8);
-    doc.setTextColor(...INK2);
-    const lines = doc.splitTextToSize(s.t, w - 3);
-    const ty = y + boxH / 2 + (lines.length > 1 ? -0.6 : 1);
-    doc.text(lines.slice(0, 2), x + w / 2, ty, { align: "center", baseline: "middle" });
-    centers.push({ cx: x + w / 2, xEnd: x + w, xStart: x });
-    if (i < steps.length - 1) {
-      const ax = x + w, ay = y + boxH / 2;
-      doc.setDrawColor(143, 168, 188); doc.setLineWidth(0.5);
-      doc.line(ax + 0.8, ay, ax + gap - 2.4, ay);
-      doc.setFillColor(143, 168, 188);
-      doc.triangle(ax + gap - 0.8, ay, ax + gap - 3.2, ay - 1.4, ax + gap - 3.2, ay + 1.4, "F");
-    }
-    x += w + gap;
-  });
-  let yb = y + boxH;
-  if (opts && opts.back) {
-    const from = centers[opts.back.from].cx, to = centers[opts.back.to].cx;
-    const yr = yb + 5;
-    doc.setDrawColor(147, 51, 234); doc.setLineWidth(0.45);
-    doc.setLineDashPattern([1.4, 1.6], 0);
-    doc.line(from, yb + 1, from, yr); doc.line(from, yr, to, yr); doc.line(to, yr, to, yb + 2.6);
-    doc.setLineDashPattern([], 0);
-    doc.setFillColor(147, 51, 234);
-    doc.triangle(to, yb + 0.8, to - 1.4, yb + 3.2, to + 1.4, yb + 3.2, "F");
-    doc.setFont("helvetica", "italic"); doc.setFontSize(6.8);
-    doc.setTextColor(147, 51, 234);
-    doc.text(opts.back.label, (from + to) / 2, yr + 3.4, { align: "center" });
-    yb = yr + 5;
-  }
-  return yb;
-}
-
 function h2(doc, y, text) {
   doc.setFont("helvetica", "bold"); doc.setFontSize(14); doc.setTextColor(...INK);
   doc.text(text, 12, y);
@@ -500,12 +330,14 @@ function bullets(doc, y, items, color, maxW) {
 
 async function proposalPDF(r) {
   const who = r.name || "your team";
-  const [icon, png] = await Promise.all([brandIcon(), svgToPng(archSVG(r), 2450)]);
+  const [icon, archPng, jourPng] = await Promise.all([
+    brandIcon(), svgToPng(archSVG(r), 3000), svgToPng(journeySVG(r), 3000)]);
   const doc = newDoc("portrait");
   const W = doc.internal.pageSize.getWidth();
   const demoURL = new URL(`../demo/${r.domain.demo}/`, location.href).href;
   const title = "Knowledge Fabric — solution proposal";
-  const PAGES = 5;
+  const PAGES = 6;
+  let y;
 
   /* -------- page 1: cover -------- */
   chrome(doc, icon, title, who, 1, PAGES);
@@ -534,11 +366,11 @@ async function proposalPDF(r) {
     "Composed from your answers to our solution-fit questionnaire. Every commitment in this document " +
     "is one we are prepared to stand behind — and every limitation is stated before a contract would.", W - 24), 12, 128);
   doc.setFontSize(8.5);
-  doc.text("This document accompanies your architecture drawing (separate PDF).", 12, 148);
+  doc.text("The full-size architecture drawing accompanies this document as its own PDF.", 12, 146);
 
   /* -------- page 2: what we understood -------- */
   doc.addPage(); chrome(doc, icon, title, who, 2, PAGES);
-  let y = h2(doc, 34, "What we understood");
+  y = h2(doc, 34, "What we understood");
   doc.setFont("helvetica", "normal"); doc.setFontSize(9.5); doc.setTextColor(...INK2);
   doc.text(doc.splitTextToSize(
     `${who === "your team" ? "Your" : who + "'s"} documents live in the ${r.domain.label.toLowerCase()} domain. ` +
@@ -583,8 +415,47 @@ async function proposalPDF(r) {
     "question and the answer only — source documents stay as written — and we commit to a language " +
     "only after validating its quality with your approved model, never by default.", W - 24), 12, y);
 
-  /* -------- page 3: how we approach it -------- */
+  /* -------- page 3: how an answer is produced -------- */
   doc.addPage(); chrome(doc, icon, title, who, 3, PAGES);
+  y = h2(doc, 34, "How an answer is produced");
+  const jw = W - 24, jh = jw * (jourPng.h / jourPng.w);
+  doc.addImage(jourPng.data, "PNG", 12, y - 2, jw, jh, undefined, "FAST");
+  y += jh + 8;
+  doc.setFont("helvetica", "bold"); doc.setFontSize(10.5); doc.setTextColor(...AMBER);
+  doc.text("Clarify-back: ask, don't refuse", 12, y); y += 6;
+  doc.setFont("helvetica", "normal"); doc.setFontSize(9.3); doc.setTextColor(...INK2);
+  doc.text(doc.splitTextToSize(
+    "Generation is gated on the grounding check, which is what makes the citation promise structural " +
+    "rather than aspirational. When evidence falls short, the system asks one targeted question, " +
+    "re-retrieves on the refined query, and only then answers. When that is still not enough, it " +
+    "returns the nearest approved sources and how to rephrase — never a bare refusal, never an " +
+    "invented answer. Every clarification is logged, so the questions the corpus cannot yet answer " +
+    "become a ranked content backlog and the knowledge base improves from real demand.", W - 24), 12, y);
+
+  /* -------- page 4: the architecture -------- */
+  doc.addPage(); chrome(doc, icon, title, who, 4, PAGES);
+  y = h2(doc, 34, "The proposed architecture");
+  const aw = W - 24, ah = aw * (archPng.h / archPng.w);
+  doc.addImage(archPng.data, "PNG", 12, y - 2, aw, ah, undefined, "FAST");
+  y += ah + 8;
+  const zones = [
+    ["Access and roles", `${r.identity.label}; ${r.roles.map(x => x.label.toLowerCase()).join(", ")} — permissions applied before anything is searched.`],
+    ["Content pipeline", `${r.infra.intake}, then ${r.infra.flow}, into ${r.vector.label} — with ${r.sel.roles.includes("curator") ? "a human curator queue" : "weekly admin conflict export"}.`],
+    ["Grounded answering", `Retrieve, grounding check, then ${r.sel.model === "none" ? "the verbatim composer" : r.model.badge} — with clarify-back as the recovery path.`],
+    ["Trust and telemetry", r.sel.obs === "none" ? "Deferred by your choice — added when you opt in." : `${r.obs.label}; per-answer scoring; ${r.infra.audit}.`],
+    ["Security and operations", `${r.infra.runtime}; ${r.infra.secrets}. Everything runs ${r.infra.boundary}.`],
+  ];
+  for (const [k, v] of zones) {
+    doc.setFont("helvetica", "bold"); doc.setFontSize(9.3); doc.setTextColor(...INK);
+    doc.text(k, 12, y);
+    doc.setFont("helvetica", "normal"); doc.setTextColor(...INK2);
+    const lines = doc.splitTextToSize(v, W - 70);
+    doc.text(lines, 58, y);
+    y += Math.max(5.2, lines.length * 4.2 + 1.4);
+  }
+
+  /* -------- page 5: approach & what makes this different -------- */
+  doc.addPage(); chrome(doc, icon, title, who, 5, PAGES);
   y = h2(doc, 34, "How we plan to approach it");
   if (r.adjustments.length) {
     doc.setFillColor(238, 240, 255); doc.setDrawColor(214, 218, 251);
@@ -622,56 +493,25 @@ async function proposalPDF(r) {
   }
   y += 4;
   doc.setFont("helvetica", "bold"); doc.setFontSize(10.5); doc.setTextColor(...INK);
+  doc.text("What makes this different", 12, y); y += 6;
+  y = bullets(doc, y, [
+    "Generation is gated, not trusted — the grounding check runs before anything is written; citation is a property of the design.",
+    "Clarification instead of refusal — thin evidence produces a targeted question and a second attempt.",
+    "Permissions applied before ranking — unauthorised content never enters the candidate set, so it cannot shape a result.",
+    "The system reports its own gaps — failed and clarified questions become a ranked content backlog.",
+    `Portable by construction — ${r.model.badge}, ${r.vector.label} and ${r.identity.label} are your deployment choices, swappable without re-platforming.`,
+  ], BLUE, W - 24);
+  y += 2;
+  doc.setFont("helvetica", "bold"); doc.setFontSize(10.5); doc.setTextColor(...INK);
   doc.text("The working principles", 12, y); y += 6;
   y = bullets(doc, y, [
-    "Answers only from your governed content, with citations — the grounding gate refuses before it invents.",
     `The answer workspace${r.sel.obs === "qzotel" ? " and the dashboards are" : " is"} custom-built for ${who}, not a re-skin of anything of ours.`,
     "Telemetry, translation and deferred formats are opt-in efforts we scope openly — never silently bundled, never silently dropped.",
     "Everything runs " + r.infra.boundary + "; identity, network, keys and content stay with you.",
   ], BLUE, W - 24);
 
-  /* -------- page 4: workflows -------- */
-  doc.addPage(); chrome(doc, icon, title, who, 4, PAGES);
-  y = h2(doc, 34, "How it works — two workflows");
-  doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor(...INK);
-  doc.text("1 · How knowledge gets in", 12, y); y += 7;
-  const curator = r.sel.roles.includes("curator");
-  y = drawFlow(doc, y, [
-    { t: "Your sources — docx txt xlsx pdf" },
-    { t: r.infra.intake },
-    { t: "Parse · extract · rank" },
-    { t: r.vector.label, hue: 1 },
-    { t: "Governed corpus" },
-  ], { back: curator
-        ? { from: 4, to: 2, label: "curators resolve conflicts & duplicates before answers rely on them" }
-        : { from: 4, to: 2, label: "auto-resolve — conflicts export weekly for admin review" } });
-  y += 10;
-  doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor(...INK);
-  doc.text("2 · How a question becomes a cited answer", 12, y); y += 7;
-  y = drawFlow(doc, y, [
-    { t: `${who} asks` },
-    { t: r.identity.label },
-    { t: "Hybrid retrieval" },
-    { t: "Grounding gate" },
-    { t: r.sel.model === "none" ? "Verbatim composer" : r.model.badge, hue: 1 },
-    { t: "Cited answer" },
-  ], { back: { from: 5, to: 0, label: "answer returns with citations & confidence — or an honest clarify-back" } });
-  y += 12;
-  doc.setFont("helvetica", "normal"); doc.setFontSize(8.8); doc.setTextColor(...MUTE);
-  doc.text(doc.splitTextToSize(
-    (r.sel.scope === "governed" || r.sel.scope === "full"
-      ? "Questions the corpus cannot answer return as a ranked content backlog, so the fabric tells you what to write next. "
-      : "") +
-    "The full architecture, drawn with each vendor's own mark, is the companion PDF to this document.",
-    W - 24), 12, y);
-  y += 14;
-  const archW = W - 24, archH = archW * (png.h / png.w);
-  doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor(...INK);
-  doc.text("The architecture, at a glance", 12, y); y += 4;
-  doc.addImage(png.data, "PNG", 12, y, archW, archH, undefined, "FAST");
-
-  /* -------- page 5: ships, limitations, demo -------- */
-  doc.addPage(); chrome(doc, icon, title, who, 5, PAGES);
+  /* -------- page 6: ships, limitations, demo -------- */
+  doc.addPage(); chrome(doc, icon, title, who, 6, PAGES);
   y = h2(doc, 34, "What ships in the first release");
   y = bullets(doc, y, scopeShips(r.sel.scope), BLUE, W - 24);
   y += 4;
@@ -715,10 +555,11 @@ function renderResult() {
       <ul class="klist">${r.adjustments.map(a => `<li>${esc(a)}</li>`).join("")}</ul>
     </div>` : ""}
 
+    <div class="arch-svg" style="margin-top:20px">${archSVG(r)}</div>
+
     <div class="r-grid">
       <div>
-        <div class="arch-svg">${archSVG(r)}</div>
-        <div class="card" style="margin-top:18px">
+        <div class="card">
           <h3>What ships in this release</h3>
           <ul class="klist">${r.scope.includes.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
         </div>
