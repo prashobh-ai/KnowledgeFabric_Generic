@@ -375,7 +375,11 @@ Four routes, published together by the same Pages job:
 `pipeline/build_site.py` regenerates `site/index.html` and `site/kit/index.html`
 on every run, and clears only `site/demo/` and `site/data/`. It never writes or
 deletes `site/assets/`, `site/walkthrough/`, `site/deck/` or `site/downloads/`,
-so those four are committed once and served as-is.
+so those four are committed once and served as-is — with one carve-out: the
+tenant brand PNGs in `site/assets/brand/` are regenerated from the source art
+in `brand-assets/` by `python -m pipeline.build_brand_assets`, which CI runs in
+both jobs. The committed copies exist so a plain checkout can serve `site/`
+without running the pipeline; CI output simply overwrites them.
 
 The nav links to the walkthrough and the kit are emitted by `build_site.py` (the
 `links` list in `build_index`) rather than hand-added to the HTML, because the
