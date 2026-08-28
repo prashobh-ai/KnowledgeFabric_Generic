@@ -92,6 +92,7 @@ IATA_DELAY_CODES = (
 
 AIRLINES = Pack(
     slug="q-airlines",
+    spine="aircraft",
     tenant="Q-Airlines",
     industry="Commercial Airline Operations",
     tagline="Network carrier · 214 aircraft · 68 stations",
@@ -366,6 +367,7 @@ AIRLINES = Pack(
 
 AEROTECH = Pack(
     slug="q-aerotech",
+    spine="component",
     tenant="Q-Aerotech",
     industry="Aerospace MRO — Part-145",
     tagline="Base and line maintenance · CAMO · component shops",
