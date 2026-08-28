@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Knowledge Fabric — film stage</title>
+<!-- Purpose-built recording stage: 1280x720, deterministic chapter timeline
+     driven by JS so the Playwright recorder captures an identical film every
+     take. First-person captions: the fabric explains itself. -->
+<style>
+/* Recording sandbox has no webfont egress: alias the site's families onto
+   installed metric-compatible faces so the film's type looks intentional. */
+@font-face{font-family:'Inter';src:local('Carlito')}
+@font-face{font-family:'Inter';font-weight:600 700;src:local('Carlito Bold')}
+@font-face{font-family:'Newsreader';src:local('Caladea')}
+@font-face{font-family:'JetBrains Mono';src:local('Liberation Mono')}
+:root{
+  --ink:#0A1626; --ink2:#22374D; --mute:#6A7F94; --faint:#93A6B8;
+  --paper:#FBFCFD; --rule:#DFE7EE;
+  --blue:#0086E6; --blue-t:#E8F5FF; --indigo:#4338CA; --indigo-t:#EEF0FF;
+  --emerald:#047857; --emerald-t:#E7F8F1; --amber:#DC6803; --amber-t:#FEF4E2;
+  --violet:#9333EA; --violet-t:#F8EDFE; --slate:#344054; --coral:#F53E5A;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1280px;height:720px;overflow:hidden;background:var(--paper);
+  font-family:Inter,system-ui,sans-serif;color:var(--ink);
+  -webkit-font-smoothing:antialiased}
+#stage{position:relative;width:1280px;height:720px}
+.ch{position:absolute;inset:0;opacity:0;transition:opacity .7s ease;pointer-events:none}
+.ch.on{opacity:1}
+.kicker{position:absolute;top:44px;left:70px;font-family:var(--mono);font-size:13px;
+  letter-spacing:.18em;color:var(--blue);text-transform:uppercase;display:flex;gap:12px;align-items:center}
+.kicker::before{content:"";width:30px;height:2px;background:var(--coral)}
+.cap{position:absolute;left:70px;right:70px;bottom:44px;display:flex;align-items:center;gap:16px}
+.cap .who{flex:none;width:44px;height:44px;border-radius:12px;background:#fff;border:1px solid var(--rule);
+  display:grid;place-items:center}
+.cap .who img{width:28px;height:28px}
+.cap p{font-size:24px;line-height:1.35;color:var(--ink2);opacity:0;transform:translateY(10px);
+  transition:opacity .55s ease,transform .55s cubic-bezier(.16,1,.3,1);max-width:1050px}
+.cap p b{color:var(--ink)}
+.cap p.say{opacity:1;transform:none}
+
+/* ---------- title & close ---------- */
+.title-card{display:flex;flex-direction:column;justify-content:center;padding:0 110px}
+.t-rule{width:84px;height:5px;border-radius:3px;background:linear-gradient(90deg,var(--blue),var(--coral));
+  transform:scaleX(0);transform-origin:left;transition:transform .8s cubic-bezier(.16,1,.3,1)}
+.ch.on .t-rule{transform:scaleX(1)}
+.title-card h1{font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:84px;
+  letter-spacing:-.03em;margin-top:26px;opacity:0;transform:translateY(16px);
+  transition:all .8s .25s cubic-bezier(.16,1,.3,1)}
+.ch.on h1{opacity:1;transform:none}
+.title-card .sub{font-family:Georgia,serif;font-style:italic;font-size:34px;color:var(--blue);
+  margin-top:8px;opacity:0;transition:opacity .8s .6s ease}
+.ch.on .sub{opacity:1}
+.title-card .voice{margin-top:34px;font-size:22px;color:var(--mute);opacity:0;transition:opacity .8s 1s ease}
+.ch.on .voice{opacity:1}
+.brandrow{position:absolute;top:44px;right:70px;display:flex;align-items:center;gap:12px;
+  font-weight:700;font-size:18px}
+.brandrow em{font-style:normal;color:var(--blue)}
+.brandrow img{height:26px}
+
+/* ---------- chapter 1: what goes in ---------- */
+.srcs{position:absolute;left:70px;top:130px;width:300px;display:flex;flex-direction:column;gap:14px}
+.src{background:#fff;border:1px solid var(--rule);border-radius:12px;padding:13px 16px;
+  font-size:15px;color:var(--ink2);display:flex;gap:11px;align-items:center;
+  opacity:0;transform:translateX(-16px);transition:all .5s cubic-bezier(.16,1,.3,1)}
+.src i{font-style:normal;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:#fff;
+  border-radius:6px;padding:3px 7px}
+.play .src{opacity:1;transform:none}
+.src:nth-child(2){transition-delay:.25s}.src:nth-child(3){transition-delay:.5s}
+.src:nth-child(4){transition-delay:.75s}.src:nth-child(5){transition-delay:1s}
+.pipe{position:absolute;left:430px;top:190px;width:400px}
+.pipe .stagebox{background:#fff;border:1px solid var(--rule);border-radius:12px;padding:14px 18px;
+  margin-bottom:12px;font-size:15px;display:flex;justify-content:space-between;align-items:center;
+  opacity:0;transform:translateY(12px);transition:all .5s cubic-bezier(.16,1,.3,1)}
+.play .stagebox{opacity:1;transform:none}
+.stagebox:nth-child(2){transition-delay:.55s}.stagebox:nth-child(3){transition-delay:1.1s}
+.stagebox b{font-weight:600}
+.stagebox .tick{width:20px;height:20px;border-radius:50%;background:var(--emerald);display:grid;
+  place-items:center;opacity:0;transform:scale(.4);transition:all .4s cubic-bezier(.2,1.4,.4,1)}
+.play .stagebox .tick{opacity:1;transform:none}
+.stagebox:nth-child(1) .tick{transition-delay:1.9s}
+.stagebox:nth-child(2) .tick{transition-delay:2.5s}
+.stagebox:nth-child(3) .tick{transition-delay:3.1s}
+.dots{position:absolute;left:376px;top:210px;width:48px;height:260px}
+.dot{position:absolute;width:10px;height:10px;border-radius:50%;opacity:0}
+.play .dot{animation:travel 1.6s ease-in forwards}
+@keyframes travel{0%{opacity:0;transform:translate(0,0)}12%{opacity:1}
+  88%{opacity:1}100%{opacity:0;transform:translate(52px,var(--dy))}}
+.cyl{position:absolute;right:110px;top:250px;width:220px;text-align:center}
+.cyl svg{width:170px}
+.cyl .fill{transform:scaleY(0);transform-origin:bottom;transition:transform 2.6s .8s cubic-bezier(.2,.8,.2,1)}
+.play .cyl .fill{transform:scaleY(1)}
+.cyl .lbl{font-family:var(--mono);font-size:12px;color:var(--mute);margin-top:8px}
+.count{font-family:var(--mono);font-size:13px;color:var(--emerald)}
+
+#ch2 .as-cap,#ch2 .as-pause{display:none}
+
+/* ---------- chapter 3: what comes out ---------- */
+.outgrid{position:absolute;left:70px;right:70px;top:128px;display:grid;
+  grid-template-columns:1.25fr 1fr 1fr;gap:18px}
+.tile{background:#fff;border:1px solid var(--rule);border-radius:14px;padding:18px;
+  opacity:0;transform:translateY(16px);transition:all .55s cubic-bezier(.16,1,.3,1)}
+.play .tile{opacity:1;transform:none}
+.tile:nth-child(2){transition-delay:.5s}.tile:nth-child(3){transition-delay:1s}
+.tile h4{font-size:14px;font-weight:600;margin-bottom:3px}
+.tile .tsub{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--faint);margin-bottom:12px}
+.ansline{height:9px;border-radius:4.5px;background:#DCE7F0;margin-bottom:9px}
+.cites{display:flex;gap:8px;margin-top:12px;align-items:center}
+.cite{font-family:var(--mono);font-size:10.5px;background:var(--blue-t);color:#01517F;
+  border-radius:5px;padding:3px 8px}
+.conf{margin-left:auto;display:flex;gap:6px;align-items:center;font-family:var(--mono);
+  font-size:10.5px;color:var(--emerald)}
+.conf i{width:8px;height:8px;border-radius:50%;background:var(--emerald)}
+.qrow{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;
+  color:var(--ink2);padding:7px 9px;border-radius:7px;margin-bottom:6px}
+.qrow em{font-style:normal;font-family:var(--mono);font-size:9.5px;border-radius:5px;padding:2px 7px}
+.gbar{display:grid;grid-template-columns:86px 1fr 42px;gap:9px;align-items:center;
+  font-size:11.5px;color:var(--ink2);margin-bottom:9px}
+.gbar .track{height:8px;border-radius:4px;background:#EEF2F6;overflow:hidden}
+.gbar .bfill{height:100%;border-radius:4px;transform:scaleX(0);transform-origin:left;
+  transition:transform 1.2s cubic-bezier(.2,.8,.2,1)}
+.play .gbar .bfill{transform:scaleX(1)}
+.gbar .val{font-family:var(--mono);font-size:10px;color:var(--mute);text-align:right}
+.gnote{font-size:10.5px;color:var(--faint);margin-top:8px}
+.loopline{position:absolute;left:70px;right:70px;top:492px;border-top:2px dashed #C7A6F2;
+  opacity:0;transition:opacity .6s ease}
+.play .loopline{opacity:1}
+.loopcap{position:absolute;top:500px;left:0;right:0;text-align:center;font-size:13px;
+  color:var(--violet);opacity:0;transition:opacity .6s .3s ease}
+.play .loopcap{opacity:1}
+</style>
+</head>
+<body>
+<div id="stage">
+
+  <!-- CH 0 · title -->
+  <div class="ch title-card" id="ch0">
+    <div class="brandrow"><img src="../../site/assets/brand/qualizeal-icon.png" alt=""><span>QUALI<em>ZEAL</em></span></div>
+    <div class="t-rule"></div>
+    <h1>Knowledge Fabric</h1>
+    <div class="sub">in its own words</div>
+    <div class="voice">Ninety seconds. What goes in, what happens, what comes out.</div>
+  </div>
+
+  <!-- CH 1 · what goes in -->
+  <div class="ch" id="ch1">
+    <div class="kicker">Chapter one — what goes in</div>
+    <div class="srcs">
+      <div class="src"><i style="background:var(--emerald)">DMS</i>Controlled documents &amp; SOPs</div>
+      <div class="src"><i style="background:var(--blue)">QMS</i>Quality records &amp; findings</div>
+      <div class="src"><i style="background:var(--indigo)">WIKI</i>Intranets &amp; shared drives</div>
+      <div class="src"><i style="background:var(--slate)">TKT</i>Tickets &amp; service desk</div>
+      <div class="src"><i style="background:var(--amber)">SCAN</i>Scanned paper — OCR'd</div>
+    </div>
+    <div class="dots" id="dots"></div>
+    <div class="pipe">
+      <div class="stagebox"><span><b>Extract &amp; rank</b> — type, version, entity, status</span><span class="tick">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round"><path d="M4 13l5 5L20 6"/></svg></span></div>
+      <div class="stagebox"><span><b>Curate</b> — conflicts &amp; superseded to a human</span><span class="tick">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round"><path d="M4 13l5 5L20 6"/></svg></span></div>
+      <div class="stagebox"><span><b>Index</b> — every paragraph addressable</span><span class="tick">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round"><path d="M4 13l5 5L20 6"/></svg></span></div>
+    </div>
+    <div class="cyl">
+      <svg viewBox="0 0 170 150">
+        <path d="M15 30 v90 a70 16 0 0 0 140 0 v-90" fill="#E7F8F1"/>
+        <g class="fill"><path d="M15 70 v50 a70 16 0 0 0 140 0 v-50" fill="#A9E6CD"/></g>
+        <ellipse cx="85" cy="120" rx="70" ry="16" fill="#8FDFC0"/>
+        <ellipse cx="85" cy="30" rx="70" ry="16" fill="#CFF2E4"/>
+        <text x="85" y="86" text-anchor="middle" font-family="Georgia,serif" font-size="17" fill="#047857">Index</text>
+      </svg>
+      <div class="lbl">passages · entities · lineage<br><span class="count" id="pcount">0 passages</span></div>
+    </div>
+  </div>
+
+  <!-- CH 2 · what happens (the answer journey, mounted) -->
+  <div class="ch" id="ch2">
+    <div class="kicker">Chapter two — what happens</div>
+    <div style="position:absolute;left:200px;right:200px;top:96px" data-archscene></div>
+  </div>
+
+  <!-- CH 3 · what comes out -->
+  <div class="ch" id="ch3">
+    <div class="kicker">Chapter three — what comes out</div>
+    <div class="outgrid">
+      <div class="tile">
+        <h4>A defensible answer</h4><div class="tsub">for everyone who asks</div>
+        <div class="ansline" style="width:92%"></div>
+        <div class="ansline" style="width:78%"></div>
+        <div class="ansline" style="width:85%"></div>
+        <div class="cites"><span class="cite">SOP-04 · p.12</span><span class="cite">POL-11 · p.3</span>
+          <span class="conf"><i></i>HIGH</span></div>
+      </div>
+      <div class="tile">
+        <h4>A curator's morning view</h4><div class="tsub">answer monitoring — dashboards we build for you</div>
+        <div class="qrow" style="background:var(--amber-t)"><span>2 answers flagged for review</span><em style="background:#F5D9AC;color:#8A4708">REVIEW</em></div>
+        <div class="qrow" style="background:var(--emerald-t)"><span>3 conflicts resolved this week</span><em style="background:#BFE8D6;color:#04543E">DONE</em></div>
+        <div class="qrow" style="background:var(--violet-t)"><span>7 gaps ranked by demand</span><em style="background:#E7CBF9;color:#6B21A8">BACKLOG</em></div>
+        <div class="gnote">Every refusal and clarification lands here — nothing fails silently.</div>
+      </div>
+      <div class="tile">
+        <h4>An admin's control panel</h4><div class="tsub">models routed by question complexity</div>
+        <div class="gbar"><span>Routine asks</span><div class="track"><div class="bfill" style="width:72%;background:var(--blue)"></div></div><span class="val">72%</span></div>
+        <div class="gbar"><span>Complex asks</span><div class="track"><div class="bfill" style="width:23%;background:var(--indigo);transition-delay:.25s"></div></div><span class="val">23%</span></div>
+        <div class="gbar"><span>Escalated</span><div class="track"><div class="bfill" style="width:5%;background:var(--violet);transition-delay:.5s"></div></div><span class="val">5%</span></div>
+        <div class="gnote">Efficient models for the routine, premium models only where reasoning earns it — with caps you set.</div>
+      </div>
+    </div>
+    <div class="loopline"></div>
+    <div class="loopcap">and every question I could not answer returns to chapter one — as a ranked content backlog</div>
+  </div>
+
+  <!-- CH 4 · close -->
+  <div class="ch title-card" id="ch4">
+    <div class="brandrow"><img src="../../site/assets/brand/qualizeal-icon.png" alt=""><span>QUALI<em>ZEAL</em></span></div>
+    <div class="t-rule"></div>
+    <h1 style="font-size:64px">Built for you,<br>inside your boundary.</h1>
+    <div class="voice" style="font-size:24px;margin-top:26px">Four questions tell us your constraints —
+      and we answer with your architecture, its limitations stated out loud.</div>
+    <div class="voice" style="font-family:var(--mono);font-size:16px;color:var(--blue);margin-top:18px">
+      knowledge fabric · solution fit &nbsp;→&nbsp; /configurator/</div>
+  </div>
+
+  <!-- narration -->
+  <div class="cap" id="cap">
+    <span class="who"><img src="../../site/assets/brand/qualizeal-icon.png" alt=""></span>
+    <p id="capline"></p>
+  </div>
+</div>
+
+<script src="../../site/assets/js/archscene.js"></script>
+<script>
+/* Deterministic film timeline. window.FILM_DONE flips when the take ends. */
+const CAPS = [
+  [1.2,  "I am <b>Knowledge Fabric</b>. Let me show you how I work."],
+  [5.2,  "Feed me only what you have <b>already approved</b> — from the systems you already run."],
+  [9.8,  "I read every format, I <b>OCR the paper</b>, and I rank what I find by type, version and status."],
+  [14.4, "Anything doubtful goes to <b>your curators</b>, not into my index."],
+  [18.2, "What remains, I index <b>down to the paragraph</b> — so every claim I ever make has an address."],
+  [23.2, "Now watch what happens when someone <b>asks me a question</b>."],
+  [24.6, "I check <b>who is asking</b> before I search a single word."],
+  [27.6, "I gather evidence — and if it is thin, my <b>grounding gate stops me</b>."],
+  [30.2, "I do not guess. I ask <b>one clarifying question</b>, and try again properly."],
+  [33.8, "When the evidence passes, I answer — <b>cited to the page</b>, with my confidence shown."],
+  [36.8, "And I file what I could not answer as a <b>backlog for your content team</b>."],
+  [41.4, "Here is what comes out — for the asker, for <b>your curators</b>, for <b>your admins</b>."],
+  [46.8, "QualiZeal builds these views for your roles — and routes <b>models by complexity</b>, under caps you set."],
+  [52.4, "The loop closes: I get better from <b>real use</b>, not guesswork."],
+  [57.6, "Tell QualiZeal your constraints — and see <b>your architecture</b>, limitations included."],
+];
+const CHAPTERS = [ [0,"ch0"], [4.6,"ch1"], [22.8,"ch2"], [40.6,"ch3"], [56.6,"ch4"] ];
+const END = 63.5;
+
+/* Hold the answer journey at frame zero until its chapter opens, so the
+   narration lands on the beats of its 16-second loop. */
+document.addEventListener("DOMContentLoaded", () => {
+  const wrap = document.querySelector("#ch2 .as-wrap");
+  if (wrap) wrap.classList.add("as-paused");
+});
+at(23.6, () => {
+  const wrap = document.querySelector("#ch2 .as-wrap");
+  if (wrap) wrap.classList.remove("as-paused");
+});
+
+function at(t, fn){ setTimeout(fn, t*1000); }
+const cap = document.getElementById("capline");
+
+/* passage counter + intake dots for chapter 1 */
+const dots = document.getElementById("dots");
+for (let i=0;i<14;i++){
+  const d=document.createElement("div"); d.className="dot";
+  d.style.cssText=`left:0;top:${8+(i%5)*54}px;--dy:${60-(i%5)*54}px;`+
+    `background:${["#047857","#0086E6","#4338CA","#344054","#DC6803"][i%5]};animation-delay:${.2+i*.34}s`;
+  dots.appendChild(d);
+}
+at(6.2, ()=>{ let n=0; const el=document.getElementById("pcount");
+  const iv=setInterval(()=>{ n+=137; if(n>=9078){n=9078;clearInterval(iv);} 
+    el.textContent=n.toLocaleString()+" passages"; }, 90); });
+
+CHAPTERS.forEach(([t,id])=>at(t,()=>{
+  document.querySelectorAll(".ch").forEach(c=>c.classList.remove("on","play"));
+  const c=document.getElementById(id); c.classList.add("on");
+  requestAnimationFrame(()=>requestAnimationFrame(()=>c.classList.add("play")));
+}));
+CAPS.forEach(([t,html])=>at(t,()=>{
+  cap.classList.remove("say");
+  setTimeout(()=>{ cap.innerHTML=html; cap.classList.add("say"); },180);
+}));
+at(END, ()=>{ window.FILM_DONE = true; });
+</script>
+</body>
+</html>

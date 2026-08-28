@@ -34,6 +34,25 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);
 h1,h2,h3{font-family:var(--display);font-weight:400;letter-spacing:-.02em;line-height:1.08}
 a{color:inherit}
 
+/* ---------- film ---------- */
+.film-frame{margin-top:44px;border-radius:18px;overflow:hidden;border:1px solid var(--rule);
+  box-shadow:0 30px 70px -38px rgba(10,22,38,.4);background:#0A1626}
+.film-frame video{display:block;width:100%;height:auto}
+.film-note{margin-top:14px;font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+
+/* ---------- built for you ---------- */
+.build-grid{margin-top:46px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.build-card{background:var(--t,#fff);border:1px solid var(--rule);border-top:3px solid var(--h,var(--blue));
+  border-radius:14px;padding:22px}
+.build-card h3{font-size:19px;margin-bottom:9px}
+.build-card p{font-size:14px;line-height:1.55;color:var(--ink-2)}
+.fit-cta{margin-top:26px;display:flex;align-items:center;justify-content:space-between;gap:22px;
+  text-decoration:none;background:linear-gradient(120deg,#0A1626,#17314D);color:#C4D3E1;
+  border-radius:16px;padding:24px 28px;transition:transform .2s}
+.fit-cta:hover{transform:translateY(-2px)}
+.fit-cta b{color:#fff;font-size:18px}
+.fit-cta svg{flex:none;color:#8FC9F5}
+
 /* ---------- weave backdrop ---------- */
 .weave{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;
   pointer-events:none;opacity:.45}
@@ -351,6 +370,7 @@ footer b{color:#C7D6E3;font-weight:500}
 
 <nav class="rail" aria-label="Section navigation">
   <button data-go="hero"><span class="tick"></span><span class="lbl">Start</span></button>
+  <button data-go="film"><span class="tick"></span><span class="lbl">The film</span></button>
   <button data-go="problem"><span class="tick"></span><span class="lbl">The problem</span></button>
   <button data-go="how"><span class="tick"></span><span class="lbl">How it works</span></button>
   <button data-go="clarify"><span class="tick"></span><span class="lbl">Clarify-back</span></button>
@@ -358,6 +378,7 @@ footer b{color:#C7D6E3;font-weight:500}
   <button data-go="caps"><span class="tick"></span><span class="lbl">Capabilities</span></button>
   <button data-go="covers"><span class="tick"></span><span class="lbl">Coverage</span></button>
   <button data-go="value"><span class="tick"></span><span class="lbl">Value</span></button>
+  <button data-go="build"><span class="tick"></span><span class="lbl">Built for you</span></button>
   <button data-go="delivery"><span class="tick"></span><span class="lbl">Delivery</span></button>
   <button data-go="close"><span class="tick"></span><span class="lbl">Difference</span></button>
 </nav>
@@ -388,6 +409,24 @@ footer b{color:#C7D6E3;font-weight:500}
   </div>
     <figcaption class="loom-cap">Each vertical thread is a source document. Each horizontal thread is a question asked. Where they cross and hold, that is a citation.</figcaption>
   </div>
+</div></section>
+
+<!-- ================= FILM ================= -->
+<section id="film" class="band"><div class="wrap">
+  <div class="rv"><div class="eyebrow">In its own words</div>
+  <h2>Seventy seconds. <em>No slides, no jargon.</em></h2>
+  <p class="sub">The fabric introduces itself: what goes in, what happens to it, and what comes
+  out — for the person asking, for your curators, and for your admins. Silent by design, with
+  the narration carried in captions, so it plays anywhere from a stand to a boardroom.</p></div>
+  <div class="film-frame rv">
+    <video controls playsinline preload="metadata"
+      poster="media/fabric-explainer-poster.jpg" aria-label="Knowledge Fabric explainer film">
+      <source src="media/fabric-explainer.webm" type="video/webm">
+      Your browser cannot play this film — the sections below tell the same story live.
+    </video>
+  </div>
+  <p class="film-note rv">Every scene in the film is the product's own animation system —
+  nothing staged, nothing mocked that we have not built.</p>
 </div></section>
 
 <!-- ================= PROBLEM ================= -->
@@ -470,6 +509,47 @@ footer b{color:#C7D6E3;font-weight:500}
   <div class="val rv" id="valGrid"></div>
 </div></section>
 
+<!-- ================= BUILT FOR YOU ================= -->
+<section id="build" class="band" style="background:#F4F8FB;border-block:1px solid var(--rule)"><div class="wrap">
+  <div class="rv"><div class="eyebrow">What QualiZeal builds on the fabric</div>
+  <h2>The platform is the floor. <em>We build your rooms.</em></h2>
+  <p class="sub">Every deployment is shaped to its owner: how the answering behaves, how content
+  arrives, and what each of your roles gets to see and control.</p></div>
+  <div class="build-grid rv">
+    <div class="build-card" style="--h:var(--blue);--t:var(--blue-t)">
+      <h3>Question-answering, tuned to your house rules</h3>
+      <p>Confidence thresholds, clarify-back style, terminology packs, answer length and tone,
+      which sources outrank which — the answering engine is configured against your prioritised
+      question set, not shipped as a default.</p>
+    </div>
+    <div class="build-card" style="--h:var(--emerald);--t:var(--emerald-t)">
+      <h3>Ingestion pipelines for your systems</h3>
+      <p>Connectors to your document management, quality and ticketing systems, event-driven or
+      scheduled, with OCR for scanned paper — so the knowledge base refreshes itself on your
+      cadence instead of by project.</p>
+    </div>
+    <div class="build-card" style="--h:var(--amber);--t:var(--amber-t)">
+      <h3>Dashboards for curators</h3>
+      <p>An answer-monitoring view: flagged answers, clarification hot-spots, conflict and
+      superseded queues, and the demand-ranked gap backlog — so content work follows real use.</p>
+    </div>
+    <div class="build-card" style="--h:var(--violet);--t:var(--violet-t)">
+      <h3>Model governance for admins</h3>
+      <p>Route questions to models by complexity — efficient models for routine asks, premium
+      models only where reasoning earns it — with per-team caps, budgets and full usage
+      visibility.</p>
+    </div>
+  </div>
+  <a class="fit-cta rv" href="../configurator/">
+    <span><b>Four questions. Your architecture.</b><br>
+    Tell us your infrastructure, your approved models and your ambitions — we answer with the
+    fabric we would propose, its limitations stated out loud, and the demonstration closest to
+    your domain.</span>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2.4" stroke-linecap="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+  </a>
+</div></section>
+
 <!-- ================= DELIVERY ================= -->
 <section id="delivery" class="band" style="background:#F4F8FB;border-block:1px solid var(--rule)"><div class="wrap">
   <div class="rv"><div class="eyebrow">Delivery</div>
@@ -486,7 +566,7 @@ footer b{color:#C7D6E3;font-weight:500}
 <footer><div class="wrap fw">
   <span class="fbrand"><img src="../assets/brand/qualizeal-icon.png" alt="QualiZeal" width="26" height="26">
     <span><b>Knowledge Fabric</b> · Enterprise Knowledge Intelligence</span></span>
-  <span class="fnav"><a href="../kit/">Presenter kit</a> · <a href="../deck/">Overview deck</a> · <a href="../index.html#domains">Demonstrations</a> · QualiZeal · AI Center of Excellence</span>
+  <span class="fnav"><a href="../configurator/">Solution fit</a> · <a href="../kit/">Presenter kit</a> · <a href="../deck/">Overview deck</a> · <a href="../index.html#domains">Demonstrations</a> · QualiZeal · AI Center of Excellence</span>
 </div></footer>
 
 <script src="../assets/js/archscene.js"></script>

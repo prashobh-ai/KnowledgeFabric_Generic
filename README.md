@@ -369,6 +369,12 @@ Four routes, published together by the same Pages job:
 | `/walkthrough/` | The scroll-driven client walkthrough. Built to be driven in front of a client instead of sending a deck. |
 | `/deck/` | The twelve-slide overview deck rendered natively in the browser — arrow keys to advance, `G` for the slide overview, `F` for full screen, `Ctrl+P` to save the whole deck as a PDF. |
 | `/downloads/` | The `.pptx`, the `.docx` and the two 3800 px reference diagrams. |
+| `/configurator/` | The solution-fit questionnaire: four choices compose the proposed architecture, its explicit limitations, and the demonstration closest to the prospect's domain. Rule-based — every combination has a prepared answer (`site/configurator/rules.js`). |
+
+The walkthrough also embeds a seventy-second explainer film in which the
+fabric introduces itself (`site/walkthrough/media/`). The film is recorded
+from `brand-assets/film-stage/stage.html` — see the README there to
+re-record after editing.
 
 ### What is generated and what is not
 
