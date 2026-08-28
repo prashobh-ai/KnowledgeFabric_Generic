@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Knowledge Fabric — Solution fit</title>
-<meta name="description" content="Four questions about your infrastructure, approved models and ambitions — answered with a proposed Knowledge Fabric architecture, its explicit limitations, and a demonstration for your domain.">
+<meta name="description" content="Eight quick answers — your infrastructure, identity, approved models, index, roles, telemetry — composed into a proposed Knowledge Fabric architecture with its limitations stated and a demonstration for your domain.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -44,14 +44,13 @@ a{color:inherit}
   color:var(--blue);display:flex;align-items:center;gap:10px;margin-bottom:18px}
 .eyebrow::before{content:"";width:26px;height:1px;background:var(--coral)}
 
-.hero{padding:clamp(40px,7vh,72px) 0 26px}
-.hero h1{font-size:clamp(30px,4.4vw,52px);max-width:22ch}
+.hero{padding:clamp(32px,6vh,56px) 0 18px}
+.hero h1{font-size:clamp(28px,4vw,46px);max-width:24ch}
 .hero h1 em{font-style:italic;color:var(--blue)}
-.hero .lede{color:var(--ink-2);max-width:62ch;margin-top:16px}
-.hero .honest{margin-top:14px;font-size:13px;color:var(--mute);max-width:70ch}
+.hero .lede{color:var(--mute);max-width:60ch;margin-top:12px;font-size:15px}
 
 /* ---------------- stepper ---------------- */
-.steps{display:flex;gap:8px;margin:26px 0 8px;flex-wrap:wrap}
+.steps{display:flex;gap:8px;margin:22px 0 8px;flex-wrap:wrap}
 .stepdot{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
   color:var(--faint);border:1px solid var(--rule);border-radius:999px;padding:6px 13px;background:#fff}
 .stepdot.on{color:#fff;background:var(--blue);border-color:var(--blue)}
@@ -71,11 +70,25 @@ a{color:inherit}
 .opt b{display:block;font-weight:600;font-size:15.5px}
 .opt span{display:block;font-size:12.5px;color:var(--mute);margin-top:4px}
 .opt.picked{border-color:var(--blue);background:var(--blue-t)}
+.opt-top{display:flex!important;align-items:center;gap:9px;margin-top:0!important}
+.opt-top img{width:18px;height:18px;flex:none}
+.opt-top b{margin:0}
+.opt.locked{cursor:default;border-color:var(--blue);background:var(--blue-t)}
+.opt.locked:hover{transform:none;box-shadow:none}
+.always{font-family:var(--mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--blue);border:1px solid var(--blue);border-radius:999px;padding:2px 8px;
+  margin-left:auto;margin-top:0!important}
 .qnav{margin-top:22px;display:flex;gap:10px}
 .ghost{all:unset;cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:.08em;
   text-transform:uppercase;color:var(--mute);border:1px solid var(--rule);border-radius:8px;
   padding:8px 14px}
 .ghost:hover{color:var(--blue);border-color:var(--blue)}
+.ghost.primary{color:#fff;background:var(--blue);border-color:var(--blue)}
+.ghost.primary:hover{background:#0070c2}
+.next{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:8px;background:var(--blue);
+  color:#fff;border-radius:10px;padding:10px 18px;font-weight:600;font-size:14px}
+.next:hover{background:#0070c2}
+.next:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 
 /* ---------------- result ---------------- */
 #result{display:none;padding:10px 0 80px}
@@ -85,12 +98,13 @@ a{color:inherit}
 .badges{display:flex;gap:8px;flex-wrap:wrap}
 .badge{font-family:var(--mono);font-size:10.5px;letter-spacing:.07em;border-radius:999px;
   padding:5px 12px;background:var(--slate-t);color:var(--slate)}
+.badge.role{background:var(--indigo-t);color:var(--indigo)}
 .r-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:22px;margin-top:22px;align-items:start}
 @media(max-width:900px){.r-grid{grid-template-columns:1fr}}
 .card{background:#fff;border:1px solid var(--rule);border-radius:16px;padding:22px}
 .card h3{font-size:17px;margin-bottom:12px}
 .arch-svg{border:1px solid var(--rule);border-radius:14px;background:#fff;padding:10px;overflow-x:auto}
-.arch-svg svg{width:100%;min-width:640px;height:auto;display:block}
+.arch-svg > svg{width:100%;min-width:640px;height:auto;display:block}
 .klist{list-style:none;display:flex;flex-direction:column;gap:8px}
 .klist li{display:flex;gap:10px;font-size:14px;color:var(--ink-2)}
 .klist li::before{content:"";flex:none;width:6px;height:6px;border-radius:50%;
@@ -127,7 +141,7 @@ footer a{color:var(--blue);text-decoration:none}
 <body>
 
 <header class="topbar">
-  <a class="brand" href="../index.html">
+  <a class="brand" href="../">
     <img src="../assets/brand/qualizeal-icon.png" alt="" width="24" height="24" style="height:24px;width:auto">
     <span class="brand-wm">QUALI<em>ZEAL</em></span>
     <span class="brand-sub">AI Center of Excellence</span>
@@ -137,40 +151,68 @@ footer a{color:var(--blue);text-decoration:none}
 
 <main class="wrap">
   <section class="hero">
-    <div class="eyebrow">Four questions</div>
-    <h1>Tell us your constraints. We'll show you <em>your fabric</em>.</h1>
-    <p class="lede">Your domain, your infrastructure, the models you have approved, and how far
-      you want the first release to go. From those four answers we compose the architecture we
-      would propose, list what ships — and state the limitations out loud, before a contract does.</p>
-    <p class="honest">Every combination here has a prepared answer: the platform is assembled from
-      the same proven blocks each time, so nothing on this page is improvised.</p>
+    <div class="eyebrow">Solution fit</div>
+    <h1>Tell us your constraints. See <em>your fabric</em>.</h1>
+    <p class="lede">Eight quick answers. We compose the architecture, name its limitations,
+      and open the demonstration for your domain.</p>
   </section>
 
   <div class="steps" id="stepdots"></div>
 
   <section class="q" data-q="domain">
     <h2>Which world do your documents live in?</h2>
-    <p class="hint">We'll show you the demonstration fabric closest to it.</p>
+    <p class="hint">We'll route you to the demonstration fabric closest to it.</p>
     <div class="opts" id="opt-domain"></div>
   </section>
 
   <section class="q" data-q="infra">
     <h2>Where would it run?</h2>
-    <p class="hint">The fabric deploys inside your boundary — identity, network and keys stay yours.</p>
+    <p class="hint">The fabric deploys inside your boundary — every later option adapts to this answer.</p>
     <div class="opts" id="opt-infra"></div>
     <div class="qnav"><button class="ghost" data-back>&#8592; Back</button></div>
   </section>
 
+  <section class="q" data-q="identity">
+    <h2>How do your people sign in?</h2>
+    <p class="hint">Single sign-on — your identity provider stays the source of truth.</p>
+    <div class="opts" id="opt-identity"></div>
+    <div class="qnav"><button class="ghost" data-back>&#8592; Back</button></div>
+  </section>
+
   <section class="q" data-q="model">
-    <h2>What model access is approved today?</h2>
+    <h2>Which models are approved today?</h2>
     <p class="hint">Honest answer, please — the architecture changes, and we'll say what each choice costs.</p>
     <div class="opts" id="opt-model"></div>
     <div class="qnav"><button class="ghost" data-back>&#8592; Back</button></div>
   </section>
 
+  <section class="q" data-q="vector">
+    <h2>Where should the search index live?</h2>
+    <p class="hint">Vector + lexical retrieval — inside your boundary unless you choose a SaaS.</p>
+    <div class="opts" id="opt-vector"></div>
+    <div class="qnav"><button class="ghost" data-back>&#8592; Back</button></div>
+  </section>
+
+  <section class="q" data-q="roles" data-multi>
+    <h2>Who works the fabric?</h2>
+    <p class="hint">Pick every role you need — each gets its own workspace in the governed tier.</p>
+    <div class="opts" id="opt-roles"></div>
+    <div class="qnav">
+      <button class="ghost" data-back>&#8592; Back</button>
+      <button class="next" data-next>Continue &#8594;</button>
+    </div>
+  </section>
+
+  <section class="q" data-q="obs">
+    <h2>How do you want to watch it run?</h2>
+    <p class="hint">Usage, cost and answer-quality telemetry, on the stack you already trust.</p>
+    <div class="opts" id="opt-obs"></div>
+    <div class="qnav"><button class="ghost" data-back>&#8592; Back</button></div>
+  </section>
+
   <section class="q" data-q="scope">
     <h2>How far should the first release go?</h2>
-    <p class="hint">Each tier is a superset of the one before it. You can start small and extend.</p>
+    <p class="hint">Each tier is a superset of the one before it. Start small, extend.</p>
     <div class="opts" id="opt-scope"></div>
     <div class="qnav"><button class="ghost" data-back>&#8592; Back</button></div>
   </section>
@@ -180,8 +222,7 @@ footer a{color:var(--blue);text-decoration:none}
 
 <footer>
   <span>QualiZeal · AI Center of Excellence — Knowledge Fabric</span>
-  <span><a href="../walkthrough/">Walkthrough</a> · <a href="../deck/">Deck</a> ·
-        <a href="../kit/">Presenter kit</a> · <a href="../index.html#domains">Demonstrations</a></span>
+  <span><a href="../">Home</a> · <a href="../demos/">Demos</a> · <a href="../admin/">Admin</a></span>
 </footer>
 
 <script src="rules.js"></script>

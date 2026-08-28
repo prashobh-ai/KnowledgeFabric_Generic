@@ -4,7 +4,7 @@
 
 Routes produced:
 
-    site/index.html                the landing page, all eleven tenants
+    site/demos/index.html          the demonstrations directory, all eleven tenants
     site/kit/index.html            the presenter kit — how to run the meeting
     site/demo/<slug>/index.html    one tenant demonstration
     site/data/<slug>/*.json        that tenant's fabric artefacts
@@ -12,8 +12,8 @@ Routes produced:
 
 Hand-written and never touched by this script:
 
-    site/assets/                   stylesheet, brand marks, vendored JS
-    site/walkthrough/              the scroll-driven client walkthrough
+    site/index.html                the walkthrough — the hand-written landing page
+    site/assets/                   stylesheet, brand marks, vendored JS, logos
     site/deck/                     the twelve-slide deck, rendered in-browser
     site/downloads/                the .pptx, the .docx and the diagrams
 
@@ -136,12 +136,12 @@ def build_index(registry: dict) -> str:
         c = x["counts"]
         rgb = tuple(int(x["accent"].lstrip("#")[i:i + 2], 16) for i in (0, 2, 4))
         tiles.append(f"""
-      <a class="card tile tilt rise" href="demo/{x['slug']}/"
+      <a class="card tile tilt rise" href="../demo/{x['slug']}/"
          style="--accent:{x['accent']};--accent-rgb:{rgb[0]},{rgb[1]},{rgb[2]}">
         <div class="sheen"></div>
         <div class="card-pad">
           <div class="top">
-            <img class="tile-logo" src="assets/brand/{x['slug']}-lockup.png"
+            <img class="tile-logo" src="../assets/brand/{x['slug']}-lockup.png"
                  alt="{html.escape(x['slug'])}" loading="lazy" decoding="async">
           </div>
           <span class="ind">{html.escape(x['industry'])}</span>
@@ -161,30 +161,25 @@ def build_index(registry: dict) -> str:
         </div>
       </a>""")
 
-    links = [("Domains", "#domains"), ("How it works", "#how"),
-             ("Walkthrough", "walkthrough/"), ("Solution fit", "configurator/"),
-             ("Resources", "kit/")]
+    links = [("Home", "../"), ("Solution fit", "../configurator/"),
+             ("Admin", "../admin/")]
 
     return head(
-        "Knowledge Fabric · Enterprise Knowledge Intelligence",
+        "Knowledge Fabric · Demonstrations",
         "Eleven industry knowledge fabrics. Citation-grounded answers, a live "
         "entity graph, and knowledge health measured directly from the corpus.",
-        "", "#0B66E1"
-    ) + topbar("", links) + f"""
+        "../", "#0B66E1"
+    ) + topbar("../", links) + f"""
 <main>
 
   <section style="padding-top:clamp(3rem,7vh,6rem)">
     <div class="wrap">
       <div class="grid" style="grid-template-columns:minmax(320px,1.02fr) minmax(320px,1fr);align-items:center;gap:3.2rem">
         <div>
-          <div class="eyebrow rise">Eleven industries · one fabric</div>
-          <h1 class="rise" style="font-size:clamp(2.3rem,4.4vw,3.9rem)">Every answer,<br><span class="grad">traced to the page it came from.</span></h1>
+          <div class="eyebrow rise">Demonstrations</div>
+          <h1 class="rise" style="font-size:clamp(2.3rem,4.4vw,3.9rem)">Eleven industries.<br><span class="grad">Pick yours, ask it anything.</span></h1>
           <p class="lede rise" style="margin-top:1.5rem">
-            Knowledge Fabric indexes an enterprise corpus down to the paragraph,
-            builds an entity graph from the documents themselves, and answers
-            questions by quoting sources verbatim — never by paraphrasing them.
-            Open any of the eleven domains below and interrogate a full
-            synthetic corpus.
+            Full synthetic corpora — ask a question, open the citation.
           </p>
           <div class="row rise" style="margin-top:2rem">
             <a class="btn" href="#domains">
@@ -217,13 +212,10 @@ def build_index(registry: dict) -> str:
     <div class="wrap">
       <div class="section-head">
         <div class="eyebrow rise">The domains</div>
-        <h2 class="rise">Eleven corpora, built from how each industry
-          actually documents itself.</h2>
+        <h2 class="rise">Built from how each industry documents itself.</h2>
         <p class="lede rise" style="margin-top:1rem">
-          Each tenant is fictional, but its scaffolding is not. Document types,
-          code systems, organisational units, approval chains and identifier
-          formats are drawn from the real standards that govern that industry —
-          ATA chapters, HL7 FHIR, X12, PCAOB, MARPOL, GS1, ISO 29119.
+          Fictional tenants on real scaffolding — ATA, HL7 FHIR, X12, PCAOB,
+          MARPOL, GS1, ISO 29119.
         </p>
       </div>
       <div class="grid g3">{''.join(tiles)}</div>
@@ -340,7 +332,7 @@ def build_index(registry: dict) -> str:
 
   // Hero graph: a composite built from every tenant's hub entities, so the
   // landing page shows the whole fabric rather than one domain's slice.
-  fetch('data/overview.json').then(function(r){{return r.json();}}).then(function(g){{
+  fetch('../data/overview.json').then(function(r){{return r.json();}}).then(function(g){{
     if(!window.THREE) return;
     var gx = new Galaxy(document.getElementById('heroGalaxy'), {{
       maxNodes: window.innerWidth < 760 ? 220 : 420, autorotate: 0.0009
@@ -509,6 +501,8 @@ def build_kit(registry: dict) -> str:
         "downloadable file and the talk track.",
         "../", "#0B66E1"
     ) + topbar("../", links) + f"""
+<script>window.GATE_BASE="../";</script>
+<script src="../assets/js/gate.js"></script>
 <main>
 
   <section style="padding-top:clamp(2.6rem,6vh,5rem)">
@@ -542,7 +536,7 @@ def build_kit(registry: dict) -> str:
         </p>
       </div>
       <div class="grid g2">
-        <a class="card tilt rise" href="../walkthrough/"><div class="sheen"></div>
+        <a class="card tilt rise" href="../"><div class="sheen"></div>
           <div class="card-pad" style="padding:2rem">
             <span class="badge">Live walkthrough</span>
             <h3 style="margin:1rem 0 .6rem;font-size:1.4rem">Scroll-driven, one page</h3>
@@ -611,18 +605,19 @@ def build_kit(registry: dict) -> str:
         <h2 class="rise">Turn their constraints into their architecture.</h2>
         <p class="lede rise" style="margin-top:1rem">
           When the room starts asking "would this work for us?", open the solution-fit
-          questionnaire together. Four choices — domain, infrastructure, approved models,
-          scope — and the page composes the architecture we would propose, lists what
-          ships, states the limitations out loud, and hands them the demonstration
-          closest to their world. Every combination has a prepared answer; the result is
-          a link you can leave in the follow-up email.
+          questionnaire together. Eight choices — domain, cloud, sign-in, models, index,
+          roles, telemetry, scope — and the page composes the architecture we would
+          propose, drawn with the vendors' own marks, lists what ships, states the
+          limitations out loud, and hands them the demonstration closest to their world.
+          Every combination has a prepared answer; the result — the architecture drawing
+          and a written proposal — downloads for the client to keep.
         </p>
       </div>
       <a class="card tilt rise" href="../configurator/" style="display:block"><div class="sheen"></div>
         <div class="card-pad" style="display:flex;align-items:center;justify-content:space-between;gap:2rem;padding:2rem">
           <div>
             <span class="badge">Solution fit</span>
-            <h3 style="margin:.9rem 0 .5rem;font-size:1.35rem">Four questions. Their fabric.</h3>
+            <h3 style="margin:.9rem 0 .5rem;font-size:1.35rem">Eight questions. Their fabric.</h3>
             <p class="small" style="margin:0">Rule-based, honest and shareable — the
             limitations panel is the part prospects remember.</p>
           </div>
@@ -1026,7 +1021,7 @@ def main() -> None:
     slugs = [t["slug"] for t in registry["tenants"]]
 
     # Clear generated routes but never assets/.
-    for p in (SITE / "demo", SITE / "data"):
+    for p in (SITE / "demo", SITE / "data", SITE / "demos"):
         if p.exists():
             shutil.rmtree(p)
 
@@ -1070,7 +1065,9 @@ def main() -> None:
     (SITE / "data" / "overview.json").write_text(
         json.dumps(overview, separators=(",", ":")), encoding="utf-8")
 
-    (SITE / "index.html").write_text(build_index(registry), encoding="utf-8")
+    demos = SITE / "demos" / "index.html"
+    demos.parent.mkdir(parents=True, exist_ok=True)
+    demos.write_text(build_index(registry), encoding="utf-8")
 
     kit = SITE / "kit" / "index.html"
     kit.parent.mkdir(parents=True, exist_ok=True)
@@ -1080,7 +1077,7 @@ def main() -> None:
 
     print("-" * 74)
     print(f"  {len(slugs)} demonstrations · {total_bytes / 1024 / 1024:.1f} MB payload")
-    print(f"  landing: site/index.html")
+    print(f"  demos:   site/demos/index.html")
     print(f"  routes:  site/demo/<slug>/index.html")
     print(f"  kit:     site/kit/index.html")
     print(f"  static:  site/walkthrough/  site/deck/  site/downloads/")

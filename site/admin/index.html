@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Knowledge Fabric — Team area</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/brand/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0A1626;--ink2:#22374D;--mute:#6A7F94;--rule:#DFE7EE;--blue:#0086E6;--paper:#FBFCFD;
+  --mono:'JetBrains Mono',ui-monospace,monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:Inter,system-ui,sans-serif;line-height:1.55}
+.topbar{display:flex;align-items:center;gap:12px;padding:13px clamp(20px,5vw,88px);
+  border-bottom:1px solid var(--rule);background:#fff}
+.topbar img{height:24px}
+.topbar b{font-size:16px}
+.topbar b em{font-style:normal;color:var(--blue)}
+.topbar span{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--mute)}
+main{max-width:960px;margin:0 auto;padding:44px clamp(20px,5vw,88px) 80px}
+h1{font-size:26px;font-weight:600;margin-bottom:6px}
+.sub{color:var(--mute);font-size:14px;margin-bottom:30px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.card{background:#fff;border:1px solid var(--rule);border-radius:14px;padding:20px;display:block;
+  text-decoration:none;color:inherit;transition:transform .18s,border-color .18s}
+a.card:hover{transform:translateY(-2px);border-color:var(--blue)}
+.card h2{font-size:15.5px;font-weight:600;margin-bottom:4px}
+.card p{font-size:12.5px;color:var(--mute)}
+.card .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--blue);display:block;margin-bottom:8px}
+h3{font-size:13px;font-weight:600;margin:32px 0 12px;color:var(--ink2)}
+.files a{display:flex;justify-content:space-between;gap:12px;padding:12px 14px;background:#fff;
+  border:1px solid var(--rule);border-radius:10px;margin-bottom:8px;text-decoration:none;color:var(--ink2);
+  font-size:13.5px}
+.files a:hover{border-color:var(--blue);color:var(--blue)}
+.files span{font-family:var(--mono);font-size:10.5px;color:var(--mute)}
+footer{padding:20px clamp(20px,5vw,88px);border-top:1px solid var(--rule);font-size:12px;color:var(--mute)}
+footer a{color:var(--blue);text-decoration:none}
+</style>
+</head>
+<body>
+<script>window.GATE_BASE="../";</script>
+<script src="../assets/js/gate.js"></script>
+<header class="topbar">
+  <img src="../assets/brand/qualizeal-icon.png" alt="">
+  <b>QUALI<em>ZEAL</em></b>
+  <span>Team area</span>
+</header>
+<main>
+  <h1>Presenter materials</h1>
+  <p class="sub">For QualiZeal AI-CoE use. Client-facing pages stay on the <a href="../" style="color:var(--blue)">home page</a>.</p>
+  <div class="grid">
+    <a class="card" href="../kit/"><span class="k">Run the meeting</span>
+      <h2>Presenter kit</h2><p>Agenda, talk track, ground rules, everything in one place.</p></a>
+    <a class="card" href="../deck/"><span class="k">Present</span>
+      <h2>Browser deck</h2><p>Twelve slides, no PowerPoint needed. G for overview, Ctrl+P for PDF.</p></a>
+  </div>
+  <h3>Downloads</h3>
+  <div class="files">
+    <a href="../downloads/Knowledge-Fabric-Overview.pptx" download>Knowledge-Fabric-Overview.pptx <span>deck · editable</span></a>
+    <a href="../downloads/Knowledge-Fabric-Capability-Overview.docx" download>Knowledge-Fabric-Capability-Overview.docx <span>leave-behind</span></a>
+    <a href="../media/fabric-explainer.webm" download>fabric-explainer.webm <span>the film · 70s</span></a>
+    <a href="../downloads/knowledge-fabric-architecture.jpg" download>knowledge-fabric-architecture.jpg <span>3800 px</span></a>
+    <a href="../downloads/knowledge-fabric-answer-workflow.jpg" download>knowledge-fabric-answer-workflow.jpg <span>3800 px</span></a>
+  </div>
+</main>
+<footer><a href="../">← Knowledge Fabric</a> · access is session-scoped, close the tab to lock</footer>
+</body>
+</html>

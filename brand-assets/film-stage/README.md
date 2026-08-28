@@ -15,7 +15,7 @@ To re-record (any machine with Playwright + Chromium):
 `recordVideo:{dir,size:{width:1280,height:720}}`, goto
 `/brand-assets/film-stage/stage.html`, `waitForFunction('window.FILM_DONE')`,
 close the context, and copy the produced .webm to
-`site/walkthrough/media/fabric-explainer.webm`. Capture the poster with a
+`site/media/fabric-explainer.webm`. Capture the poster with a
 plain screenshot at ~2.8s.
 
 The stage aliases the site's webfonts onto locally installed

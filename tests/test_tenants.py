@@ -204,8 +204,8 @@ def test_the_directory_is_not_copied_into_the_tenant_routes(assembled_site):
     protect, rather than the mechanism that used to protect it — this keeps
     catching the regression however the page is produced.
     """
-    landing = (assembled_site / "index.html").read_text()
-    assert 'id="domains"' in landing, "landing page is no longer the directory"
+    landing = (assembled_site / "demos" / "index.html").read_text()
+    assert 'id="domains"' in landing, "demos page is no longer the directory"
     for t in registry()["tenants"]:
         page = (assembled_site / "demo" / t["slug"] / "index.html").read_text()
         assert page != landing, f"{t['slug']}: tenant route is a copy of the directory"
