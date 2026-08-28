@@ -369,7 +369,7 @@ DOWNLOADS = [
      "Overview deck — 12 slides",
      "The editable deck. Send it when the meeting expects an attachment, or "
      "when someone needs to lift a slide into their own pack.",
-     "Same twelve slides as the browser deck."),
+     "Same twelve slides as the browser deck, with fade transitions set."),
     ("Knowledge-Fabric-Capability-Overview.docx", "Word",
      "Capability overview — 11 pages",
      "The written record. The leave-behind for people who read rather than "
@@ -547,9 +547,11 @@ def build_kit(registry: dict) -> str:
             <span class="badge">Live walkthrough</span>
             <h3 style="margin:1rem 0 .6rem;font-size:1.4rem">Scroll-driven, one page</h3>
             <p class="small">Built to be driven in front of a client instead
-            of sending a deck. The loom animates on load, the six stages
-            advance as you scroll, and a left rail jumps to any section when
-            somebody wants to skip ahead or double back.</p>
+            of sending a deck. The loom weaves itself on load, the six stages
+            advance as you scroll, and in the architecture section the
+            audience watches a live question make the whole journey — held at
+            the evidence gate, clarified, then answered with citations. A
+            left rail jumps anywhere when somebody wants to skip ahead.</p>
             <p class="tiny muted" style="margin-top:.9rem">Best for discovery
             calls and technical audiences · 20–30 minutes · keyboard navigable</p>
             <div class="go" style="margin-top:1.2rem">Open the walkthrough
@@ -564,9 +566,10 @@ def build_kit(registry: dict) -> str:
             <h3 style="margin:1rem 0 .6rem;font-size:1.4rem">Twelve slides, in the browser</h3>
             <p class="small">The same twelve slides as the PowerPoint,
             rendered natively — no PowerPoint installed, no fonts to go
-            missing on a borrowed laptop. Arrow keys to advance, <b>G</b> for
-            the slide overview, <b>F</b> for full screen, <b>Ctrl+P</b> to
-            save the whole deck as a PDF.</p>
+            missing on a borrowed laptop. Slides build as they open, and the
+            architecture slide runs the animated answer journey live. Arrow
+            keys to advance, <b>G</b> for the overview, <b>F</b> for full
+            screen, <b>Ctrl+P</b> for a clean PDF.</p>
             <p class="tiny muted" style="margin-top:.9rem">Best for leadership
             and procurement · 15–25 minutes · projector-safe</p>
             <div class="go" style="margin-top:1.2rem">Open the deck
