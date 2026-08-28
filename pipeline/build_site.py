@@ -605,19 +605,20 @@ def build_kit(registry: dict) -> str:
         <h2 class="rise">Turn their constraints into their architecture.</h2>
         <p class="lede rise" style="margin-top:1rem">
           When the room starts asking "would this work for us?", open the solution-fit
-          questionnaire together. Eight choices — domain, cloud, sign-in, models, index,
-          roles, telemetry, scope — and the page composes the architecture we would
-          propose, drawn with the vendors' own marks, lists what ships, states the
-          limitations out loud, and hands them the demonstration closest to their world.
-          Every combination has a prepared answer; the result — the architecture drawing
-          and a written proposal — downloads for the client to keep.
+          questionnaire together. Nine choices — their name first, then domain, cloud,
+          sign-in, models, index, roles, telemetry, scope — and the page composes the
+          architecture we would propose, drawn with the vendors' own marks, lists what
+          ships, states the limitations out loud, and hands them the demonstration
+          closest to their world. Every combination has a prepared answer; the takeaway
+          is two print-locked PDFs addressed to the client by name — the architecture
+          drawing and a written proposal.
         </p>
       </div>
       <a class="card tilt rise" href="../configurator/" style="display:block"><div class="sheen"></div>
         <div class="card-pad" style="display:flex;align-items:center;justify-content:space-between;gap:2rem;padding:2rem">
           <div>
             <span class="badge">Solution fit</span>
-            <h3 style="margin:.9rem 0 .5rem;font-size:1.35rem">Eight questions. Their fabric.</h3>
+            <h3 style="margin:.9rem 0 .5rem;font-size:1.35rem">Nine questions. Their fabric, addressed to them.</h3>
             <p class="small" style="margin:0">Rule-based, honest and shareable — the
             limitations panel is the part prospects remember.</p>
           </div>

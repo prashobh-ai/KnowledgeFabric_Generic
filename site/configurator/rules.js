@@ -145,8 +145,8 @@ const ROLES = {
 const ROLE_ORDER = ["reader", "curator", "admin", "auditor"];
 
 const OBS = {
-  qzotel: { label: "QualiZeal dashboards (Python + OpenTelemetry)",
-    sub: "custom-built for you; the code is handed over", short: "QualiZeal OTel dashboards",
+  qzotel: { label: "Dashboards custom-built for you (Python + OpenTelemetry)",
+    sub: "your dashboards, your code — designed around your teams and handed over", short: "Custom-built dashboards",
     logos: ["python", "opentelemetry"] },
   native: { label: "Our cloud's monitoring", sub: "the platform's native telemetry", short: "cloud-native monitoring",
     logos: ["kubernetes"],
@@ -159,11 +159,14 @@ const OBS = {
     } },
   datadog: { label: "Datadog", sub: "your existing Datadog org", short: "Datadog", logos: ["datadog"] },
   grafana: { label: "Grafana + Prometheus", sub: "open-source, runs inside your boundary", short: "Grafana + Prometheus", logos: ["grafana"] },
+  none: { label: "Not needed for the first build", sub: "keep it lean — telemetry is real effort, added when you want it",
+    short: "deferred — opt in later", logos: [] },
 };
 
 const SCOPES = {
   core: { label: "Grounded Q&A first",
-    includes: ["Answer web app with citations & confidence", "Hybrid retrieval (lexical + semantic)",
+    includes: ["Answer workspace custom-built for your teams, with citations & confidence",
+               "Hybrid retrieval (lexical + semantic)",
                "Grounding gate & clarify-back", "Access scoped to the roles you chose", "Audit log"] },
   insight: { label: "Q&A + graph & knowledge health",
     includes: ["Everything in Grounded Q&A", "Entity & relationship graph",
@@ -172,8 +175,9 @@ const SCOPES = {
     includes: ["Everything in graph & health", "A workspace for each role you selected",
                "Usage / cost / quality telemetry on your chosen stack",
                "Model routing by question complexity, per-team caps"] },
-  full: { label: "Full platform incl. API & multilingual",
-    includes: ["Everything in the governed platform", "Multilingual ask-and-answer with labelled translations",
+  full: { label: "Full platform incl. Answer API",
+    includes: ["Everything in the governed platform",
+               "Query-and-answer translation for an agreed language list (English-first)",
                "Answer API & embeddable widget", "BI export of telemetry"] },
 };
 
@@ -195,7 +199,7 @@ const CONFLICTS = [
     say: "Pinecone is a managed SaaS outside the enclave — we propose pgvector in-enclave instead." },
   { when: s => s.infra === "disconnected" && s.obs === "datadog",
     force: { obs: "qzotel" },
-    say: "Datadog cannot receive telemetry from a no-egress enclave — we propose our Python + OpenTelemetry dashboards, running inside." },
+    say: "Datadog cannot receive telemetry from a no-egress enclave — we propose dashboards custom-built for you in Python + OpenTelemetry, running inside it." },
   { when: s => s.infra === "disconnected" && (s.identity === "okta" || s.identity === "entra"),
     force: { identity: "keycloak" },
     say: "A cloud identity provider cannot be reached from a disconnected enclave — we propose Keycloak mirroring your directory inside it." },
@@ -209,11 +213,17 @@ const LIMITS = [
   { when: s => s.model === "managed",
     text: "The model catalogue is limited to what your cloud provider hosts in-tenant — frontier releases arrive there later than on public APIs." },
   { when: s => s.model === "selfhost",
-    text: "Answer fluency and multilingual coverage depend on the open model you approve, and GPU capacity is a hard prerequisite we size in Discover." },
+    text: "Answer fluency and translation quality depend on the open model you approve, and GPU capacity is a hard prerequisite we size in Discover." },
   { when: s => s.model === "none",
     text: "With no LLM approved, answers are verbatim-extractive: exact quoted sentences with citations, no cross-document synthesis. The public demonstrations run exactly this mode — that is what you would get on day one." },
   { when: s => s.model === "none" && s.scope === "full",
-    text: "Multilingual answering needs a generation model — it stays deferred until one is approved, however full the rest of the scope." },
+    text: "Query-and-answer translation needs a generation model — it stays deferred until one is approved, however full the rest of the scope." },
+  { when: () => true,
+    text: "The first build ingests text-first formats: .docx, .txt, .xlsx and readable PDFs — including PDFs with tables and embedded images. Scanned or image-only documents, OCR, audio and video are not first-build items; where your estate needs them, that effort is scoped and finalised with QualiZeal separately." },
+  { when: s => s.scope === "full",
+    text: "English is the working language of the first release. Where you need more, we translate the question and the answer only — source documents are not translated — and we commit to a language only after validating its quality with your approved model in Discover, never by default." },
+  { when: s => s.obs === "none" && (s.scope === "governed" || s.scope === "full"),
+    text: "You deferred telemetry — a lean first build. Role workspaces still ship; usage and answer-quality dashboards are added when you choose to opt in, scoped as their own effort." },
   { when: s => s.vector === "pinecone" && s.infra !== "disconnected",
     text: "Pinecone holds your vectors and document chunks in its own cloud — it is the one component outside your boundary, and residency follows Pinecone's region." },
   { when: s => s.vector === "redis",
@@ -221,7 +231,7 @@ const LIMITS = [
   { when: s => s.obs === "datadog" && s.infra !== "disconnected",
     text: "Usage and quality metrics are exported to your Datadog org — answer content stays inside your boundary; metric names and counts leave it." },
   { when: s => s.obs === "qzotel",
-    text: "The QualiZeal dashboards are code we write and hand over — after Extend your team owns their upkeep, with us on support." },
+    text: "The custom-built dashboards are your code, written for you and handed over — after Extend your team owns their upkeep, with us on support." },
   { when: s => s.roles && !s.roles.includes("curator"),
     text: "No curator role selected: conflict and duplicate queues route to admins as a weekly export. Answer quality holds longer with a named curator — we will say this again in Discover." },
   { when: s => s.roles && s.roles.some(r => r !== "reader") && (s.scope === "core" || s.scope === "insight"),
@@ -235,6 +245,18 @@ const LIMITS = [
   { when: s => s.scope === "full" && s.model === "selfhost",
     text: "Answer-API latency under load depends on your GPU pool; we publish the measured envelope in Prove rather than promising one now." },
 ];
+
+/* The site shows tiers incrementally ("Everything in …"); a standalone client
+   document needs the concrete cumulative list instead.                     */
+const SCOPE_ORDER = ["core", "insight", "governed", "full"];
+function scopeShips(id) {
+  const idx = SCOPE_ORDER.indexOf(id);
+  const out = [];
+  for (let i = 0; i <= (idx < 0 ? 0 : idx); i++)
+    for (const item of SCOPES[SCOPE_ORDER[i]].includes)
+      if (!/^Everything in/.test(item)) out.push(item);
+  return out;
+}
 
 const PHASES = {
   standard:  [["Discover", "weeks"], ["Prove", "weeks"], ["Harden", "weeks"], ["Extend", "ongoing"]],
@@ -261,5 +283,8 @@ function resolve(sel) {
   const limits   = LIMITS.filter(l => l.when(s)).map(l => l.text);
   const phases   = (s.infra === "onprem" || s.infra === "disconnected")
     ? PHASES.heavy : PHASES.standard;
-  return { sel: s, domain, infra, identity, model, vector, obs, roles, scope, limits, adjustments, phases };
+  const rawName  = String(s.name || "").trim();
+  const name     = rawName === "-" ? "" : rawName.slice(0, 60);   // "-" = asked, none given
+  return { sel: s, name, domain, infra, identity, model, vector, obs, roles, scope,
+           limits, adjustments, phases };
 }

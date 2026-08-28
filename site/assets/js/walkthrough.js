@@ -272,7 +272,7 @@ const CAPS = [
   ['graph','indigo','Relationship graph','Explore how products, processes, regulations and records connect to one another.','Engineering · quality'],
   ['health','violet','Knowledge health','Coverage, connectivity, provenance, quality and freshness, with gaps ranked.','Content owners'],
   ['version','emerald','Version awareness','Current revisions outrank superseded ones; drafts stay out unless requested.','Quality · operations'],
-  ['lang','blue','Multilingual answering','Ask and answer in the user\u2019s language; translated material is labelled as translated.','Global operations'],
+  ['lang','blue','Query & answer translation','English-first; where needed, the question and the answer are translated for an agreed, quality-validated language list.','Global operations'],
   ['curate','emerald','Curator workbench','A human queue for conflicts, duplicates and superseded documents.','Content owners'],
   ['lock','slate','Role-scoped access','Permissions applied before ranking, so unauthorised content never enters a result.','Security · IT'],
   ['chart','violet','Usage dashboards','Consumption, question categories, clarification and refusal rates over time.','Sponsors · IT'],
@@ -301,9 +301,9 @@ const fill = (id, arr) => {
 fill('#marqA', CHIPS_A); fill('#marqB', CHIPS_B);
 
 const COV = [
-  ['blue','Formats','Text and scanned documents, office formats, presentations, spreadsheets, structured exports and web content. Scanned material is processed so its text becomes searchable and citable.'],
+  ['blue','Formats','Word documents, plain text, spreadsheets and readable PDFs — including PDFs with tables and embedded images. Formats beyond these are scoped as their own effort, openly.'],
   ['emerald','Functions','Quality and compliance, engineering and manufacturing, service and support, operations, procurement, legal, and people functions.'],
-  ['indigo','Languages','Multilingual corpora and multilingual users. The answer returns in the language of the question, and any translated passage is labelled.'],
+  ['indigo','Languages','English-first by design. Where teams need more, the question and the answer are translated for an agreed language list — validated for quality, never assumed.'],
   ['violet','Question shapes','Factual lookup, procedural how-to, comparison across documents, status and version checks, and relationship questions across entities.']
 ];
 COV.forEach(c => $('#cov').appendChild(el('div', '',

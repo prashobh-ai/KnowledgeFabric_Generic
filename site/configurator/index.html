@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Knowledge Fabric — Solution fit</title>
-<meta name="description" content="Eight quick answers — your infrastructure, identity, approved models, index, roles, telemetry — composed into a proposed Knowledge Fabric architecture with its limitations stated and a demonstration for your domain.">
+<meta name="description" content="A short questionnaire — your infrastructure, identity, approved models, index, roles, telemetry — composed into a proposed Knowledge Fabric architecture with its limitations stated, a demonstration for your domain, and a proposal addressed to you.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -89,6 +89,10 @@ a{color:inherit}
   color:#fff;border-radius:10px;padding:10px 18px;font-weight:600;font-size:14px}
 .next:hover{background:#0070c2}
 .next:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.name-input{width:min(420px,100%);border:1px solid var(--rule);border-radius:12px;background:#fff;
+  padding:14px 18px;font-family:var(--body);font-size:17px;color:var(--ink)}
+.name-input:focus{outline:2px solid var(--blue);border-color:var(--blue)}
+.name-input::placeholder{color:var(--faint)}
 
 /* ---------------- result ---------------- */
 #result{display:none;padding:10px 0 80px}
@@ -153,16 +157,27 @@ footer a{color:var(--blue);text-decoration:none}
   <section class="hero">
     <div class="eyebrow">Solution fit</div>
     <h1>Tell us your constraints. See <em>your fabric</em>.</h1>
-    <p class="lede">Eight quick answers. We compose the architecture, name its limitations,
-      and open the demonstration for your domain.</p>
+    <p class="lede">Nine quick answers. We compose the architecture, name its limitations,
+      and hand you a proposal addressed to you — with the demonstration for your domain.</p>
   </section>
 
   <div class="steps" id="stepdots"></div>
+
+  <section class="q" data-q="name">
+    <h2>Who are we preparing this for?</h2>
+    <p class="hint">Your organisation's name — the architecture and the proposal are addressed to you.</p>
+    <input class="name-input" id="client-name" type="text" maxlength="60"
+           placeholder="e.g. Meridian Health" autocomplete="organization">
+    <div class="qnav">
+      <button class="next" data-next>Continue &#8594;</button>
+    </div>
+  </section>
 
   <section class="q" data-q="domain">
     <h2>Which world do your documents live in?</h2>
     <p class="hint">We'll route you to the demonstration fabric closest to it.</p>
     <div class="opts" id="opt-domain"></div>
+    <div class="qnav"><button class="ghost" data-back>&#8592; Back</button></div>
   </section>
 
   <section class="q" data-q="infra">
@@ -225,6 +240,7 @@ footer a{color:var(--blue);text-decoration:none}
   <span><a href="../">Home</a> · <a href="../demos/">Demos</a> · <a href="../admin/">Admin</a></span>
 </footer>
 
+<script src="../assets/vendor/jspdf.umd.min.js"></script>
 <script src="rules.js"></script>
 <script src="configurator.js"></script>
 </body>
