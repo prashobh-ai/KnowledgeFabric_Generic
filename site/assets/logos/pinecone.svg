@@ -1,0 +1,7 @@
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Pinecone</title>
+<g fill="none" stroke="#201D1E" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+<path d="M12 2.6 9.4 5.4M12 2.6l2.6 2.8M12 2.6v3.4"/>
+<path d="M12 8.2 8.8 11M12 8.2l3.2 2.8M12 8.2v3.6"/>
+<path d="M12 14 8.6 17M12 14l3.4 3M12 14v3.8"/>
+<circle cx="12" cy="21" r="1.5" fill="#201D1E" stroke="none"/>
+</g></svg>

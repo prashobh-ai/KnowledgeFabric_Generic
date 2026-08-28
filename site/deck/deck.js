@@ -102,7 +102,7 @@ const SLIDES = [
     ["Entity and relationship graph", "Explore how products, processes, regulations and records connect to one another.", "Engineering, quality"],
     ["Knowledge health", "Coverage, connectivity, provenance, extraction quality and freshness, with gaps ranked.", "Content owners"],
     ["Version and status awareness", "Current revisions outrank superseded ones; draft material is excluded unless requested.", "Quality, operations"],
-    ["Multilingual answering", "Ask and answer in the user's language; translated material is labelled as translated.", "Global operations"],
+    ["Query & answer translation", "English-first; the question and the answer are translated for an agreed, quality-validated language list.", "Global operations"],
     ["Curator workbench", "A human queue for conflicts, duplicates and superseded documents.", "Content owners"],
     ["Role-scoped access", "Permissions applied before ranking, so unauthorised content never enters a result.", "Security, IT"],
     ["Usage and quality dashboards", "Consumption, question categories, clarification and refusal rates over time.", "Sponsors, IT"],
@@ -113,7 +113,7 @@ const SLIDES = [
   sub: "Coverage is broad because the questions people ask do not respect system boundaries",
   items: [
     {h: "Document formats", hue: "blue",
-     p: "Text and scanned documents, office formats, presentations, spreadsheets, structured exports and web content. Scanned material is processed so its text becomes searchable and citable."},
+     p: "Word documents, plain text, spreadsheets and readable PDFs — including PDFs with tables and embedded images. Formats beyond these are scoped as their own effort, openly."},
     {h: "Source systems", hue: "emerald",
      p: "Document management and quality systems, engineering and product lifecycle systems, ticketing and service desks, wikis and intranets, shared drives, and regulatory or public registries."},
     {h: "Content types", hue: "indigo",
@@ -121,7 +121,7 @@ const SLIDES = [
     {h: "Business functions", hue: "amber",
      p: "Quality and compliance, engineering and manufacturing, service and support, operations, procurement, legal, and people functions."},
     {h: "Languages", hue: "violet",
-     p: "Multilingual corpora and multilingual users, with the answer returned in the language of the question and any translated passage labelled."},
+     p: "English-first by design; where teams need more, the question and the answer are translated for an agreed, quality-validated language list."},
     {h: "Question shapes", hue: "slate",
      p: "Factual lookup, procedural how-to, comparison across documents, status and version checks, and relationship questions across entities."}]},
 

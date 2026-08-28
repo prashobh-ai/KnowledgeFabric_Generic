@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Knowledge Fabric — Enterprise Knowledge Intelligence</title>
+<meta name="description" content="A guided walkthrough of Knowledge Fabric: answers drawn only from documents your organisation has already approved.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,300;1,6..72,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="assets/brand/favicon.png"><link rel="alternate icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230A1626'/%3E%3Cpath d='M8 8v16M14 8v16M20 8v16M26 8v16' stroke='%230096FF' stroke-width='1.4'/%3E%3Cpath d='M6 12h20M6 18h20M6 24h20' stroke='%23F53E5A' stroke-width='1.4'/%3E%3C/svg%3E">
+<style>
+:root{
+  --ink:#0A1626; --ink-2:#22374D; --mute:#6A7F94; --faint:#93A6B8;
+  --paper:#FBFCFD; --panel:#FFFFFF; --rule:#DFE7EE;
+  --thread:#C3D2DF;
+  --blue:#0086E6; --blue-t:#E8F5FF;
+  --indigo:#4338CA; --indigo-t:#EEF0FF;
+  --emerald:#047857; --emerald-t:#E7F8F1;
+  --amber:#DC6803; --amber-t:#FEF4E2;
+  --violet:#9333EA; --violet-t:#F8EDFE;
+  --slate:#344054; --slate-t:#EEF1F5;
+  --coral:#F53E5A;
+  --display:'Newsreader',Georgia,serif;
+  --body:'Inter',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --pad:clamp(20px,5vw,88px);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);
+  font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:#CFE9FF;color:var(--ink)}
+h1,h2,h3{font-family:var(--display);font-weight:400;letter-spacing:-.02em;line-height:1.08}
+a{color:inherit}
+
+/* ---------- film ---------- */
+.film-frame{margin-top:44px;border-radius:18px;overflow:hidden;border:1px solid var(--rule);
+  box-shadow:0 30px 70px -38px rgba(10,22,38,.4);background:#0A1626}
+.film-frame video{display:block;width:100%;height:auto}
+.film-note{margin-top:14px;font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+
+/* ---------- built for you ---------- */
+.build-grid{margin-top:46px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.build-card{background:var(--t,#fff);border:1px solid var(--rule);border-top:3px solid var(--h,var(--blue));
+  border-radius:14px;padding:22px}
+.build-card h3{font-size:19px;margin-bottom:9px}
+.build-card p{font-size:14px;line-height:1.55;color:var(--ink-2)}
+.fit-cta{margin-top:26px;display:flex;align-items:center;justify-content:space-between;gap:22px;
+  text-decoration:none;background:linear-gradient(120deg,#0A1626,#17314D);color:#C4D3E1;
+  border-radius:16px;padding:24px 28px;transition:transform .2s}
+.fit-cta:hover{transform:translateY(-2px)}
+.fit-cta b{color:#fff;font-size:18px}
+.fit-cta svg{flex:none;color:#8FC9F5}
+
+/* ---------- weave backdrop ---------- */
+.weave{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:0;
+  pointer-events:none;opacity:.45}
+.weave line{stroke:var(--thread);stroke-width:1}
+
+/* ---------- progress rail ---------- */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;
+  gap:16px;padding:13px var(--pad);background:rgba(251,252,253,.86);
+  backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--rule)}
+.brand{display:flex;align-items:center;gap:13px;text-decoration:none}
+.brand img{display:block}
+.brand-wm{font-family:var(--body);font-weight:700;font-size:16px;letter-spacing:-.01em;color:var(--ink)}
+.brand-wm em{font-style:normal;color:var(--blue)}
+.brand-sub{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--mute);padding-left:13px;border-left:1px solid var(--rule)}
+.topnav{margin-left:auto;display:flex;gap:22px}
+.topnav a{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--mute);text-decoration:none}
+.topnav a:hover{color:var(--blue)}
+@media(max-width:700px){.brand-sub{display:none}}
+.rail{position:fixed;left:max(14px,2.2vw);top:50%;transform:translateY(-50%);z-index:40;
+  display:flex;flex-direction:column;gap:15px}
+.rail button{all:unset;cursor:pointer;display:flex;align-items:center;gap:10px}
+.rail .tick{width:22px;height:2px;background:var(--thread);border-radius:2px;
+  transition:width .45s cubic-bezier(.2,.8,.2,1),background .45s}
+.rail .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--faint);opacity:0;transform:translateX(-4px);transition:opacity .35s,transform .35s;
+  white-space:nowrap}
+.rail button:hover .lbl,.rail button:focus-visible .lbl{opacity:1;transform:none}
+.rail button[aria-current="true"] .tick{width:44px;background:var(--blue)}
+.rail button:focus-visible .tick{outline:2px solid var(--blue);outline-offset:3px}
+
+/* ---------- shell ---------- */
+.wrap{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:0 var(--pad)}
+section{position:relative;z-index:1}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--blue);display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.eyebrow::before{content:"";width:26px;height:1px;background:var(--coral)}
+
+/* ---------- hero ---------- */
+.hero{min-height:100svh;display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(28px,4vw,70px);
+  align-items:center;padding-block:150px 80px}
+.hero h1{font-size:clamp(42px,5.4vw,76px);font-weight:300}
+.hero h1 em{font-style:italic;color:var(--blue)}
+.hero .lede{font-size:clamp(17px,1.45vw,21px);color:var(--ink-2);max-width:33ch;margin-top:26px;
+  line-height:1.55}
+.hero .meta{margin-top:38px;display:flex;flex-wrap:wrap;gap:10px}
+.pill{font-family:var(--mono);font-size:11px;letter-spacing:.06em;padding:7px 13px;border-radius:999px;
+  border:1px solid var(--rule);background:#fff;color:var(--mute)}
+.pill b{color:var(--ink);font-weight:500}
+.scroll-cue{margin-top:46px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--faint);display:flex;align-items:center;gap:10px}
+.scroll-cue span{display:block;width:1px;height:26px;background:linear-gradient(var(--thread),transparent);
+  animation:drop 2.1s ease-in-out infinite}
+@keyframes drop{0%,100%{transform:scaleY(.35);opacity:.4}50%{transform:scaleY(1);opacity:1}}
+
+/* ---------- search-vs-answer contrast ---------- */
+.contrast{margin-top:56px;display:grid;gap:18px;max-width:860px}
+.con-row{display:grid;grid-template-columns:130px 1fr;gap:6px 18px;align-items:center}
+.con-label{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--mute)}
+.con-new .con-label{color:var(--emerald)}
+.con-track{height:10px;border-radius:5px;background:#EEF2F6;overflow:hidden;position:relative}
+.con-note{grid-column:2;font-size:13.5px;color:var(--mute);display:flex;align-items:center;gap:8px}
+.con-new .con-note{color:var(--ink-2)}
+.con-crawl,.con-instant{position:absolute;inset:0;border-radius:5px;transform:scaleX(0);transform-origin:left}
+.con-crawl{background:repeating-linear-gradient(-45deg,#C3D2DF,#C3D2DF 8px,#D5E0EA 8px,#D5E0EA 16px)}
+.con-instant{background:linear-gradient(90deg,var(--blue),var(--emerald))}
+.contrast.in .con-crawl{animation:crawl 14s cubic-bezier(.3,.6,.7,.4) infinite}
+.contrast.in .con-instant{animation:instant 1s .5s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes crawl{0%{transform:scaleX(0)}18%{transform:scaleX(.22)}45%{transform:scaleX(.34)}
+  70%{transform:scaleX(.52)}100%{transform:scaleX(.62)}}
+@keyframes instant{to{transform:scaleX(1)}}
+@media(prefers-reduced-motion:reduce){
+  .contrast.in .con-crawl{animation:none;transform:scaleX(.55)}
+  .contrast.in .con-instant{animation:none;transform:scaleX(1)}}
+
+/* ---------- the live architecture ---------- */
+.arch-live{margin-top:52px;background:var(--panel);border:1px solid var(--rule);
+  border-radius:18px;padding:clamp(14px,2.4vw,30px);
+  box-shadow:0 24px 60px -34px rgba(10,22,38,.25)}
+@media(max-width:700px){.arch-live{padding:10px;border-radius:12px}}
+
+/* hero pills enter in sequence */
+.hero .meta .pill{opacity:0;transform:translateY(8px);
+  animation:pillIn .6s cubic-bezier(.16,1,.3,1) forwards}
+.hero .meta .pill:nth-child(1){animation-delay:1.1s}
+.hero .meta .pill:nth-child(2){animation-delay:1.3s}
+.hero .meta .pill:nth-child(3){animation-delay:1.5s}
+@keyframes pillIn{to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.hero .meta .pill{animation:none;opacity:1;transform:none}}
+
+/* the loom */
+.loomwrap{display:flex;flex-direction:column}
+.loom{position:relative;aspect-ratio:1/1;max-height:56vh;margin-inline:auto;width:100%}
+.loom-cap{margin-top:26px;font-family:var(--mono);font-size:11.5px;line-height:1.75;
+  color:var(--faint);max-width:44ch;border-left:2px solid var(--rule);padding-left:14px}
+.loom svg{width:100%;height:100%;overflow:visible}
+.warp{stroke:var(--thread);stroke-width:1.1;stroke-dasharray:520;stroke-dashoffset:520;
+  animation:weaveIn 1.5s cubic-bezier(.3,.9,.3,1) forwards}
+.weft{stroke:#AFC3D4;stroke-width:1.1;stroke-dasharray:520;stroke-dashoffset:520;
+  animation:weaveIn 1.5s cubic-bezier(.3,.9,.3,1) forwards}
+@keyframes weaveIn{to{stroke-dashoffset:0}}
+.knot{opacity:0;animation:knotIn .7s cubic-bezier(.2,1.4,.4,1) forwards}
+@keyframes knotIn{from{opacity:0;transform:scale(.2)}to{opacity:1;transform:scale(1)}}
+.knot circle{transform-box:fill-box;transform-origin:center}
+.pulse{animation:pulse 3.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.25;r:3}50%{opacity:1;r:5.5}}
+.answer-card{position:absolute;right:-2%;bottom:2%;width:min(310px,86%);background:#fff;
+  border:1px solid var(--rule);border-radius:14px;padding:16px 18px;
+  box-shadow:0 18px 44px -18px rgba(10,22,38,.3);opacity:0;transform:translateY(14px);
+  animation:rise .8s 1.55s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.answer-card .q{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--faint);
+  text-transform:uppercase;margin-bottom:9px}
+.answer-card p{font-size:14.5px;line-height:1.5;color:var(--ink-2)}
+.cite{display:inline-block;font-family:var(--mono);font-size:10.5px;background:var(--blue-t);
+  color:#01517F;border-radius:5px;padding:2px 6px;margin-left:4px;white-space:nowrap}
+.conf{margin-top:12px;padding-top:11px;border-top:1px dashed var(--rule);display:flex;
+  align-items:center;gap:9px;font-family:var(--mono);font-size:10.5px;color:var(--emerald)}
+.conf i{width:7px;height:7px;border-radius:50%;background:var(--emerald);display:block;
+  box-shadow:0 0 0 0 rgba(4,120,87,.45);animation:halo 2.4s ease-out infinite}
+@keyframes halo{to{box-shadow:0 0 0 11px rgba(4,120,87,0)}}
+
+/* ---------- reveal ---------- */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .8s cubic-bezier(.2,.8,.2,1),
+  transform .8s cubic-bezier(.2,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+
+/* ---------- generic section ---------- */
+.band{padding:clamp(80px,10vw,140px) 0}
+.band h2{font-size:clamp(31px,4vw,52px);font-weight:300;max-width:20ch}
+.band h2 em{font-style:italic;color:var(--blue)}
+.band .sub{color:var(--mute);max-width:56ch;margin-top:20px;font-size:17px}
+
+/* problem */
+.probs{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:2px;
+  margin-top:56px;background:var(--rule);border:1px solid var(--rule);border-radius:14px;overflow:hidden}
+.prob{background:#fff;padding:26px 22px;transition:background .35s}
+.prob:hover{background:#F7FAFC}
+/* The fifth problem is the punchline — and on most widths it would
+   otherwise sit orphaned beside empty grid cells. Full width, always. */
+.prob:last-child{grid-column:1/-1}
+.prob b{display:block;font-family:var(--display);font-size:20px;font-weight:500;margin-bottom:9px}
+.prob span{font-size:14px;color:var(--mute);line-height:1.55}
+.prob i{font-family:var(--mono);font-style:normal;font-size:11px;color:var(--coral);
+  display:block;margin-bottom:13px}
+
+/* ---------- scrollytelling ---------- */
+.story{display:grid;grid-template-columns:1fr 1.05fr;gap:clamp(30px,5vw,80px);align-items:start}
+.stage{position:sticky;top:0;height:100svh;display:flex;align-items:center;justify-content:center}
+.stage-inner{width:100%;aspect-ratio:1/.86;position:relative}
+.stage svg{position:absolute;inset:0;width:100%;height:100%;opacity:0;
+  transition:opacity .5s ease;pointer-events:none}
+.stage svg.on{opacity:1}
+.steps{padding:8vh 0 16vh}
+.step{min-height:64svh;display:flex;flex-direction:column;justify-content:center;
+  opacity:.24;transition:opacity .5s ease}
+.step.on{opacity:1}
+.step .n{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--blue);
+  margin-bottom:16px}
+.step h3{font-size:clamp(27px,3.1vw,40px);font-weight:400;margin-bottom:16px}
+.step p{color:var(--ink-2);max-width:40ch;font-size:16.5px}
+.step .tag{margin-top:20px;font-family:var(--mono);font-size:11px;color:var(--mute);
+  border-left:2px solid var(--rule);padding-left:12px;max-width:38ch;line-height:1.7}
+
+/* clarify */
+.clarify{background:linear-gradient(180deg,#FFFDF8,#FFF8EC);border-top:1px solid #F6E0BC;
+  border-bottom:1px solid #F6E0BC}
+.clarify h2 em{color:var(--amber)}
+.loop-demo{margin-top:54px;display:grid;grid-template-columns:repeat(auto-fit,minmax(196px,1fr));
+  gap:18px}
+.turn{background:#fff;border:1px solid #F3DDB8;border-radius:14px;padding:22px}
+.turn .who{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--amber);margin-bottom:11px}
+.turn p{font-size:15px;color:var(--ink-2);line-height:1.55}
+.turn.sys{background:#FFFBF2}
+.typing::after{content:"";display:inline-block;width:2px;height:1em;background:var(--amber);
+  margin-left:2px;vertical-align:-2px;animation:blink 1.1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* ---------- architecture ---------- */
+.arch{background:#EEF4F9;color:var(--ink);border-block:1px solid var(--rule)}
+.arch h2 em{color:var(--blue)}
+.zones{margin-top:60px;display:grid;gap:16px}
+.zrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}
+.zone{border:1px solid var(--rule);border-radius:14px;background:#fff;overflow:hidden;
+  transition:border-color .4s,transform .4s,box-shadow .4s;cursor:default}
+.zone:hover{transform:translateY(-4px);box-shadow:0 16px 34px -22px rgba(10,22,38,.3)}
+.zhead{padding:12px 16px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:#fff;display:flex;align-items:center;gap:9px}
+.zbody{padding:15px 16px 19px}
+.zone.full .zbody{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:0 20px}
+.zbody li{list-style:none;font-size:13.5px;color:var(--ink-2);padding:5px 0 5px 15px;position:relative}
+.zbody li::before{content:"";position:absolute;left:0;top:12.5px;width:5px;height:5px;
+  border-radius:50%;background:currentColor;opacity:.55}
+.zcap{font-size:12.5px;color:var(--mute);font-style:italic;padding:0 16px 12px}
+.flowline{height:34px;position:relative}
+.flowline::before{content:"";position:absolute;left:50%;top:0;width:1px;height:100%;
+  background:linear-gradient(var(--rule),var(--blue))}
+.flowline::after{content:"";position:absolute;left:50%;top:0;width:1px;height:34px;
+  background:var(--blue);transform:translateX(-.5px);animation:flowDown 2.6s linear infinite}
+@keyframes flowDown{0%{transform:translate(-.5px,-100%) scaleY(.4);opacity:0}
+  30%{opacity:1}100%{transform:translate(-.5px,100%) scaleY(.4);opacity:0}}
+.loopback{margin-top:22px;border:1px dashed #C7A6F2;border-radius:12px;padding:15px 20px;
+  background:#F7F1FF;color:#6B21A8;font-size:14px;display:flex;gap:13px;align-items:center}
+.loopback svg{flex:0 0 20px;color:#9333EA}
+
+/* ---------- capability grid ---------- */
+.caps{margin-top:54px;display:grid;grid-template-columns:repeat(auto-fill,minmax(252px,1fr));gap:16px}
+.cap{background:#fff;border:1px solid var(--rule);border-radius:14px;padding:22px;
+  transition:transform .4s cubic-bezier(.2,.8,.2,1),box-shadow .4s,border-color .4s}
+.cap:hover{transform:translateY(-4px);box-shadow:0 16px 34px -20px rgba(10,22,38,.32)}
+.cap .ci{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;margin-bottom:15px}
+.cap b{display:block;font-size:16px;font-weight:600;margin-bottom:7px}
+.cap span{font-size:14px;color:var(--mute);line-height:1.55}
+.cap em{display:block;margin-top:12px;font-family:var(--mono);font-style:normal;font-size:10.5px;
+  color:var(--faint);letter-spacing:.05em}
+
+/* ---------- coverage marquee ---------- */
+.marq{overflow:hidden;margin-top:46px;margin-inline:calc(-1 * var(--pad));
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent)}
+.marq-track{display:flex;gap:12px;width:max-content;animation:slide 44s linear infinite}
+.marq:hover .marq-track{animation-play-state:paused}
+@keyframes slide{to{transform:translateX(-50%)}}
+.chipx{font-size:14px;padding:9px 17px;border-radius:999px;background:#fff;
+  border:1px solid var(--rule);color:var(--ink-2);white-space:nowrap}
+.marq-track.rev{animation-direction:reverse;animation-duration:56s}
+.cov{margin-top:50px;display:grid;grid-template-columns:repeat(auto-fit,minmax(202px,1fr));gap:30px}
+.cov h4{font-family:var(--display);font-size:21px;font-weight:500;margin-bottom:9px}
+.cov p{font-size:14.5px;color:var(--mute);line-height:1.6}
+.cov .bar{width:32px;height:3px;border-radius:2px;margin-bottom:15px}
+
+/* ---------- value ---------- */
+.val{display:grid;grid-template-columns:repeat(auto-fit,minmax(228px,1fr));gap:2px;margin-top:56px;
+  border:1px solid var(--rule);border-radius:16px;overflow:hidden;background:var(--rule)}
+.vcol{background:#fff;padding:28px 24px;transition:background .4s}
+.vcol:hover{background:#FAFCFE}
+.vcol h4{font-family:var(--display);font-size:22px;font-weight:500;margin-bottom:18px;line-height:1.2}
+.vcol li{list-style:none;font-size:14.5px;color:var(--ink-2);line-height:1.55;padding:9px 0 9px 17px;
+  position:relative;border-top:1px solid #EEF3F7}
+.vcol li:first-of-type{border-top:0}
+.vcol li::before{content:"";position:absolute;left:0;top:17px;width:6px;height:6px;border-radius:50%}
+
+/* ---------- phases ---------- */
+.phases{margin-top:56px;position:relative}
+.ptrack{position:absolute;left:0;right:0;top:29px;height:2px;background:var(--rule)}
+.ptrack i{position:absolute;inset:0;background:linear-gradient(90deg,var(--indigo),var(--blue),
+  var(--emerald),var(--violet));transform-origin:left;transform:scaleX(0);
+  transition:transform 1.6s cubic-bezier(.2,.8,.2,1)}
+.phases.in .ptrack i{transform:scaleX(1)}
+.plist{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:26px;position:relative}
+.ph .dot{width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--rule);
+  margin:22px 0 22px;position:relative;z-index:2;transition:border-color .5s}
+.ph .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--faint)}
+.ph h4{font-family:var(--display);font-size:26px;font-weight:500;margin:6px 0 11px}
+.ph p{font-size:14.5px;color:var(--mute);line-height:1.6}
+.ph .out{margin-top:14px;font-size:13.5px;color:var(--ink-2);border-left:2px solid var(--rule);
+  padding-left:12px;font-style:italic}
+
+/* ---------- closing ---------- */
+.close{background:#FFFFFF;color:var(--ink);text-align:center;padding:clamp(90px,12vw,160px) 0;
+  border-top:1px solid var(--rule)}
+.close h2{font-size:clamp(32px,4.6vw,58px);font-weight:300;max-width:22ch;margin:0 auto}
+.close h2 em{font-style:italic;color:var(--blue)}
+.diffs{margin-top:64px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:14px;text-align:left}
+.diff{border:1px solid var(--rule);border-radius:13px;padding:20px;background:#FBFCFD;
+  transition:border-color .4s,transform .4s}
+.diff:hover{border-color:var(--blue);transform:translateY(-3px)}
+.diff b{display:block;font-size:15px;margin-bottom:8px;color:var(--ink)}
+.diff span{font-size:13.5px;color:var(--mute);line-height:1.55}
+.diff .num{font-family:var(--mono);font-size:10.5px;color:var(--blue);display:block;margin-bottom:11px}
+footer{background:#0A1626;padding:32px 0;color:#8298AC;font-size:13px}
+.fw{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;align-items:center}
+.fw img{height:26px;width:auto;display:block}
+.fbrand{display:flex;align-items:center;gap:12px}
+footer b{color:#C7D6E3;font-weight:500}
+.fnav a{color:#5EB5F5;text-decoration:none}
+.fnav a:hover,.fnav a:focus-visible{color:#fff;text-decoration:underline}
+
+@media(min-width:1100px){:root{--pad:clamp(120px,9vw,150px)}}
+@media(max-width:960px){
+  .hero{grid-template-columns:1fr;padding-block:104px 60px}
+  .story{grid-template-columns:1fr}
+  .stage{position:relative;height:auto;padding:20px 0 0}
+  .stage-inner{aspect-ratio:1/.72}
+  .steps{padding:0}
+  .step{min-height:auto;opacity:1;padding:38px 0;border-top:1px solid var(--rule)}
+  .rail{display:none}
+  .answer-card{position:relative;right:auto;bottom:auto;width:100%;margin-top:20px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
+    transition-duration:.001ms!important}
+  .rv{opacity:1;transform:none}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<svg class="weave" aria-hidden="true"><defs><pattern id="wv" width="52" height="52" patternUnits="userSpaceOnUse">
+<line x1="0" y1="0" x2="0" y2="52"/><line x1="0" y1="0" x2="52" y2="0"/>
+</pattern></defs><rect width="100%" height="100%" fill="url(#wv)" opacity=".55"/></svg>
+
+<header class="topbar">
+  <a class="brand" href="index.html" aria-label="QualiZeal — AI Center of Excellence">
+    <img src="assets/brand/qualizeal-icon.png" alt="" width="26" height="26" style="height:26px;width:auto">
+    <span class="brand-wm">QUALI<em>ZEAL</em></span>
+    <span class="brand-sub">AI Center of Excellence</span>
+  </a>
+  <nav class="topnav">
+    <a href="demos/">Demos</a><a href="configurator/">Solution fit</a><a href="admin/">Admin</a>
+  </nav>
+</header>
+
+<nav class="rail" aria-label="Section navigation">
+  <button data-go="hero"><span class="tick"></span><span class="lbl">Start</span></button>
+  <button data-go="film"><span class="tick"></span><span class="lbl">The film</span></button>
+  <button data-go="problem"><span class="tick"></span><span class="lbl">The problem</span></button>
+  <button data-go="how"><span class="tick"></span><span class="lbl">How it works</span></button>
+  <button data-go="clarify"><span class="tick"></span><span class="lbl">Clarify-back</span></button>
+  <button data-go="arch"><span class="tick"></span><span class="lbl">Architecture</span></button>
+  <button data-go="caps"><span class="tick"></span><span class="lbl">Capabilities</span></button>
+  <button data-go="covers"><span class="tick"></span><span class="lbl">Coverage</span></button>
+  <button data-go="value"><span class="tick"></span><span class="lbl">Value</span></button>
+  <button data-go="build"><span class="tick"></span><span class="lbl">Built for you</span></button>
+  <button data-go="delivery"><span class="tick"></span><span class="lbl">Delivery</span></button>
+  <button data-go="close"><span class="tick"></span><span class="lbl">Difference</span></button>
+</nav>
+
+<!-- ================= HERO ================= -->
+<section id="hero"><div class="wrap hero">
+  <div>
+    <div class="eyebrow">Platform walkthrough</div>
+    <h1>Every answer,<br>woven from<br><em>your own</em><br>documents.</h1>
+    <p class="lede">Plain-language answers, cited to the page, with confidence shown. Nothing invented.</p>
+    <div class="meta">
+      <span class="pill"><b>Grounded</b> · never from general world knowledge</span>
+      <span class="pill"><b>Cited</b> · document, page, paragraph</span>
+      <span class="pill"><b>Honest</b> · asks rather than guesses</span>
+    </div>
+    <div class="scroll-cue"><span></span> Scroll to begin the walkthrough</div>
+  </div>
+
+  <div class="loomwrap"><div class="loom">
+    <svg viewBox="0 0 420 420" aria-label="Threads of source documents weaving into a single cited answer">
+      <g id="warp"></g><g id="weft"></g><g id="knots"></g>
+    </svg>
+    <div class="answer-card">
+      <div class="q">Answer</div>
+      <p>The current revision requires a documented review before release<span class="cite">SOP-04 · p.12</span> and the record must be retained for the full product life<span class="cite">POL-11 · p.3</span>.</p>
+      <div class="conf"><i></i> HIGH CONFIDENCE · 2 sources agree</div>
+    </div>
+  </div>
+    <figcaption class="loom-cap">Each vertical thread is a source document. Each horizontal thread is a question asked. Where they cross and hold, that is a citation.</figcaption>
+  </div>
+</div></section>
+
+<!-- ================= FILM ================= -->
+<section id="film" class="band"><div class="wrap">
+  <div class="rv"><div class="eyebrow">In its own words</div>
+  <h2>Seventy seconds.</h2>
+  <p class="sub">What goes in, what happens, what comes out. Silent — captions carry the narration.</p></div>
+  <div class="film-frame rv">
+    <video controls playsinline preload="metadata"
+      poster="media/fabric-explainer-poster.jpg" aria-label="Knowledge Fabric explainer film">
+      <source src="media/fabric-explainer.webm" type="video/webm">
+      Your browser cannot play this film — the sections below tell the same story live.
+    </video>
+  </div>
+</div></section>
+
+<!-- ================= PROBLEM ================= -->
+<section id="problem" class="band"><div class="wrap">
+  <div class="rv"><div class="eyebrow">The problem</div>
+  <h2>The right answer exists. It is just unreachable in time.</h2></div>
+  <div class="probs rv" id="probs"></div>
+
+  <div class="contrast rv" aria-hidden="true">
+    <div class="con-row con-old">
+      <span class="con-label">Today</span>
+      <div class="con-track"><i class="con-crawl"></i></div>
+      <span class="con-note">a search through systems, revisions and colleagues — still going</span>
+    </div>
+    <div class="con-row con-new">
+      <span class="con-label">With the fabric</span>
+      <div class="con-track"><i class="con-instant"></i></div>
+      <span class="con-note">the current, approved answer — <b>cited</b>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="3" stroke-linecap="round"><path d="M4 13l5 5L20 6"/></svg></span>
+    </div>
+  </div>
+</div></section>
+
+<!-- ================= HOW IT WORKS ================= -->
+<section id="how" class="band" style="padding-bottom:0"><div class="wrap">
+  <div class="rv"><div class="eyebrow">How it works</div>
+  <h2>Six stages. Two gates.</h2>
+  <p class="sub">Permissions before searching. Evidence before writing.</p></div>
+
+  <div class="story">
+    <div class="stage"><div class="stage-inner" id="stage"></div></div>
+    <div class="steps" id="steps"></div>
+  </div>
+</div></section>
+
+<!-- ================= CLARIFY-BACK ================= -->
+<section id="clarify" class="band clarify"><div class="wrap">
+  <div class="rv"><div class="eyebrow" style="color:var(--amber)">The signature behaviour</div>
+  <h2>When the evidence is thin, it asks.</h2>
+  <p class="sub">One targeted question, then a fresh attempt — never a refusal, never a guess.</p></div>
+  <div class="loop-demo rv" id="loopDemo"></div>
+</div></section>
+
+<!-- ================= ARCHITECTURE ================= -->
+<section id="arch" class="band arch"><div class="wrap">
+  <div class="rv"><div class="eyebrow">Architecture</div>
+  <h2>Five zones, one loop.</h2>
+  <p class="sub">Watch one question make the journey.</p></div>
+  <div class="arch-live rv" data-archscene></div>
+  <div class="zones rv" id="zones"></div>
+  <div class="loopback rv">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 12a8.4 8.4 0 0 1 14.4-5.9l2.4 2.3"/><path d="M20.4 4v4.4H16"/><path d="M20.4 12a8.4 8.4 0 0 1-14.4 5.9L3.6 15.6"/><path d="M3.6 20v-4.4H8"/></svg>
+    <span><b style="color:#4A1FB8">The loop closes the system.</b> Questions the corpus cannot yet answer travel from telemetry back to the content pipeline as a ranked backlog — so the platform improves from real use rather than guesswork.</span>
+  </div>
+</div></section>
+
+<!-- ================= CAPABILITIES ================= -->
+<section id="caps" class="band"><div class="wrap">
+  <div class="rv"><div class="eyebrow">Functional coverage</div>
+  <h2>One platform.</h2>
+  <p class="sub">No edition where citation or confidence is switched off.</p></div>
+  <div class="caps rv" id="capsGrid"></div>
+</div></section>
+
+<!-- ================= COVERAGE ================= -->
+<section id="covers" class="band" style="background:#F4F8FB;border-block:1px solid var(--rule)"><div class="wrap">
+  <div class="rv"><div class="eyebrow">What it covers</div>
+  <h2>Questions don't respect system boundaries.</h2></div>
+  <div class="marq rv"><div class="marq-track" id="marqA"></div></div>
+  <div class="marq rv" style="margin-top:12px"><div class="marq-track rev" id="marqB"></div></div>
+  <div class="cov rv" id="cov"></div>
+</div></section>
+
+<!-- ================= VALUE ================= -->
+<section id="value" class="band"><div class="wrap">
+  <div class="rv"><div class="eyebrow">Value</div>
+  <h2>What each group gets.</h2></div>
+  <div class="val rv" id="valGrid"></div>
+</div></section>
+
+<!-- ================= BUILT FOR YOU ================= -->
+<section id="build" class="band" style="background:#F4F8FB;border-block:1px solid var(--rule)"><div class="wrap">
+  <div class="rv"><div class="eyebrow">What QualiZeal builds on the fabric</div>
+  <h2>The platform is the floor. We build your rooms.</h2></div>
+  <div class="build-grid rv">
+    <div class="build-card" style="--h:var(--blue);--t:var(--blue-t)">
+      <h3>Question-answering, tuned to your house rules</h3>
+      <p>Confidence thresholds, clarify-back style, terminology packs, answer length and tone,
+      which sources outrank which — the answering engine is configured against your prioritised
+      question set, not shipped as a default.</p>
+    </div>
+    <div class="build-card" style="--h:var(--emerald);--t:var(--emerald-t)">
+      <h3>Ingestion pipelines for your systems</h3>
+      <p>Connectors to your document management, quality and ticketing systems, event-driven or
+      scheduled, for the text formats we commit to — docx, txt, xlsx and readable PDFs — so the
+      knowledge base refreshes itself on your cadence instead of by project.</p>
+    </div>
+    <div class="build-card" style="--h:var(--amber);--t:var(--amber-t)">
+      <h3>Dashboards for curators</h3>
+      <p>An answer-monitoring view: flagged answers, clarification hot-spots, conflict and
+      superseded queues, and the demand-ranked gap backlog — so content work follows real use.</p>
+    </div>
+    <div class="build-card" style="--h:var(--violet);--t:var(--violet-t)">
+      <h3>Model governance for admins</h3>
+      <p>Route questions to models by complexity — efficient models for routine asks, premium
+      models only where reasoning earns it — with per-team caps, budgets and full usage
+      visibility.</p>
+    </div>
+  </div>
+  <a class="fit-cta rv" href="configurator/">
+    <span><b>Answer a few questions — see your architecture.</b><br>
+    Your cloud, your models, your roles. Limitations stated out loud.</span>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2.4" stroke-linecap="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+  </a>
+</div></section>
+
+<!-- ================= DELIVERY ================= -->
+<section id="delivery" class="band" style="background:#F4F8FB;border-block:1px solid var(--rule)"><div class="wrap">
+  <div class="rv"><div class="eyebrow">Delivery</div>
+  <h2>Four phases, each ending in something you can judge.</h2></div>
+  <div class="phases rv" id="phases"><div class="ptrack"><i></i></div><div class="plist" id="plist"></div></div>
+</div></section>
+
+<!-- ================= CLOSE ================= -->
+<section id="close" class="close"><div class="wrap">
+  <h2 class="rv">Five things most systems don't do.</h2>
+  <div class="diffs rv" id="diffs"></div>
+</div></section>
+
+<footer><div class="wrap fw">
+  <span class="fbrand"><img src="assets/brand/qualizeal-icon.png" alt="QualiZeal" width="26" height="26">
+    <span><b>Knowledge Fabric</b> · Enterprise Knowledge Intelligence</span></span>
+  <span class="fnav"><a href="demos/">Demos</a> · <a href="configurator/">Solution fit</a> · <a href="admin/">Admin</a> · QualiZeal AI Center of Excellence</span>
+</div></footer>
+
+<script src="assets/js/archscene.js"></script>
+<script src="assets/js/walkthrough.js"></script>
+</body>
+</html>
