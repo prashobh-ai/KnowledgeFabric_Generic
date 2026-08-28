@@ -22,8 +22,6 @@ jobs:
   # than being discovered after publication.
   corpora:
     runs-on: ubuntu-latest
-    outputs:
-      tenants: ${{ steps.list.outputs.tenants }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
@@ -40,15 +38,6 @@ jobs:
       - name: Full tenant factory tests
         run: pytest tests/ -q
 
-      - id: list
-        name: Enumerate tenants for the build matrix
-        run: |
-          python - <<'PY' >> "$GITHUB_OUTPUT"
-          import json, yaml
-          reg = yaml.safe_load(open("tenants/registry.yml"))
-          print("tenants=" + json.dumps([t["slug"] for t in reg["tenants"]]))
-          PY
-
       - uses: actions/upload-artifact@v4
         with:
           name: corpora
@@ -56,41 +45,19 @@ jobs:
           retention-days: 1
 
   # ---------------------------------------------------------------- stage 2
-  # One job per tenant, in parallel. Each is a completely independent build —
-  # its own vocabulary, graph specification and intent model — which is the
-  # whole point: q-airlines cannot contaminate q-cruise because they never
-  # share a process.
-  fabric:
-    needs: corpora
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        tenant: ${{ fromJSON(needs.corpora.outputs.tenants) }}
-    steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-python@v6
-        with: { python-version: "3.12", cache: pip }
-      - run: pip install -r pipeline/requirements.txt
-
-      - uses: actions/download-artifact@v4
-        with: { name: corpora, path: tenants/ }
-
-      - name: Build fabric — ${{ matrix.tenant }}
-        run: python -m pipeline.build_index --tenant ${{ matrix.tenant }}
-
-      - name: Train intent model — ${{ matrix.tenant }}
-        run: python -m pipeline.train_intent --tenant ${{ matrix.tenant }}
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: fabric-${{ matrix.tenant }}
-          path: site/t/${{ matrix.tenant }}/
-          retention-days: 1
-
-  # ---------------------------------------------------------------- stage 3
+  # Assemble and publish. This reads the corpora artefact directly: build_site
+  # produces site/demo/ and site/data/ from tenants/, so there is no per-tenant
+  # index build between the two.
+  #
+  # There used to be one — a `fabric` matrix job running pipeline.build_index
+  # and pipeline.train_intent into site/t/<slug>/. It was removed because it
+  # fed nothing: site/t/ is a superseded route (build_site's own docstring says
+  # so), nothing links to it, and all eleven site/t/<slug>/index.html files are
+  # byte-identical copies of a stale landing page whose relative links are
+  # broken. build_index cannot run in any case — it imports four names from
+  # pipeline.textnorm that the module does not define.
   publish:
-    needs: fabric
+    needs: corpora
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     environment:
@@ -105,22 +72,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with: { name: corpora, path: tenants/ }
 
-      - uses: actions/download-artifact@v4
-        with: { pattern: fabric-*, path: site/t/, merge-multiple: false }
-
-      - name: Flatten tenant artifacts into site/t/<slug>/
-        run: |
-          cd site/t
-          for d in fabric-*; do
-            [ -d "$d" ] || continue
-            slug="${d#fabric-}"
-            mkdir -p "$slug"
-            cp -r "$d"/. "$slug"/
-            rm -rf "$d"
-          done
-          ls -la
-
-      - name: Build tenant directory page
+      - name: Build the site
         run: python -m pipeline.build_site
 
       - uses: actions/configure-pages@v5
