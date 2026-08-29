@@ -15,6 +15,48 @@
 
   let bundle, engine, galaxy, current = null;
 
+  // -------------------------------------------------------------------------
+  // Language. Query and answer are translated (rule-based, in i18n.js);
+  // source documents stay English and every citation opens the original.
+  // -------------------------------------------------------------------------
+  const I18N = window.KF_I18N;
+  let LANG = 'en';
+  try { LANG = localStorage.getItem('kf_lang') || 'en'; } catch (e) {}
+  if (!I18N || !I18N.langs.includes(LANG)) LANG = 'en';
+  const T = () => (I18N ? I18N.UI[LANG] : null) || { };
+
+  function setLang(l, opts) {
+    LANG = l;
+    try { localStorage.setItem('kf_lang', l); } catch (e) {}
+    $$('#langs button').forEach(b => b.classList.toggle('on', b.dataset.lang === l));
+    const t = T();
+    const q = $('#q');
+    if (q) { q.placeholder = t.placeholder; }
+    const ab = $('#askBtn'); if (ab && ab.firstChild) ab.firstChild.textContent = t.ask + ' ';
+    if (bundle) renderSuggestions();
+    if (current) { renderAnswer(current); }
+    else {
+      const a = $('#answer'), m = $('#answerMeta');
+      if (a && !(opts && opts.keep)) a.innerHTML = `<p class="muted small">${esc(t.answerIdle)}</p>`;
+      if (m && !(opts && opts.keep)) m.innerHTML = `<p class="muted small">${esc(t.metaIdle)}</p>`;
+    }
+  }
+
+  function mountLangs() {
+    if (!I18N) return;
+    const bar = $('#askBar');
+    if (!bar) return;
+    const el = document.createElement('div');
+    el.id = 'langs';
+    el.innerHTML = [['en', 'EN'], ['fr', 'FR'], ['es', 'ES'], ['ja', '\u65e5\u672c\u8a9e']]
+      .map(([l, lab]) => `<button data-lang="${l}" class="${l === LANG ? 'on' : ''}">${lab}</button>`).join('');
+    bar.appendChild(el);
+    el.addEventListener('click', e => {
+      const b = e.target.closest('button');
+      if (b) setLang(b.dataset.lang);
+    });
+  }
+
   // ---------------------------------------------------------------------------
   // Scroll reveal
   // ---------------------------------------------------------------------------
@@ -70,7 +112,9 @@
 
     initGalaxy();
     renderStats();
+    mountLangs();
     renderSuggestions();
+    if (LANG !== 'en') setLang(LANG);
     renderHealth();
     renderInsights();
     renderDendrogram();
@@ -149,7 +193,9 @@
 
   function renderSuggestions() {
     const box = $('#suggest');
-    box.innerHTML = bundle.manifest.questions.map(q =>
+    const qi = bundle.manifest.questions_i18n || {};
+    const qs = (LANG !== 'en' && qi[LANG] && qi[LANG].length) ? qi[LANG] : bundle.manifest.questions;
+    box.innerHTML = qs.map(q =>
       `<button class="chip" data-q="${esc(q)}"><span class="dot"></span>${esc(q)}</button>`
     ).join('');
     $$('.chip', box).forEach(b => b.addEventListener('click', () => {
@@ -178,7 +224,19 @@
     // considered. This is the only place we fake anything, and it fakes
     // nothing about the content.
     setTimeout(() => {
-      const r = engine.answer(q);
+      let lang = LANG;
+      if (I18N) {
+        const det = I18N.detect(q);
+        if (det !== 'en' && det !== lang) { lang = det; setLang(det, { keep: true }); }
+        else if (det === 'en' && lang !== 'en' && /^[\x00-\x7F]*$/.test(q)) {
+          // typed plain English while browsing in another language: retrieve as-is
+        }
+      }
+      const engineQuery = (I18N && lang !== 'en' && I18N.detect(q) !== 'en')
+        ? I18N.toEnglish(q, lang) : q;
+      const r = engine.answer(engineQuery);
+      r.displayQuery = q;
+      r.lang = lang;
       current = r;
       renderAnswer(r);
       renderFindings(r);
@@ -204,42 +262,45 @@
     const out = $('#answer');
     const meta = $('#answerMeta');
 
+    const lang = r.lang || LANG;
+    const t = (I18N ? I18N.UI[lang] : null) || I18N.UI.en;
     if (!r.ok) {
       // An honest non-answer. Returning a confident-sounding paragraph
       // assembled from weak matches is the failure mode this whole design
       // exists to avoid.
       const why = {
-        degenerate: 'That query is made entirely of function words, so there is no ' +
-                    'retrievable intent in it. Try naming a process, a document type ' +
-                    'or a standard.',
-        'no-match': 'Neither the lexical nor the semantic retriever found a passage ' +
-                    'above threshold. The subject may genuinely not be covered by ' +
-                    'this corpus.',
-        'no-coverage': 'Passages were retrieved, but none contained a sentence that ' +
-                    'actually addresses the terms asked about. Quoting one anyway ' +
-                    'would misrepresent the corpus.'
-      }[r.reason] || 'The retrieval signal was too weak to cite a source.';
+        degenerate: t.whyDegenerate,
+        'no-match': t.whyNoMatch,
+        'no-coverage': t.whyNoCoverage
+      }[r.reason] || t.whyNoMatch;
 
       out.innerHTML =
-        `<div class="badge red mb">No grounded answer</div>
-         <p>Nothing in this corpus supports an answer to
-         <strong>${esc(r.query)}</strong>.</p>
+        `<div class="badge red mb">${esc(t.noAnswer)}</div>
+         <p>${esc(t.noAnswerBody)}
+         <strong>${esc(r.displayQuery || r.query)}</strong>.</p>
          <p class="small muted">${esc(why)}</p>
-         <p class="small muted" style="margin:0">This is a deliberate non-answer.
-         Assembling a confident-sounding paragraph from loosely related passages
-         is the failure mode this design exists to prevent.</p>`;
+         <p class="small muted" style="margin:0">${esc(t.noAnswerNote)}</p>`;
       meta.innerHTML = '';
       return;
     }
 
+    const renderSent = (s, i) => {
+      let text = s.text, tag = '';
+      if (lang !== 'en' && I18N) {
+        const tr = I18N.translateSentence(s.text, lang);
+        if (tr) text = tr;
+        else tag = ` <span class="entag" title="${esc(t.enTag)}">EN</span>`;
+      }
+      return `<p>${esc(text)}${tag} <button class="cite" data-c="${i}">${i + 1}</button></p>`;
+    };
     out.innerHTML =
       `<div class="answer-body">` +
-      r.sentences.map((s, i) =>
-        `<p>${esc(s.text)} <button class="cite" data-c="${i}">${i + 1}</button></p>`
-      ).join('') +
+      r.sentences.map(renderSent).join('') +
       `</div>` +
+      (lang !== 'en' && t.translatedNote
+        ? `<p class="tiny muted" style="margin:.6rem 0 0">${esc(t.translatedNote)}</p>` : '') +
       `<div class="mt" style="border-top:1px solid var(--line);padding-top:1rem">
-         <div class="eyebrow" style="margin-bottom:.7rem">Sources</div>
+         <div class="eyebrow" style="margin-bottom:.7rem">${esc(t.sources)}</div>
          ${r.citations.map(c => `
            <button class="chip" data-open="${esc(c.doc.id)}" data-hl="${esc(c.passage.id)}"
                    style="width:100%;justify-content:flex-start;text-align:left;margin-bottom:.4rem">

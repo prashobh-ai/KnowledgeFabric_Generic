@@ -826,3 +826,25 @@ footer .note { font-size: .78rem; color: var(--ink-faint); max-width: 68ch; }
   .flip-in { transition: none; }
   .ring-arc { transition: none; }
 }
+
+/* ---- language switcher & translated answers -------------------------------
+   Query and answer are translated; sources stay English, citations open the
+   original passage. The pill lives inside the ask bar. */
+#langs {
+  display: flex; gap: 2px; flex: none; align-items: center;
+  background: rgba(var(--accent-rgb), .07);
+  border: 1px solid rgba(var(--accent-rgb), .18);
+  border-radius: 999px; padding: 3px;
+}
+#langs button {
+  all: unset; cursor: pointer; font: 600 11px/1 var(--font-mono, ui-monospace, monospace);
+  letter-spacing: .04em; color: var(--ink-mute); border-radius: 999px;
+  padding: 6px 10px; transition: background .15s, color .15s;
+}
+#langs button:hover { color: var(--ink); }
+#langs button.on { background: rgb(var(--accent-rgb)); color: #fff; }
+.entag {
+  display: inline-block; vertical-align: 1px; font: 600 9px/1 var(--font-mono, monospace);
+  letter-spacing: .06em; color: var(--ink-mute);
+  border: 1px solid var(--line); border-radius: 5px; padding: 2px 5px;
+}

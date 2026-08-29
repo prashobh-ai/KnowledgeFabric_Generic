@@ -28,6 +28,7 @@ from .engine import DISCLAIMER
 from .fabric import (BM25, build_graph, build_health, build_insights,
                      extract_passages, link_passages_to_entities)
 from .clusters import build_dendrogram
+from .packs.i18n_questions import QUESTIONS_I18N
 from .semantic import build_semantic_index
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -123,6 +124,10 @@ def build_tenant(pack, docs_target: int) -> dict:
         "systems": list(pack.systems),
         "lexicon": list(pack.lexicon),
         "questions": list(pack.questions),
+        "questions_i18n": {
+            lang: list(qs)
+            for lang, qs in QUESTIONS_I18N.get(pack.slug, {}).items()
+        },
         "doc_types": [
             {"key": d.key, "name": d.name, "abbrev": d.abbrev,
              "authority": d.authority, "system": d.system,

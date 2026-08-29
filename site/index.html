@@ -35,7 +35,7 @@ h1,h2,h3{font-family:var(--display);font-weight:400;letter-spacing:-.02em;line-h
 a{color:inherit}
 
 /* ---------- film ---------- */
-.film-frame{margin-top:44px;border-radius:18px;overflow:hidden;border:1px solid var(--rule);
+.film-frame{margin-top:24px;border-radius:18px;overflow:hidden;border:1px solid var(--rule);
   box-shadow:0 30px 70px -38px rgba(10,22,38,.4);background:#0A1626}
 .film-frame video{display:block;width:100%;height:auto}
 .film-note{margin-top:14px;font-family:var(--mono);font-size:11.5px;color:var(--faint)}
@@ -110,7 +110,7 @@ section{position:relative;z-index:1}
 @keyframes drop{0%,100%{transform:scaleY(.35);opacity:.4}50%{transform:scaleY(1);opacity:1}}
 
 /* ---------- search-vs-answer contrast ---------- */
-.contrast{margin-top:56px;display:grid;gap:18px;max-width:860px}
+.contrast{margin-top:34px;display:grid;gap:18px;max-width:860px}
 .con-row{display:grid;grid-template-columns:130px 1fr;gap:6px 18px;align-items:center}
 .con-label{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--mute)}
 .con-new .con-label{color:var(--emerald)}
@@ -182,13 +182,13 @@ section{position:relative;z-index:1}
 .rv.in{opacity:1;transform:none}
 
 /* ---------- generic section ---------- */
-.band{padding:clamp(80px,10vw,140px) 0}
+.band{padding:clamp(52px,6.5vw,84px) 0}
 .band h2{font-size:clamp(31px,4vw,52px);font-weight:300;max-width:20ch}
 .band h2 em{font-style:italic;color:var(--blue)}
-.band .sub{color:var(--mute);max-width:56ch;margin-top:20px;font-size:17px}
+.band .sub{color:var(--mute);max-width:56ch;margin-top:12px;font-size:16px}
 
 /* problem */
-.probs{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:2px;
+.probs{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2px;
   margin-top:56px;background:var(--rule);border:1px solid var(--rule);border-radius:14px;overflow:hidden}
 .prob{background:#fff;padding:26px 22px;transition:background .35s}
 .prob:hover{background:#F7FAFC}
@@ -200,6 +200,20 @@ section{position:relative;z-index:1}
 .prob i{font-family:var(--mono);font-style:normal;font-size:11px;color:var(--coral);
   display:block;margin-bottom:13px}
 
+
+/* ---------- editorial duo: head beside content, less scroll ---------- */
+.duo{display:grid;grid-template-columns:minmax(240px,.72fr) 1.9fr;
+  gap:.5rem clamp(2rem,3.6vw,4rem);align-items:start}
+.duo>.rv:first-child{position:sticky;top:96px;grid-column:1}
+.duo>*:not(:first-child){grid-column:2;margin-top:0!important}
+.duo h2{font-size:clamp(25px,2.7vw,38px);max-width:16ch}
+.duo .probs{grid-template-columns:repeat(6,1fr)}
+.duo .probs>div{grid-column:span 2}
+.duo .probs>div:nth-child(n+4){grid-column:span 3}
+@media(max-width:980px){.duo{display:block}.duo>.rv:first-child{position:static;margin-bottom:1.6rem}
+  .duo .probs{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+  .duo .probs>div{grid-column:auto}.duo .probs>div:nth-child(n+4){grid-column:auto}}
+
 /* ---------- scrollytelling ---------- */
 .story{display:grid;grid-template-columns:1fr 1.05fr;gap:clamp(30px,5vw,80px);align-items:start}
 .stage{position:sticky;top:0;height:100svh;display:flex;align-items:center;justify-content:center}
@@ -207,8 +221,8 @@ section{position:relative;z-index:1}
 .stage svg{position:absolute;inset:0;width:100%;height:100%;opacity:0;
   transition:opacity .5s ease;pointer-events:none}
 .stage svg.on{opacity:1}
-.steps{padding:8vh 0 16vh}
-.step{min-height:64svh;display:flex;flex-direction:column;justify-content:center;
+.steps{padding:5vh 0 9vh}
+.step{min-height:48svh;display:flex;flex-direction:column;justify-content:center;
   opacity:.24;transition:opacity .5s ease}
 .step.on{opacity:1}
 .step .n{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--blue);
@@ -236,7 +250,7 @@ section{position:relative;z-index:1}
 /* ---------- architecture ---------- */
 .arch{background:#EEF4F9;color:var(--ink);border-block:1px solid var(--rule)}
 .arch h2 em{color:var(--blue)}
-.zones{margin-top:60px;display:grid;gap:16px}
+.zones{margin-top:34px;display:grid;gap:16px}
 .zrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}
 .zone{border:1px solid var(--rule);border-radius:14px;background:#fff;overflow:hidden;
   transition:border-color .4s,transform .4s,box-shadow .4s;cursor:default}
@@ -262,7 +276,7 @@ section{position:relative;z-index:1}
 .loopback svg{flex:0 0 20px;color:#9333EA}
 
 /* ---------- capability grid ---------- */
-.caps{margin-top:54px;display:grid;grid-template-columns:repeat(auto-fill,minmax(252px,1fr));gap:16px}
+.caps{margin-top:30px;display:grid;grid-template-columns:repeat(auto-fill,minmax(214px,1fr));gap:12px}
 .cap{background:#fff;border:1px solid var(--rule);border-radius:14px;padding:22px;
   transition:transform .4s cubic-bezier(.2,.8,.2,1),box-shadow .4s,border-color .4s}
 .cap:hover{transform:translateY(-4px);box-shadow:0 16px 34px -20px rgba(10,22,38,.32)}
@@ -282,13 +296,13 @@ section{position:relative;z-index:1}
 .chipx{font-size:14px;padding:9px 17px;border-radius:999px;background:#fff;
   border:1px solid var(--rule);color:var(--ink-2);white-space:nowrap}
 .marq-track.rev{animation-direction:reverse;animation-duration:56s}
-.cov{margin-top:50px;display:grid;grid-template-columns:repeat(auto-fit,minmax(202px,1fr));gap:30px}
+.cov{margin-top:34px;display:grid;grid-template-columns:repeat(auto-fit,minmax(202px,1fr));gap:30px}
 .cov h4{font-family:var(--display);font-size:21px;font-weight:500;margin-bottom:9px}
 .cov p{font-size:14.5px;color:var(--mute);line-height:1.6}
 .cov .bar{width:32px;height:3px;border-radius:2px;margin-bottom:15px}
 
 /* ---------- value ---------- */
-.val{display:grid;grid-template-columns:repeat(auto-fit,minmax(228px,1fr));gap:2px;margin-top:56px;
+.val{display:grid;grid-template-columns:repeat(auto-fit,minmax(198px,1fr));gap:2px;margin-top:30px;
   border:1px solid var(--rule);border-radius:16px;overflow:hidden;background:var(--rule)}
 .vcol{background:#fff;padding:28px 24px;transition:background .4s}
 .vcol:hover{background:#FAFCFE}
@@ -316,11 +330,11 @@ section{position:relative;z-index:1}
   padding-left:12px;font-style:italic}
 
 /* ---------- closing ---------- */
-.close{background:#FFFFFF;color:var(--ink);text-align:center;padding:clamp(90px,12vw,160px) 0;
+.close{background:#FFFFFF;color:var(--ink);text-align:center;padding:clamp(60px,8vw,96px) 0;
   border-top:1px solid var(--rule)}
 .close h2{font-size:clamp(32px,4.6vw,58px);font-weight:300;max-width:22ch;margin:0 auto}
 .close h2 em{font-style:italic;color:var(--blue)}
-.diffs{margin-top:64px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+.diffs{margin-top:40px;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
   gap:14px;text-align:left}
 .diff{border:1px solid var(--rule);border-radius:13px;padding:20px;background:#FBFCFD;
   transition:border-color .4s,transform .4s}
@@ -430,7 +444,7 @@ footer b{color:#C7D6E3;font-weight:500}
 </div></section>
 
 <!-- ================= PROBLEM ================= -->
-<section id="problem" class="band"><div class="wrap">
+<section id="problem" class="band"><div class="wrap duo">
   <div class="rv"><div class="eyebrow">The problem</div>
   <h2>The right answer exists. It is just unreachable in time.</h2></div>
   <div class="probs rv" id="probs"></div>
@@ -463,7 +477,7 @@ footer b{color:#C7D6E3;font-weight:500}
 </div></section>
 
 <!-- ================= CLARIFY-BACK ================= -->
-<section id="clarify" class="band clarify"><div class="wrap">
+<section id="clarify" class="band clarify"><div class="wrap duo">
   <div class="rv"><div class="eyebrow" style="color:var(--amber)">The signature behaviour</div>
   <h2>When the evidence is thin, it asks.</h2>
   <p class="sub">One targeted question, then a fresh attempt — never a refusal, never a guess.</p></div>
@@ -508,7 +522,7 @@ footer b{color:#C7D6E3;font-weight:500}
 </div></section>
 
 <!-- ================= BUILT FOR YOU ================= -->
-<section id="build" class="band" style="background:#F4F8FB;border-block:1px solid var(--rule)"><div class="wrap">
+<section id="build" class="band" style="background:#F4F8FB;border-block:1px solid var(--rule)"><div class="wrap duo">
   <div class="rv"><div class="eyebrow">What QualiZeal builds on the fabric</div>
   <h2>The platform is the floor. We build your rooms.</h2></div>
   <div class="build-grid rv">
@@ -545,7 +559,7 @@ footer b{color:#C7D6E3;font-weight:500}
 </div></section>
 
 <!-- ================= DELIVERY ================= -->
-<section id="delivery" class="band" style="background:#F4F8FB;border-block:1px solid var(--rule)"><div class="wrap">
+<section id="delivery" class="band" style="background:#F4F8FB;border-block:1px solid var(--rule)"><div class="wrap duo">
   <div class="rv"><div class="eyebrow">Delivery</div>
   <h2>Four phases, each ending in something you can judge.</h2></div>
   <div class="phases rv" id="phases"><div class="ptrack"><i></i></div><div class="plist" id="plist"></div></div>

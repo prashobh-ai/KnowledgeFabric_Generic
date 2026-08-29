@@ -966,6 +966,7 @@ def build_demo(m: dict) -> str:
 {FOOTER_TPL.replace('%LOGO%', logo(base, 24)).replace('</body></html>', '')}
 <script src="{base}assets/vendor/three.min.js"></script>
 <script src="{base}assets/js/galaxy.js"></script>
+<script src="{base}assets/js/i18n.js"></script>
 <script src="{base}assets/js/engine.js"></script>
 <script src="{base}assets/js/app.js"></script>
 </body></html>
